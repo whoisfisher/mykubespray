@@ -124,7 +124,7 @@ case "$command" in
         fi
 
         case "$1" in
-            make_kubespray|files-server)
+            kubespray|files-server)
                 target="$1"
                 shift
                 ;;
