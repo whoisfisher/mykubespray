@@ -76,8 +76,7 @@ RUN apt-get update -q \
        ansible \
        apt-utils \
     && apt-get clean \
-    && rm -rf /var/lib/apt/lists/* /var/log/* \
-    && ulimit -u 4096
+    && rm -rf /var/lib/apt/lists/* /var/log/*
 
 RUN pip config set global.index-url https://mirrors.ustc.edu.cn/pypi/web/simple
 
