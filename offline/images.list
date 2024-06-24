@@ -1,0 +1,3 @@
+registry:latest
+nginx:alpine
+quay.io/kubespray/kubespray:v2.25.0
