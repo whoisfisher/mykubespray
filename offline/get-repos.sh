@@ -53,7 +53,7 @@ function download_repo() {
     echo "===> Resolving dependencies"
     DEPS=$(apt-cache depends --recurse --no-recommends --no-suggests --no-conflicts --no-breaks --no-replaces --no-enhances --no-pre-depends $packages | grep "^\w" | sort | uniq)
     echo "===> Downloading packages: " $packages $DEPS
-    cd $REPO_OUTPUT/$VERSION_ID && apt download $packages $DEPS
+    cd $REPO_OUTPUT/$VERSION_ID && apt download $packages $DEPS && cd -
   fi
 }
 
