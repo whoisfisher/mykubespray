@@ -43,4 +43,4 @@ sshpass
 open-iscsi
 nfs-common
 nvme-cli
-linux-modules-extra-`uname -r`
+linux-modules-extra-5.15.0-112-generic
