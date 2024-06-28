@@ -463,6 +463,7 @@ case "$command" in
         case "$target" in
         cluster)
           init_kubernetes
+          prepare_offline
           ;;
         esac
         ;;

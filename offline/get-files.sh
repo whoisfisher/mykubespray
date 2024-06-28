@@ -33,22 +33,13 @@ function decide_relative_dir() {
     local url=$1
     local rdir
     rdir=$url
-    rdir=$(echo $rdir | sed "s@.*/\(v[0-9.]*\)/.*/kube\(adm\|ctl\|let\)@kubernetes/\1@g")
-    rdir=$(echo $rdir | sed "s@.*/etcd-.*.tar.gz@kubernetes/etcd@")
-    rdir=$(echo $rdir | sed "s@.*/cni-plugins.*.tgz@kubernetes/cni@")
-    rdir=$(echo $rdir | sed "s@.*/crictl-.*.tar.gz@kubernetes/cri-tools@")
-    rdir=$(echo $rdir | sed "s@.*/\(v.*\)/calicoctl-.*@kubernetes/calico/\1@")
-    rdir=$(echo $rdir | sed "s@.*/\(v.*\)/runc.amd64@runc/\1@")
+    rdir=$(echo ${rdir#*//})
+    rdir=$(echo ${rdir%/*})
     if [ "$url" != "$rdir" ]; then
         echo $rdir
         return
-    fi
-
-    rdir=$(echo $rdir | sed "s@.*/calico/.*@kubernetes/calico@")
-    if [ "$url" != "$rdir" ]; then
-        echo $rdir
     else
-        echo ""
+      echo ""
     fi
 }
 

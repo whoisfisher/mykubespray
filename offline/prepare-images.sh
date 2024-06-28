@@ -12,7 +12,7 @@ function create_registry() {
   else
     tar_name=$(echo ${REGISTRY_IMAGE##*/} | sed s/:/-/g).tar
     echo "===>loading $REGISTRY_IMAGE"
-    docker load -i $IMAGES_OUTPUT/$tar_name
+    docker load -i $IMAGES_OUTPUT/$ARCH/$tar_name
     echo "===> starting docker repository"
     docker run -d -p $REGISTRY_PORT:5000 -v /opt/registry:/mnt/registry --restart=always --name $REGISTRY_NAME $REGISTRY_IMAGE
     if [ $? -ne 0 ]; then

@@ -84,28 +84,57 @@ function get_system_version() {
   VERSION_MAJOR=$VERSION_ID
   case "${VERSION_MAJOR}" in
       7*)
-          VERSION_MAJOR="dnf"
+          VERSION_MAJOR="$NAME-7"
           ;;
       8*)
-          VERSION_MAJOR="dnf"
+          VERSION_MAJOR="$NAME-8"
           ;;
       9*)
-          VERSION_MAJOR="dnf"
+          VERSION_MAJOR="$NAME-9"
           ;;
       22*)
-          VERSION_MAJOR="apt"
+          VERSION_MAJOR="$NAME-$VERSION_ID"
           ;;
       24*)
-          VERSION_MAJOR="apt"
+          VERSION_MAJOR="$NAME-$VERSION_ID"
           ;;
       kylin*)
-          VERSION_MAJOR="dnf"
+          VERSION_MAJOR="$NAME-$VERSION_ID"
           ;;
       uos*)
-          VERSION_MAJOR="apt"
+          VERSION_MAJOR="$NAME-$VERSION_ID"
           ;;
       *)
           echo "Unsupported version: $VERSION_MAJOR"
           ;;
   esac
+}
+
+function get_system() {
+  if [ -f /etc/os-release ]; then
+      . /etc/os-release
+      if [ -n "$ID" ]; then
+          case "$ID" in
+              ubuntu)
+                  echo "Ubuntu"
+                  ;;
+              debian)
+                  echo "Debian"
+                  ;;
+              centos)
+                  echo "CentOS"
+                  ;;
+              fedora)
+                  echo "Fedora"
+                  ;;
+              *)
+                  echo "Unknown"
+                  ;;
+          esac
+      else
+          echo "Unknown"
+      fi
+  else
+      echo "Unknown"
+  fi
 }

@@ -125,7 +125,7 @@ EOF
   docker load -i $IMAGES_OUTPUT/$tar_name
   echo "===> starting kubespray"
   docker run --rm -it -v $KUBESPRAY_CACHE/kubespray-$KUBESPRAY_VERSION/:/kubespray/ -v /root/.ssh/id_rsa:/root/.ssh/id_rsa --name $KUBESPRAY_NAME $kubespray_image \
-      ansible-playbook -i /kubespray/inventory/$CLUSTER_NAME/hosts.yaml --private-key /root/.ssh/id_rsa --become --become-user=root longhorn-iscsi-installation.yaml
+      ansible-playbook -i /kubespray/inventory/$CLUSTER_NAME/hosts.yaml --private-key /root/.ssh/id_rsa --become --become-user=root longhorn-iscsi-installation.yaml -vvvvv
   if [ $? -ne 0 ]; then
     echo "Error: Failed to run Docker kubespray container."
     exit 1
@@ -189,7 +189,7 @@ EOF
   docker load -i $IMAGES_OUTPUT/$tar_name
   echo "===> starting kubespray"
   docker run --rm -it -v $KUBESPRAY_CACHE/kubespray-$KUBESPRAY_VERSION/:/kubespray/ -v /root/.ssh/id_rsa:/root/.ssh/id_rsa --name $KUBESPRAY_NAME $kubespray_image \
-      ansible-playbook -i /kubespray/inventory/$CLUSTER_NAME/hosts.yaml --private-key /root/.ssh/id_rsa --become --become-user=root longhorn-nfs-installation.yaml
+      ansible-playbook -i /kubespray/inventory/$CLUSTER_NAME/hosts.yaml --private-key /root/.ssh/id_rsa --become --become-user=root longhorn-nfs-installation.yaml -vvvvv
   if [ $? -ne 0 ]; then
     echo "Error: Failed to run Docker kubespray container."
     exit 1
@@ -284,7 +284,7 @@ EOF
   docker load -i $IMAGES_OUTPUT/$tar_name
   echo "===> starting kubespray"
   docker run --rm -it -v $KUBESPRAY_CACHE/kubespray-$KUBESPRAY_VERSION/:/kubespray/ -v /root/.ssh/id_rsa:/root/.ssh/id_rsa --name $KUBESPRAY_NAME $kubespray_image \
-      ansible-playbook -i /kubespray/inventory/$CLUSTER_NAME/hosts.yaml --private-key /root/.ssh/id_rsa --become --become-user=root longhorn-hugepages-installation.yaml
+      ansible-playbook -i /kubespray/inventory/$CLUSTER_NAME/hosts.yaml --private-key /root/.ssh/id_rsa --become --become-user=root longhorn-hugepages-installation.yaml -vvvvv
   if [ $? -ne 0 ]; then
     echo "Error: Failed to run Docker kubespray container."
     exit 1

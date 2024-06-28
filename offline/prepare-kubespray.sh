@@ -2,7 +2,25 @@
 . .env
 . common.sh
 . check-env.sh
+. /etc/os-release
 
+function prepare_offline() {
+  current_ip=$(get_main_ip)
+  offline_file="$KUBESPRAY_CACHE/kubespray-$KUBESPRAY_VERSION/inventory/$CLUSTER_NAME/group_vars/all/offline.yml"
+  echo "===>Setting up image repository"
+  sed -i s@myprivateregisry.com@$current_ip:$FILE_SERVER_PORT@g $offline_file
+  echo "===>Setting up file server address"
+  sed -i s@myprivatehttpd@$current_ip:$FILE_SERVER_PORT/files@g $offline_file
+  echo "===>Setting up os repository"
+  system_name=$(get_system)
+  if [ "$system_name" == "CentOS" ]; then
+    sed -i s@myinternalyumrepo@$current_ip:$FILE_SERVER_PORT/repository/$NAME-$VERSION_ID/$ARCH@ $offline_file
+  elif [ "$system_name" == "Debian" ]; then
+    sed -i s@myinternaldebianrepo@$current_ip:$FILE_SERVER_PORT/repository/$NAME-$VERSION_ID/$ARCH@ $offline_file
+  elif [ "$system_name" == "Ubuntu" ]; then
+    sed -i s@myinternalubunturepo@$current_ip:$FILE_SERVER_PORT/repository/$NAME-$VERSION_ID/$ARCH@ $offline_file
+  fi
+}
 
 function create_kubespray() {
   check_docker
@@ -71,7 +89,7 @@ EOF
   docker load -i $IMAGES_OUTPUT/$ARCH/$tar_name
   echo "===> starting kubespray"
   docker run --rm -it -v $KUBESPRAY_CACHE/kubespray-$KUBESPRAY_VERSION/:/kubespray/ -v /root/.ssh/id_rsa:/root/.ssh/id_rsa --name $KUBESPRAY_NAME $kubespray_image \
-      ansible-playbook -i /kubespray/inventory/$CLUSTER_NAME/hosts.yaml --private-key /root/.ssh/id_rsa --become --become-user=root update_hosts.yaml
+      ansible-playbook -i /kubespray/inventory/$CLUSTER_NAME/hosts.yaml --private-key /root/.ssh/id_rsa --become --become-user=root update_hosts.yaml -vvvvv
   if [ $? -ne 0 ]; then
     echo "Error: Failed to run Docker kubespray container."
     exit 1
@@ -84,12 +102,12 @@ EOF
 
 function init_kubernetes() {
   cp -rf $KUBESPRAY_CACHE/kubespray-$KUBESPRAY_VERSION/inventory/sample $KUBESPRAY_CACHE/kubespray-$KUBESPRAY_VERSION/inventory/$CLUSTER_NAME
-  cp hosts.yaml $KUBESPRAY_CACHE/kubespray-$KUBESPRAY_VERSION/inventory/$CLUSTER_NAME/hosts.yaml
-  cp offline2.yaml $KUBESPRAY_CACHE/kubespray-$KUBESPRAY_VERSION/inventory/$CLUSTER_NAME/group_vars/all/offline.yaml
+  cp hosts.yaml $KUBESPRAY_CACHE/kubespray-$KUBESPRAY_VERSION/inventory/$CLUSTER_NAME/hosts.yml
+  cp offline.yml $KUBESPRAY_CACHE/kubespray-$KUBESPRAY_VERSION/inventory/$CLUSTER_NAME/group_vars/all/offline.yml
   echo "===>Please add node information in the following file"
-  echo "$KUBESPRAY_CACHE/kubespray-$KUBESPRAY_VERSION/inventory/$CLUSTER_NAME/hosts.yaml"
+  echo "$KUBESPRAY_CACHE/kubespray-$KUBESPRAY_VERSION/inventory/$CLUSTER_NAME/hosts.yml"
   echo "===>Please add image repository, file repository, and system source in the following file"
-  echo "$KUBESPRAY_CACHE/kubespray-$KUBESPRAY_VERSION/inventory/$CLUSTER_NAME/group_vars/all/offline.yaml"
+  echo "$KUBESPRAY_CACHE/kubespray-$KUBESPRAY_VERSION/inventory/$CLUSTER_NAME/group_vars/all/offline.yml"
   echo "===>Please add cluster related configurations in the following file"
   echo "$KUBESPRAY_CACHE/kubespray-$KUBESPRAY_VERSION/inventory/$CLUSTER_NAME/group_vars/k8s_cluster/k8s-cluster.yml"
 }
@@ -107,7 +125,7 @@ function install_kubernetes() {
   docker load -i $IMAGES_OUTPUT/$ARCH/$tar_name
   echo "===> starting kubespray"
   docker run --rm -it -v $KUBESPRAY_CACHE/kubespray-$KUBESPRAY_VERSION/:/kubespray/ -v /root/.ssh/id_rsa:/root/.ssh/id_rsa --name $KUBESPRAY_NAME $kubespray_image \
-      ansible-playbook -i /kubespray/inventory/$CLUSTER_NAME/hosts.yaml --private-key /root/.ssh/id_rsa --become --become-user=root cluster.yml
+      ansible-playbook -i /kubespray/inventory/$CLUSTER_NAME/hosts.yaml --private-key /root/.ssh/id_rsa --become --become-user=root cluster.yml -vvvvv
   if [ $? -ne 0 ]; then
     echo "Error: Failed to run Docker kubespray container."
     exit 1
@@ -130,7 +148,7 @@ function delete_kubernetes() {
   docker load -i $IMAGES_OUTPUT/$ARCH/$tar_name
   echo "===> starting kubespray"
   docker run --rm -it -v $KUBESPRAY_CACHE/kubespray-$KUBESPRAY_VERSION/:/kubespray/ -v /root/.ssh/id_rsa:/root/.ssh/id_rsa --name $KUBESPRAY_NAME $kubespray_image \
-      ansible-playbook -i /kubespray/inventory/$CLUSTER_NAME/hosts.yaml --private-key /root/.ssh/id_rsa --become --become-user=root reset.yml
+      ansible-playbook -i /kubespray/inventory/$CLUSTER_NAME/hosts.yaml --private-key /root/.ssh/id_rsa --become --become-user=root reset.yml -vvvvv
   if [ $? -ne 0 ]; then
     echo "Error: Failed to delete kubernetes: $CLUSTER_NAME"
     exit 1
