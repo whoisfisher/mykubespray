@@ -14,11 +14,11 @@ function prepare_offline() {
   echo "===>Setting up os repository"
   system_name=$(get_system)
   if [ "$system_name" == "CentOS" ]; then
-    sed -i s@myinternalyumrepo@$current_ip:$FILE_SERVER_PORT/repository/$NAME-$VERSION_ID/$ARCH@ $offline_file
+    sed -i s@myinternalyumrepo@$current_ip:$FILE_SERVER_PORT/repository/$ID-$VERSION_ID/$ARCH@ $offline_file
   elif [ "$system_name" == "Debian" ]; then
-    sed -i s@myinternaldebianrepo@$current_ip:$FILE_SERVER_PORT/repository/$NAME-$VERSION_ID/$ARCH@ $offline_file
+    sed -i s@myinternaldebianrepo@$current_ip:$FILE_SERVER_PORT/repository/$ID-$VERSION_ID/$ARCH@ $offline_file
   elif [ "$system_name" == "Ubuntu" ]; then
-    sed -i s@myinternalubunturepo@$current_ip:$FILE_SERVER_PORT/repository/$NAME-$VERSION_ID/$ARCH@ $offline_file
+    sed -i s@myinternalubunturepo@$current_ip:$FILE_SERVER_PORT/repository/$ID-$VERSION_ID/$ARCH@ $offline_file
   fi
 }
 

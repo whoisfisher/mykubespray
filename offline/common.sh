@@ -84,25 +84,25 @@ function get_system_version() {
   VERSION_MAJOR=$VERSION_ID
   case "${VERSION_MAJOR}" in
       7*)
-          VERSION_MAJOR="$NAME-7"
+          VERSION_MAJOR="$ID-7"
           ;;
       8*)
-          VERSION_MAJOR="$NAME-8"
+          VERSION_MAJOR="$ID-8"
           ;;
       9*)
-          VERSION_MAJOR="$NAME-9"
+          VERSION_MAJOR="$ID-9"
           ;;
       22*)
-          VERSION_MAJOR="$NAME-$VERSION_ID"
+          VERSION_MAJOR="$ID-$VERSION_ID"
           ;;
       24*)
-          VERSION_MAJOR="$NAME-$VERSION_ID"
+          VERSION_MAJOR="$ID-$VERSION_ID"
           ;;
       kylin*)
-          VERSION_MAJOR="$NAME-$VERSION_ID"
+          VERSION_MAJOR="$ID-$VERSION_ID"
           ;;
       uos*)
-          VERSION_MAJOR="$NAME-$VERSION_ID"
+          VERSION_MAJOR="$ID-$VERSION_ID"
           ;;
       *)
           echo "Unsupported version: $VERSION_MAJOR"
