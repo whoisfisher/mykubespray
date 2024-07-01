@@ -19,6 +19,10 @@ recursive=false
 cluster_name=""
 container_runtime=""
 network_plugin=""
+ntp_server=""
+internal_lb_port=""
+external_lb_ip=""
+external_lb_port=""
 
 usage() {
     echo "Usage:"
@@ -56,7 +60,11 @@ usage() {
     echo "  init <target>         Init something:"
     echo "                          cluster"
     echo "  Config <target>       Config something:"
-    echo "                          docker"
+    echo "                          docker-config"
+    echo "                          docker-proxy"
+    echo "                          ntp"
+    echo "                          internal-lb"
+    echo "                          external-lb"
     echo
     echo "Options:"
     echo "  -r                     Enable recursive mode (for applicable commands)."
@@ -258,15 +266,41 @@ case "$command" in
         fi
 
         case "$1" in
-            docker-proxy|docker-config)
+            docker-proxy|docker-config|ntp|internal-lb|external-lb)
                 target="$1"
                 shift
                 ;;
             *)
-                echo "Error: Invalid target '$1' for command '$command'. Must be one of 'docker-proxy, docker-config'."
+                echo "Error: Invalid target '$1' for command '$command'. Must be one of 'docker-proxy, docker-config, ntp, internal-lb, external-lb'."
                 usage
                 ;;
         esac
+
+        if [ "$command" = "config" ]; then
+            if [ "$target" = "ntp" ]; then
+                if [ -z "$2" ]; then
+                  echo "Error: You must specify a ntp server with '--ntp-server'."
+                  usage
+                fi
+                ntp_server="$2"
+                shift 2
+            elif [ "$target" = "internal-lb" ]; then
+                if [ -z "$2" ]; then
+                  echo "Error: You must specify a ntp server with '--internal-lb-port'."
+                  usage
+                fi
+                internal_lb_port="$2"
+                shift 2
+            elif [ "$target" = "external-lb" ]; then
+                if [ -z "$2" ] || [ -z "$4" ]; then
+                  echo "Error: You must specify a ntp server with '--external-lb-ip' and '--external-lb-port'."
+                  usage
+                fi
+                external_lb_ip="$2"
+                external_lb_port="$4"
+                shift 2
+            fi
+        fi
         ;;
     *)
         echo "Error: Invalid command '$command'. Must be one of 'get', 'delete', 'make', 'install', 'remove', 'create', 'init'."
@@ -283,7 +317,7 @@ while [[ $# -gt 0 ]]; do
         -h)
             usage
             ;;
-        -cn)
+        --cluster-name)
             if [ -z "$2" ]; then
                 echo "Error: Cluster name cannot be empty."
                 usage
@@ -291,7 +325,7 @@ while [[ $# -gt 0 ]]; do
             cluster_name="$2"
             shift 2
             ;;
-        -cr)
+        --container-runtime)
             if [ -z "$2" ]; then
                 echo "Error: Container runtime cannot be empty."
                 usage
@@ -299,12 +333,44 @@ while [[ $# -gt 0 ]]; do
             container_runtime="$2"
             shift 2
             ;;
-        -np)
+        --network-plugin)
             if [ -z "$2" ]; then
                 echo "Error: Network plugin cannot be empty."
                 usage
             fi
             network_plugin="$2"
+            shift 2
+            ;;
+        --ntp-server)
+            if [ -z "$2" ]; then
+                echo "Error: Ntp Server cannot be empty."
+                usage
+            fi
+            ntp_server="$2"
+            shift 2
+            ;;
+        --internal-lb-port)
+            if [ -z "$2" ]; then
+                echo "Error: Internal loadbalance port cannot be empty."
+                usage
+            fi
+            internal_lb_port="$2"
+            shift 2
+            ;;
+        --external-lb-ip)
+            if [ -z "$2" ]; then
+                echo "Error: External loadbalance ip cannot be empty."
+                usage
+            fi
+            external_lb_ip="$2"
+            shift 2
+            ;;
+        --external-lb-port)
+            if [ -z "$2" ]; then
+                echo "Error: External loadbalance port cannot be empty."
+                usage
+            fi
+            external_lb_port="$2"
             shift 2
             ;;
         *)
@@ -329,7 +395,22 @@ fi
 if [ -n "$network_plugin" ]; then
     echo "Network Plugin: $network_plugin"
 fi
-
+if [ -n "$ntp_server" ]; then
+    echo "NTP Server: $ntp_server"
+    export NTP_SERVER_IP=$ntp_server
+fi
+if [ -n "$internal_lb_port" ]; then
+    echo "Internal Loadbalance Port: $internal_lb_port"
+    export INTERNAL_LB_PORT=$internal_lb_port
+fi
+if [ -n "$external_lb_ip" ]; then
+    echo "External Loadbalance IP: $external_lb_ip"
+    export EXTERNAL_LB_IP=$external_lb_ip
+fi
+if [ -n "$external_lb_port" ]; then
+    echo "External Loadbalance Port: $external_lb_port"
+    export EXTERNAL_LB_PORT=$external_lb_port
+fi
 case "$command" in
     get)
         echo "Performing 'get' operation on '$target'."

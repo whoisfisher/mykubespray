@@ -49,7 +49,7 @@ function configure_internal_loadbalancer() {
   config_file="$KUBESPRAY_CACHE/kubespray-$KUBESPRAY_VERSION/inventory/$CLUSTER_NAME/group_vars/all/all.yml"
   sed -i '/^#.*loadbalancer_apiserver_localhost/s/^#//' $config_file
   sed -i '/^#.*loadbalancer_apiserver_type:/s/^#//' $config_file
-  sed -i 's/loadbalancer_apiserver_port: 6443/loadbalancer_apiserver_port: 36443/g' $config_file
+  sed -i 's/loadbalancer_apiserver_port: 6443/loadbalancer_apiserver_port: ${INTERNAL_LB_PORT}/g' $config_file
 }
 
 function configure_external_loadbalancer() {
@@ -57,8 +57,8 @@ function configure_external_loadbalancer() {
   sed -i '/^#.*loadbalancer_apiserver:/s/^#//' $config_file
   sed -i '/^#.*address: 1.2.3.4/s/^#//' $config_file
   sed -i '/^#.*port: 1234/s/^#//' $config_file
-  sed -i 's/address: 1.2.3.4/address: ${EXTERNAL_VIP}/g' $config_file
-  sed -i 's/port: 1234/port: ${EXTERNAL_PORT}/g' $config_file
+  sed -i 's/address: 1.2.3.4/address: ${EXTERNAL_LB_IP}/g' $config_file
+  sed -i 's/port: 1234/port: ${EXTERNAL_LB_PORT}/g' $config_file
 }
 
 function open_logs() {
