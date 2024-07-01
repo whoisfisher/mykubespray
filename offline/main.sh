@@ -410,12 +410,12 @@ case "$command" in
           install_docker
           ;;
         cluster)
-          create_registry
-          configure_docker
-          pushed_images
-          create_repo
-          create_file_server
-          configure_repo
+#          create_registry
+#          configure_docker
+#          pushed_images
+#          create_repo
+#          create_file_server
+#          configure_repo
           configure_kubespray_containerd
           configure_nexus_hosts
           install_kubernetes

@@ -8,7 +8,7 @@ function prepare_offline() {
   current_ip=$(get_main_ip)
   offline_file="$KUBESPRAY_CACHE/kubespray-$KUBESPRAY_VERSION/inventory/$CLUSTER_NAME/group_vars/all/offline.yml"
   echo "===>Setting up image repository"
-  sed -i s@myprivateregisry.com@$current_ip:$FILE_SERVER_PORT@g $offline_file
+  sed -i s@myprivateregisry.com@$current_ip:$REGISTRY_PORT@g $offline_file
   echo "===>Setting up file server address"
   sed -i s@myprivatehttpd@$current_ip:$FILE_SERVER_PORT/files@g $offline_file
   echo "===>Setting up os repository"
@@ -35,7 +35,7 @@ function create_kubespray() {
   docker load -i $IMAGES_OUTPUT/$ARCH/$tar_name
   echo "===> starting kubespray"
   docker run --rm -it -v $KUBESPRAY_CACHE/kubespray-$KUBESPRAY_VERSION/:/kubespray/ -v /root/.ssh/id_rsa:/root/.ssh/id_rsa --name $KUBESPRAY_NAME $kubespray_image \
-      ansible-playbook -i /kubespray/inventory/$CLUSTER_NAME/hosts.yaml --private-key /root/.ssh/id_rsa --become --become-user=root cluster.yml
+      ansible-playbook -i /kubespray/inventory/$CLUSTER_NAME/hosts.yml --private-key /root/.ssh/id_rsa --become --become-user=root cluster.yml
   if [ $? -ne 0 ]; then
     echo "Error: Failed to run Docker kubespray container."
     exit 1
@@ -44,6 +44,34 @@ function create_kubespray() {
   fi
 }
 
+
+function configure_internal_loadbalancer() {
+  config_file="$KUBESPRAY_CACHE/kubespray-$KUBESPRAY_VERSION/inventory/$CLUSTER_NAME/group_vars/all/all.yml"
+  sed -i '/^#.*loadbalancer_apiserver_localhost/s/^#//' $config_file
+  sed -i '/^#.*loadbalancer_apiserver_type:/s/^#//' $config_file
+  sed -i 's/loadbalancer_apiserver_port: 6443/loadbalancer_apiserver_port: 36443/g' $config_file
+}
+
+function configure_external_loadbalancer() {
+  config_file="$KUBESPRAY_CACHE/kubespray-$KUBESPRAY_VERSION/inventory/$CLUSTER_NAME/group_vars/all/all.yml"
+  sed -i '/^#.*loadbalancer_apiserver:/s/^#//' $config_file
+  sed -i '/^#.*address: 1.2.3.4/s/^#//' $config_file
+  sed -i '/^#.*port: 1234/s/^#//' $config_file
+  sed -i 's/address: 1.2.3.4/address: ${EXTERNAL_VIP}/g' $config_file
+  sed -i 's/port: 1234/port: ${EXTERNAL_PORT}/g' $config_file
+}
+
+function open_logs() {
+  config_file="$KUBESPRAY_CACHE/kubespray-$KUBESPRAY_VERSION/inventory/$CLUSTER_NAME/group_vars/all/all.yml"
+  sed -i 's/unsafe_show_logs: false/unsafe_show_logs: true/g' $config_file
+}
+
+function configure_ntp() {
+  config_file="$KUBESPRAY_CACHE/kubespray-$KUBESPRAY_VERSION/inventory/$CLUSTER_NAME/group_vars/all/all.yml"
+  sed -i 's/ntp_enabled: false/ntp_enabled: true/g' $config_file
+  sed -i 's/ntp_manage_config: false/ntp_manage_config: true/g' $config_file
+  sed -i 's/3.pool.ntp.org iburst/${NTP_SERVER_IP} iburst/g' $config_file
+}
 
 function configure_kubespray_containerd() {
   current_ip=$(get_main_ip)
@@ -89,7 +117,7 @@ EOF
   docker load -i $IMAGES_OUTPUT/$ARCH/$tar_name
   echo "===> starting kubespray"
   docker run --rm -it -v $KUBESPRAY_CACHE/kubespray-$KUBESPRAY_VERSION/:/kubespray/ -v /root/.ssh/id_rsa:/root/.ssh/id_rsa --name $KUBESPRAY_NAME $kubespray_image \
-      ansible-playbook -i /kubespray/inventory/$CLUSTER_NAME/hosts.yaml --private-key /root/.ssh/id_rsa --become --become-user=root update_hosts.yaml -vvvvv
+      ansible-playbook -i /kubespray/inventory/$CLUSTER_NAME/hosts.yml --private-key /root/.ssh/id_rsa --become --become-user=root update_hosts.yaml -vvvvv
   if [ $? -ne 0 ]; then
     echo "Error: Failed to run Docker kubespray container."
     exit 1
@@ -125,7 +153,7 @@ function install_kubernetes() {
   docker load -i $IMAGES_OUTPUT/$ARCH/$tar_name
   echo "===> starting kubespray"
   docker run --rm -it -v $KUBESPRAY_CACHE/kubespray-$KUBESPRAY_VERSION/:/kubespray/ -v /root/.ssh/id_rsa:/root/.ssh/id_rsa --name $KUBESPRAY_NAME $kubespray_image \
-      ansible-playbook -i /kubespray/inventory/$CLUSTER_NAME/hosts.yaml --private-key /root/.ssh/id_rsa --become --become-user=root cluster.yml -vvvvv
+      ansible-playbook -i /kubespray/inventory/$CLUSTER_NAME/hosts.yml --private-key /root/.ssh/id_rsa --become --become-user=root cluster.yml -vvvvv
   if [ $? -ne 0 ]; then
     echo "Error: Failed to run Docker kubespray container."
     exit 1
@@ -148,7 +176,7 @@ function delete_kubernetes() {
   docker load -i $IMAGES_OUTPUT/$ARCH/$tar_name
   echo "===> starting kubespray"
   docker run --rm -it -v $KUBESPRAY_CACHE/kubespray-$KUBESPRAY_VERSION/:/kubespray/ -v /root/.ssh/id_rsa:/root/.ssh/id_rsa --name $KUBESPRAY_NAME $kubespray_image \
-      ansible-playbook -i /kubespray/inventory/$CLUSTER_NAME/hosts.yaml --private-key /root/.ssh/id_rsa --become --become-user=root reset.yml -vvvvv
+      ansible-playbook -i /kubespray/inventory/$CLUSTER_NAME/hosts.yml --private-key /root/.ssh/id_rsa --become --become-user=root reset.yml -vvvvv
   if [ $? -ne 0 ]; then
     echo "Error: Failed to delete kubernetes: $CLUSTER_NAME"
     exit 1
