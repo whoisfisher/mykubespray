@@ -50,7 +50,7 @@ function create_repo() {
 
 function configure_local_repo() {
   get_system_version
-  if [ "$VERSION_MAJOR" == "CentOS-7" ] || [ "$VERSION_MAJOR" == "CentOS-8" ] || [ "$VERSION_MAJOR" == "Kylin-V10-SP3" ]; then
+  if [ "$VERSION_MAJOR" == "CentOS-7" ] || [ "$VERSION_MAJOR" == "CentOS-8" ] || [ "$VERSION_MAJOR" == "Kylin-V10" ]; then
     cat <<EOF | sudo tee /etc/apt/sources.list.d/local.list > /dev/null
 [local-mirror]
 name=Local Mirror
@@ -69,7 +69,7 @@ EOF
 function configure_repo() {
   get_system_version
   current_ip=$(get_main_ip)
-  if [ "$VERSION_MAJOR" == "CentOS-7" ] || [ "$VERSION_MAJOR" == "CentOS-8" ] || [ "$VERSION_MAJOR" == "Kylin-V10-SP3" ]; then
+  if [ "$VERSION_MAJOR" == "CentOS-7" ] || [ "$VERSION_MAJOR" == "CentOS-8" ] || [ "$VERSION_MAJOR" == "Kylin-V10" ]; then
     echo "Creating local repository....."
     cat <<EOF | tee /etc/yum.repo.d/mymirror.list > /dev/null
 [local-mirror]
@@ -92,7 +92,7 @@ EOF
 function remove_repo() {
   get_system_version
   current_ip=$(get_main_ip)
-  if [ "$VERSION_MAJOR" == "CentOS-7" ] || [ "$VERSION_MAJOR" == "CentOS-8" ] || [ "$VERSION_MAJOR" == "Kylin-V10-SP3" ]; then
+  if [ "$VERSION_MAJOR" == "CentOS-7" ] || [ "$VERSION_MAJOR" == "CentOS-8" ] || [ "$VERSION_MAJOR" == "Kylin-V10" ]; then
     rm -f /etc/apt/sources.list.d/mymirror.list
   elif [ "$VERSION_MAJOR" == "Ubuntu-22.04" ] || [ "$VERSION_MAJOR" == "Ubuntu-24.04" ] || [ "$VERSION_MAJOR" == "Debian-12" ] || [ "$VERSION_MAJOR" == "UOS-20" ]; then
     rm -f /etc/apt/sources.list.d/mymirror.list

@@ -20,9 +20,9 @@ function download_repo() {
           echo "Download error"
           exit 1
   }
-  elif [ "$VERSION_MAJOR" == "Kylin-V10-SP3" ]; then
-    packages=$(cat dnf.list | grep -v "^#" | sort | uniq)
-    repotrack -p $REPO_OUTPUT/$ID-$VERSION_ID/$ARCH $packages || {
+  elif [ "$VERSION_MAJOR" == "kylin-V10" ]; then
+    packages=$(cat kylin-v10.list | grep -v "^#" | sort | uniq)
+    repotrack --downloaddir $REPO_OUTPUT/$ID-$VERSION_ID/$ARCH $packages || {
           echo "Download error"
           exit 1
   }
@@ -70,6 +70,8 @@ function download_repo() {
     DEPS=$(apt-cache depends --recurse --no-recommends --no-suggests --no-conflicts --no-breaks --no-replaces --no-enhances --no-pre-depends $packages | grep "^\w" | sort | uniq)
     echo "===> Downloading packages: " $packages $DEPS
     cd $REPO_OUTPUT/$ID-$VERSION_ID/$ARCH && apt download $packages $DEPS && cd -
+  else
+    echo "===> Unsupported System Version: $VERSION_MAJOR"
   fi
 }
 
@@ -94,7 +96,7 @@ function download_multi_repo() {
             echo "Download error"
             exit 1
     }
-    elif [ "$VERSION_MAJOR" == "Kylin-V10-SP3" ]; then
+    elif [ "$VERSION_MAJOR" == "Kylin-V10" ]; then
       packages=$(cat dnf.list | grep -v "^#" | sort | uniq)
       repotrack -a $iarch -p $REPO_OUTPUT/$ID-$VERSION_ID/$iarch $packages || {
             echo "Download error"

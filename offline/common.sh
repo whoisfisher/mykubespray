@@ -98,7 +98,7 @@ function get_system_version() {
       24*)
           VERSION_MAJOR="$ID-$VERSION_ID"
           ;;
-      kylin*)
+      V10*)
           VERSION_MAJOR="$ID-$VERSION_ID"
           ;;
       uos*)
