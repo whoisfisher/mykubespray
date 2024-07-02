@@ -101,7 +101,7 @@ function get_system_version() {
       V10*)
           VERSION_MAJOR="$ID-$VERSION_ID"
           ;;
-      uos*)
+      20*)
           VERSION_MAJOR="$ID-$VERSION_ID"
           ;;
       *)
