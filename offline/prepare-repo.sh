@@ -48,7 +48,7 @@ function create_repo() {
 function configure_local_repo() {
   get_system_version
   if [ "$VERSION_MAJOR" == "CentOS-7" ] || [ "$VERSION_MAJOR" == "CentOS-8" ] || [ "$VERSION_MAJOR" == "kylin-V10" ] || [ "$VERSION_MAJOR" == "uos-20" ]; then
-    cat <<EOF | sudo tee /etc/apt/sources.list.d/local.list > /dev/null
+    cat <<EOF | sudo tee /etc/yum.repos.d/local.list > /dev/null
 [local-mirror]
 name=Local Mirror
 baseurl=file://$REPO_OUTPUT/$ID-$VERSION_ID/$ARCH
