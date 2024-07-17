@@ -5,41 +5,47 @@ import (
 	"fmt"
 	"io"
 	"os"
-	"os/exec"
 )
 
+// SSHExecutor implements Executor for SSH connections.
 type SSHExecutor struct {
-	Connection SSHConnection // SSH连接信息
+	Connection SSHConnection
 }
 
-type Executor interface {
-	ExecuteCommand(command string, logChan chan LogEntry) error          // 执行命令
-	CopyFile(srcFile, destFile string, outputHandler func(string)) error // 复制文件
-}
-
+// NewSSHExecutor creates a new instance of SSHExecutor.
 func NewSSHExecutor(connection SSHConnection) *SSHExecutor {
 	return &SSHExecutor{Connection: connection}
+}
+
+// ExecuteCommand executes a command over SSH.
+
+func (executor *SSHExecutor) ExecuteShortCommand(command string) (string, error) {
+	session, err := executor.Connection.Client.NewSession()
+	if err != nil {
+		return "", fmt.Errorf("failed to create SSH session: %s", err)
+	}
+	defer session.Close()
+	res, err := session.CombinedOutput(command)
+	if err != nil {
+		return "", fmt.Errorf("failed to create SSH session: %s", err)
+	}
+	return string(res), nil
 }
 
 func (executor *SSHExecutor) ExecuteCommand(command string, logChan chan LogEntry) error {
 	session, err := executor.Connection.Client.NewSession()
 	if err != nil {
-		return fmt.Errorf("Failed to create SSH session: %s", err)
+		return fmt.Errorf("failed to create SSH session: %s", err)
 	}
 	defer session.Close()
 
-	cmd := exec.Command("sh", "-c", command)
-	cmd.Stdin = os.Stdin
-	cmd.Stdout = os.Stdout
-	cmd.Stderr = os.Stderr
-
-	stdoutPipe, err := cmd.StdoutPipe()
+	stdoutPipe, err := session.StdoutPipe()
 	if err != nil {
-		return fmt.Errorf("Unable to setup stdout for SSH command: %v", err)
+		return fmt.Errorf("unable to setup stdout for SSH command: %v", err)
 	}
-	stderrPipe, err := cmd.StderrPipe()
+	stderrPipe, err := session.StderrPipe()
 	if err != nil {
-		return fmt.Errorf("Failed to create stderr pipe: %s", err)
+		return fmt.Errorf("failed to create stderr pipe: %s", err)
 	}
 
 	go func() {
@@ -56,34 +62,48 @@ func (executor *SSHExecutor) ExecuteCommand(command string, logChan chan LogEntr
 		}
 	}()
 
-	err = cmd.Start()
+	err = session.Start(command)
 	if err != nil {
-		return fmt.Errorf("Failed to run SSH command: %s", err)
+		return fmt.Errorf("failed to run SSH command: %s", err)
 	}
 
-	err = cmd.Wait()
+	err = session.Wait()
 	if err != nil {
 		return fmt.Errorf("SSH command execution failed: %s", err)
 	}
 	return nil
 }
 
+func (executor *SSHExecutor) ExecuteCommandWithoutReturn(command string) error {
+	session, err := executor.Connection.Client.NewSession()
+	if err != nil {
+		return fmt.Errorf("failed to create SSH session: %s", err)
+	}
+	defer session.Close()
+	err = session.Run(command)
+	if err != nil {
+		return fmt.Errorf("failed to create SSH session: %s", err)
+	}
+	return nil
+}
+
+// CopyFile copies a file over SSH using SCP.
 func (executor *SSHExecutor) CopyFile(srcFile, destFile string, outputHandler func(string)) error {
 	src, err := os.Open(srcFile)
 	if err != nil {
-		return fmt.Errorf("Failed to open source file: %s", err)
+		return fmt.Errorf("failed to open source file: %s", err)
 	}
 	defer src.Close()
 
 	session, err := executor.Connection.Client.NewSession()
 	if err != nil {
-		return fmt.Errorf("Failed to create SSH session: %s", err)
+		return fmt.Errorf("failed to create SSH session: %s", err)
 	}
 	defer session.Close()
 
 	dest, err := session.StdinPipe()
 	if err != nil {
-		return fmt.Errorf("Failed to setup stdin for SCP: %s", err)
+		return fmt.Errorf("failed to setup stdin for SCP: %s", err)
 	}
 
 	go func() {
@@ -103,20 +123,20 @@ func (executor *SSHExecutor) CopyFile(srcFile, destFile string, outputHandler fu
 	return nil
 }
 
+// CopyRemoteToRemote copies a file from one remote host to another using SCP.
 func (executor *SSHExecutor) CopyRemoteToRemote(srcHost, srcFile, destHost, destFile string, outputHandler func(string)) error {
-	// 使用 SCP 将文件从源主机复制到目标主机
 	cmd := fmt.Sprintf("/usr/bin/scp -o StrictHostKeyChecking=no %s:%s %s:%s", srcHost, srcFile, destHost, destFile)
 	outputHandler(fmt.Sprintf("Executing command: %s", cmd))
 
-	// 执行远程命令
 	session, err := executor.Connection.Client.NewSession()
 	if err != nil {
-		return fmt.Errorf("Failed to create SSH session: %s", err)
+		return fmt.Errorf("failed to create SSH session: %s", err)
 	}
 	defer session.Close()
+
 	err = session.Run(cmd)
 	if err != nil {
-		return fmt.Errorf("Failed to run command: %s", err)
+		return fmt.Errorf("failed to run command: %s", err)
 	}
 
 	outputHandler(fmt.Sprintf("Copied file %s from %s to %s on %s", srcFile, srcHost, destFile, destHost))

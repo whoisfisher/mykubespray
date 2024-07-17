@@ -15,11 +15,13 @@ type SSHConfig struct {
 	AuthMethods []ssh.AuthMethod
 }
 
+// SSHConnection manages an SSH connection.
 type SSHConnection struct {
-	Client *ssh.Client // SSH客户端
+	Client *ssh.Client
 }
 
-func (conn *SSHConnection) ConnectSSH(config SSHConfig) (SSHConnection, error) {
+// NewSSHConnection establishes a new SSH connection.
+func NewSSHConnection(config SSHConfig) (*SSHConnection, error) {
 	sshConfig := &ssh.ClientConfig{
 		User:            config.User,
 		Auth:            config.AuthMethods,
@@ -33,7 +35,7 @@ func (conn *SSHConnection) ConnectSSH(config SSHConfig) (SSHConnection, error) {
 	if config.PrivateKey != "" {
 		key, err := parsePrivateKey(config.PrivateKey)
 		if err != nil {
-			return SSHConnection{}, fmt.Errorf("Failed to parse private key: %s", err)
+			return nil, fmt.Errorf("failed to parse private key: %s", err)
 		}
 		sshConfig.Auth = append(sshConfig.Auth, key)
 	}
@@ -41,10 +43,10 @@ func (conn *SSHConnection) ConnectSSH(config SSHConfig) (SSHConnection, error) {
 	address := fmt.Sprintf("%s:%d", config.Host, config.Port)
 	client, err := ssh.Dial("tcp", address, sshConfig)
 	if err != nil {
-		return SSHConnection{}, fmt.Errorf("Failed to dial: %s", err)
+		return nil, fmt.Errorf("failed to dial: %s", err)
 	}
 
-	connection := SSHConnection{
+	connection := &SSHConnection{
 		Client: client,
 	}
 
@@ -54,13 +56,19 @@ func (conn *SSHConnection) ConnectSSH(config SSHConfig) (SSHConnection, error) {
 func parsePrivateKey(keyPath string) (ssh.AuthMethod, error) {
 	key, err := ioutil.ReadFile(keyPath)
 	if err != nil {
-		return nil, fmt.Errorf("Failed to read private key file: %s", err)
+		return nil, fmt.Errorf("failed to read private key file: %s", err)
 	}
 
 	signer, err := ssh.ParsePrivateKey(key)
 	if err != nil {
-		return nil, fmt.Errorf("Failed to parse private key: %s", err)
+		return nil, fmt.Errorf("failed to parse private key: %s", err)
 	}
 
 	return ssh.PublicKeys(signer), nil
+}
+
+// Connect establishes an SSH connection.
+func (conn *SSHConnection) Connect(config SSHConfig) error {
+	// No additional implementation needed, as NewSSHConnection already establishes the connection.
+	return nil
 }

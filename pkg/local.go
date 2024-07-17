@@ -8,7 +8,23 @@ import (
 	"os/exec"
 )
 
+// LocalExecutor implements Executor for local system commands.
 type LocalExecutor struct{}
+
+func NewLocalExecutor() *LocalExecutor {
+	return &LocalExecutor{}
+}
+
+// ExecuteCommand executes a command on the local system.
+
+func (executor *LocalExecutor) ExecuteShortCommand(command string) (string, error) {
+	cmd := exec.Command("sh", "-c", command)
+	res, err := cmd.CombinedOutput()
+	if err != nil {
+		return "", fmt.Errorf("Failed to create stderr pipe: %s", err)
+	}
+	return string(res), nil
+}
 
 func (executor *LocalExecutor) ExecuteCommand(command string, logChan chan LogEntry) error {
 	cmd := exec.Command("sh", "-c", command)
@@ -28,14 +44,16 @@ func (executor *LocalExecutor) executeCommand(cmd *exec.Cmd, logChan chan LogEnt
 	go func() {
 		scanner := bufio.NewScanner(stdoutPipe)
 		for scanner.Scan() {
-			logChan <- LogEntry{Message: scanner.Text(), IsError: false}
+			text, _ := DecodeGBK(scanner.Bytes())
+			logChan <- LogEntry{Message: text, IsError: false}
 		}
 	}()
 
 	go func() {
 		scanner := bufio.NewScanner(stderrPipe)
 		for scanner.Scan() {
-			logChan <- LogEntry{Message: scanner.Text(), IsError: true}
+			text, _ := DecodeGBK(scanner.Bytes())
+			logChan <- LogEntry{Message: text, IsError: true}
 		}
 	}()
 
@@ -51,6 +69,7 @@ func (executor *LocalExecutor) executeCommand(cmd *exec.Cmd, logChan chan LogEnt
 	return nil
 }
 
+// CopyFile copies a file locally.
 func (executor *LocalExecutor) CopyFile(srcFile, destFile string, outputHandler func(string)) error {
 	src, err := os.Open(srcFile)
 	if err != nil {
