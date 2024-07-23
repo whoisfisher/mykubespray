@@ -1,4 +1,4 @@
-module github.com/offline-kubespray
+module github.com/xiaoming/offline-kubespray
 
 go 1.20
 
