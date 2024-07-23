@@ -1,4 +1,4 @@
-package pkg
+package utils
 
 import (
 	"bytes"
@@ -6,6 +6,7 @@ import (
 	"golang.org/x/text/encoding/simplifiedchinese"
 	"golang.org/x/text/transform"
 	"io"
+	"log"
 	"strings"
 )
 
@@ -27,14 +28,10 @@ func DecodeGBK(data []byte) (string, error) {
 	return DecodeBytes(data, simplifiedchinese.GBK.NewDecoder())
 }
 
-func GetDistribution(sshConfig SSHConfig) (string, error) {
-	connection, err := NewSSHConnection(sshConfig)
+func GetDistribution(executor *SSHExecutor) (string, error) {
+	output, err := executor.ExecuteShortCommand("cat /etc/os-release")
 	if err != nil {
-		return "", err
-	}
-	sshExecutor := NewSSHExecutor(*connection)
-	output, err := sshExecutor.ExecuteShortCommand("cat /etc/os-release")
-	if err != nil {
+		log.Printf("Get distribution failed: %s", err.Error())
 		return "", err
 	}
 	res := parseOSRelease(output)

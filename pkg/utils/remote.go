@@ -1,9 +1,10 @@
-package pkg
+package utils
 
 import (
 	"bufio"
 	"fmt"
 	"io"
+	"log"
 	"os"
 )
 
@@ -22,12 +23,14 @@ func NewSSHExecutor(connection SSHConnection) *SSHExecutor {
 func (executor *SSHExecutor) ExecuteShortCommand(command string) (string, error) {
 	session, err := executor.Connection.Client.NewSession()
 	if err != nil {
-		return "", fmt.Errorf("failed to create SSH session: %s", err)
+		log.Printf("Failed to create SSH session: %s", err.Error())
+		return "", err
 	}
 	defer session.Close()
 	res, err := session.CombinedOutput(command)
 	if err != nil {
-		return "", fmt.Errorf("failed to create SSH session: %s", err)
+		log.Printf("Failed to create SSH session: %s", err.Error())
+		return "", err
 	}
 	return string(res), nil
 }
@@ -35,17 +38,20 @@ func (executor *SSHExecutor) ExecuteShortCommand(command string) (string, error)
 func (executor *SSHExecutor) ExecuteCommand(command string, logChan chan LogEntry) error {
 	session, err := executor.Connection.Client.NewSession()
 	if err != nil {
-		return fmt.Errorf("failed to create SSH session: %s", err)
+		log.Printf("Failed to create SSH session: %s", err.Error())
+		return err
 	}
 	defer session.Close()
 
 	stdoutPipe, err := session.StdoutPipe()
 	if err != nil {
-		return fmt.Errorf("unable to setup stdout for SSH command: %v", err)
+		log.Printf("Unable to setup stdout for SSH command: %v", err.Error())
+		return err
 	}
 	stderrPipe, err := session.StderrPipe()
 	if err != nil {
-		return fmt.Errorf("failed to create stderr pipe: %s", err)
+		log.Printf("Failed to create stderr pipe: %s", err.Error())
+		return err
 	}
 
 	go func() {
@@ -64,12 +70,14 @@ func (executor *SSHExecutor) ExecuteCommand(command string, logChan chan LogEntr
 
 	err = session.Start(command)
 	if err != nil {
-		return fmt.Errorf("failed to run SSH command: %s", err)
+		log.Printf("Failed to run SSH command: %s", err.Error())
+		return err
 	}
 
 	err = session.Wait()
 	if err != nil {
-		return fmt.Errorf("SSH command execution failed: %s", err)
+		log.Printf("SSH command execution failed: %s", err.Error())
+		return err
 	}
 	return nil
 }
@@ -77,12 +85,14 @@ func (executor *SSHExecutor) ExecuteCommand(command string, logChan chan LogEntr
 func (executor *SSHExecutor) ExecuteCommandWithoutReturn(command string) error {
 	session, err := executor.Connection.Client.NewSession()
 	if err != nil {
-		return fmt.Errorf("failed to create SSH session: %s", err)
+		log.Printf("Failed to create SSH session: %s", err.Error())
+		return err
 	}
 	defer session.Close()
 	err = session.Run(command)
 	if err != nil {
-		return fmt.Errorf("failed to create SSH session: %s", err)
+		log.Printf("Failed to execute command: %s", err.Error())
+		return err
 	}
 	return nil
 }
@@ -91,25 +101,28 @@ func (executor *SSHExecutor) ExecuteCommandWithoutReturn(command string) error {
 func (executor *SSHExecutor) CopyFile(srcFile, destFile string, outputHandler func(string)) error {
 	src, err := os.Open(srcFile)
 	if err != nil {
-		return fmt.Errorf("failed to open source file: %s", err)
+		log.Printf("Failed to open source file: %s", err.Error())
+		return err
 	}
 	defer src.Close()
 
 	session, err := executor.Connection.Client.NewSession()
 	if err != nil {
-		return fmt.Errorf("failed to create SSH session: %s", err)
+		log.Printf("Failed to create SSH session: %s", err.Error())
+		return err
 	}
 	defer session.Close()
 
 	dest, err := session.StdinPipe()
 	if err != nil {
-		return fmt.Errorf("failed to setup stdin for SCP: %s", err)
+		log.Printf("Failed to setup stdin for SCP: %s", err.Error())
+		return err
 	}
 
 	go func() {
 		srcStat, err := src.Stat()
 		if err != nil {
-			fmt.Printf("Failed to get source file info: %s\n", err)
+			log.Printf("Failed to get source file info: %s\n", err)
 			return
 		}
 		defer dest.Close()
@@ -123,22 +136,21 @@ func (executor *SSHExecutor) CopyFile(srcFile, destFile string, outputHandler fu
 	return nil
 }
 
-// CopyRemoteToRemote copies a file from one remote host to another using SCP.
-func (executor *SSHExecutor) CopyRemoteToRemote(srcHost, srcFile, destHost, destFile string, outputHandler func(string)) error {
-	cmd := fmt.Sprintf("/usr/bin/scp -o StrictHostKeyChecking=no %s:%s %s:%s", srcHost, srcFile, destHost, destFile)
-	outputHandler(fmt.Sprintf("Executing command: %s", cmd))
-
+func (executor *SSHExecutor) MkDirALL(path string, outputHandler func(string)) error {
 	session, err := executor.Connection.Client.NewSession()
 	if err != nil {
-		return fmt.Errorf("failed to create SSH session: %s", err)
+		log.Printf("Failed to create SSH session: %s", err.Error())
+		return err
 	}
 	defer session.Close()
-
+	cmd := fmt.Sprintf("mkdir -p %s", path)
 	err = session.Run(cmd)
 	if err != nil {
-		return fmt.Errorf("failed to run command: %s", err)
+		errMsg := fmt.Sprintf("Failed to create directory '%s' on remote host: %s", path, err)
+		log.Println("%s: %s", errMsg, err.Error())
+		return err
 	}
-
-	outputHandler(fmt.Sprintf("Copied file %s from %s to %s on %s", srcFile, srcHost, destFile, destHost))
+	_ = fmt.Sprintf("Directory '%s' created successfully on remote host\n", path)
+	outputHandler(fmt.Sprintf("Mkdir Directory: %s", path))
 	return nil
 }

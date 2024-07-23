@@ -1,9 +1,10 @@
-package pkg
+package utils
 
 import (
 	"bufio"
 	"fmt"
 	"io"
+	"log"
 	"os"
 	"os/exec"
 )
@@ -21,7 +22,8 @@ func (executor *LocalExecutor) ExecuteShortCommand(command string) (string, erro
 	cmd := exec.Command("sh", "-c", command)
 	res, err := cmd.CombinedOutput()
 	if err != nil {
-		return "", fmt.Errorf("Failed to create stderr pipe: %s", err)
+		log.Printf("Failed to create stderr pipe: %s", err.Error())
+		return "", err
 	}
 	return string(res), nil
 }
@@ -34,11 +36,13 @@ func (executor *LocalExecutor) ExecuteCommand(command string, logChan chan LogEn
 func (executor *LocalExecutor) executeCommand(cmd *exec.Cmd, logChan chan LogEntry) error {
 	stdoutPipe, err := cmd.StdoutPipe()
 	if err != nil {
-		return fmt.Errorf("Unable to setup stdout for local command: %v", err)
+		log.Printf("Unable to setup stdout for local command: %s", err.Error())
+		return err
 	}
 	stderrPipe, err := cmd.StderrPipe()
 	if err != nil {
-		return fmt.Errorf("Failed to create stderr pipe: %s", err)
+		log.Printf("Failed to create stderr pipe: %s", err.Error())
+		return err
 	}
 
 	go func() {
@@ -59,12 +63,14 @@ func (executor *LocalExecutor) executeCommand(cmd *exec.Cmd, logChan chan LogEnt
 
 	err = cmd.Start()
 	if err != nil {
-		return fmt.Errorf("Failed to run local command: %s", err)
+		log.Printf("Failed to run local command: %s", err.Error())
+		return err
 	}
 
 	err = cmd.Wait()
 	if err != nil {
-		return fmt.Errorf("Local command execution failed: %s", err)
+		log.Printf("Local command execution failed: %s", err.Error())
+		return err
 	}
 	return nil
 }
@@ -73,21 +79,38 @@ func (executor *LocalExecutor) executeCommand(cmd *exec.Cmd, logChan chan LogEnt
 func (executor *LocalExecutor) CopyFile(srcFile, destFile string, outputHandler func(string)) error {
 	src, err := os.Open(srcFile)
 	if err != nil {
-		return fmt.Errorf("Failed to open source file: %s", err)
+		log.Printf("Failed to open source file: %s", err.Error())
+		return err
 	}
 	defer src.Close()
 
 	dest, err := os.Create(destFile)
 	if err != nil {
-		return fmt.Errorf("Failed to create destination file: %s", err)
+		log.Printf("Failed to create destination file: %s", err.Error())
+		return err
 	}
 	defer dest.Close()
 
 	_, err = io.Copy(dest, src)
 	if err != nil {
-		return fmt.Errorf("Failed to copy file: %s", err)
+		log.Printf("Failed to copy file: %s", err.Error())
+		return err
 	}
 
 	outputHandler(fmt.Sprintf("Copied file %s to %s", srcFile, destFile))
+	return nil
+}
+
+func (executor *LocalExecutor) MkDirALL(path string, outputHandler func(string)) error {
+	cmd := exec.Command("/usr/bin/mkdir -p %s", path)
+	outputHandler(fmt.Sprintf("Mkdir Directory: %s", path))
+
+	err := cmd.Run()
+	if err != nil {
+		log.Printf("failed to run command: %s", err.Error())
+		return err
+	}
+
+	outputHandler(fmt.Sprintf("Mkdir Directory: %s", path))
 	return nil
 }

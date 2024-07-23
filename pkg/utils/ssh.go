@@ -1,9 +1,10 @@
-package pkg
+package utils
 
 import (
 	"fmt"
 	"golang.org/x/crypto/ssh"
-	"io/ioutil"
+	"log"
+	"os"
 )
 
 type SSHConfig struct {
@@ -35,7 +36,8 @@ func NewSSHConnection(config SSHConfig) (*SSHConnection, error) {
 	if config.PrivateKey != "" {
 		key, err := parsePrivateKey(config.PrivateKey)
 		if err != nil {
-			return nil, fmt.Errorf("failed to parse private key: %s", err)
+			log.Printf("Failed to parse private key: %s", err.Error())
+			return nil, err
 		}
 		sshConfig.Auth = append(sshConfig.Auth, key)
 	}
@@ -43,7 +45,8 @@ func NewSSHConnection(config SSHConfig) (*SSHConnection, error) {
 	address := fmt.Sprintf("%s:%d", config.Host, config.Port)
 	client, err := ssh.Dial("tcp", address, sshConfig)
 	if err != nil {
-		return nil, fmt.Errorf("failed to dial: %s", err)
+		log.Printf("Failed to dial: %s", err.Error())
+		return nil, err
 	}
 
 	connection := &SSHConnection{
@@ -54,14 +57,16 @@ func NewSSHConnection(config SSHConfig) (*SSHConnection, error) {
 }
 
 func parsePrivateKey(keyPath string) (ssh.AuthMethod, error) {
-	key, err := ioutil.ReadFile(keyPath)
+	key, err := os.ReadFile(keyPath)
 	if err != nil {
-		return nil, fmt.Errorf("failed to read private key file: %s", err)
+		log.Printf("Failed to read private key file: %s", err.Error())
+		return nil, err
 	}
 
 	signer, err := ssh.ParsePrivateKey(key)
 	if err != nil {
-		return nil, fmt.Errorf("failed to parse private key: %s", err)
+		log.Printf("Failed to parse private key: %s", err.Error())
+		return nil, err
 	}
 
 	return ssh.PublicKeys(signer), nil

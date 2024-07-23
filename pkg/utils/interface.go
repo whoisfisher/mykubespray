@@ -1,4 +1,4 @@
-package pkg
+package utils
 
 // Executor interface defines methods for executing commands and copying files.
 type Executor interface {

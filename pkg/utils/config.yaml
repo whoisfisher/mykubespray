@@ -1,0 +1,4 @@
+log:
+  level: debug
+  output_type: file_and_stdout
+  logfile: logs/app.log
