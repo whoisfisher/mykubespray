@@ -24,7 +24,7 @@ func NewKubekeyClient(kubekeyConf entity.KubekeyConf, osClient OSClient) *Kubeke
 func (client *KubekeyClient) ParseToTemplate() *entity.KubekeyTemplate {
 	template := &entity.KubekeyTemplate{}
 	for _, host := range client.KubekeyConf.Hosts {
-		template.HostList += fmt.Sprintf("- {name: %s, address: %s, internalAddress: %s, port: %s, user: %s, password: %s}\n  ", host.Name, host.Address, host.InternalAddress, host.Port, host.User, host.Password)
+		template.HostList += fmt.Sprintf("- {name: %s, address: %s, internalAddress: %s, port: %d, user: %s, password: %s}\n  ", host.Name, host.Address, host.InternalAddress, host.Port, host.User, host.Password)
 	}
 	template.HostList = strings.TrimSpace(template.HostList)
 
@@ -52,6 +52,11 @@ func (client *KubekeyClient) ParseToTemplate() *entity.KubekeyTemplate {
 	template.RegistryUrI = client.KubekeyConf.Registry.Url
 	template.RegistryUser = client.KubekeyConf.Registry.User
 	template.RegistryPassword = client.KubekeyConf.Registry.Password
+	template.RegistryCertPath = client.KubekeyConf.Registry.CertPath
+	template.RegistryKeyPath = client.KubekeyConf.Registry.KeyPath
+	template.RegistrySkipTLS = client.KubekeyConf.Registry.SkipTLS
+	template.RegistryPlainHttp = client.KubekeyConf.Registry.PlainHttp
+	template.RegistryNodeName = client.KubekeyConf.Registry.NodeName
 	template.ProxyMode = client.KubekeyConf.ProxyMode
 	template.ContainerManager = client.KubekeyConf.ContainerManager
 	template.ClusterName = client.KubekeyConf.ClusterName
@@ -114,8 +119,8 @@ spec:
       "{{ .RegistryUrI }}":
         username: {{ .RegistryUser }}
         password: {{ .RegistryPassword }}
-        skipTLSVerify: true
-        plainHTTP: true
+        skipTLSVerify: {{ .RegistrySkipTLS }}
+        plainHTTP: {{ .RegistryPlainHttp }}
     privateRegistry: "{{ .RegistryUrI }}"
     namespaceOverride: "kubesphereio"
     registryMirrors: []

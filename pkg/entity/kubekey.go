@@ -37,5 +37,10 @@ type KubekeyTemplate struct {
 	RegistryUrI       string
 	RegistryUser      string
 	RegistryPassword  string
+	RegistryKeyPath   string
+	RegistryCertPath  string
+	RegistrySkipTLS   bool
+	RegistryPlainHttp bool
+	RegistryNodeName  string
 	KubernetesVersion string
 }
