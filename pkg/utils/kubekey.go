@@ -3,7 +3,7 @@ package utils
 import (
 	"bytes"
 	"fmt"
-	"github.com/xiaoming/offline-kubespray/pkg/entity"
+	"github.com/whoisfisher/mykubespray/pkg/entity"
 	"log"
 	"strings"
 	"text/template"

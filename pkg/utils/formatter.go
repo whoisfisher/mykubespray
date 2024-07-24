@@ -3,7 +3,7 @@ package utils
 import (
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
-	"github.com/xiaoming/offline-kubespray/pkg/logger"
+	"github.com/whoisfisher/mykubespray/pkg/logger"
 )
 
 // Info logs an informational message
