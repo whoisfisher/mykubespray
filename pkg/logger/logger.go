@@ -1,4 +1,4 @@
-package utils
+package logger
 
 import (
 	"fmt"
@@ -23,9 +23,9 @@ var (
 // Init initializes the global logger based on configuration
 func Init() error {
 	// Load configuration from file
-	if err := loadConfig(); err != nil {
-		return err
-	}
+	//if err := loadConfig(); err != nil {
+	//	return err
+	//}
 
 	// Initialize logger once
 	once.Do(func() {
@@ -54,7 +54,7 @@ func Init() error {
 
 func loadConfig() error {
 	viper.SetConfigName("config")
-	viper.AddConfigPath("./logger")
+	viper.AddConfigPath("./")
 	if err := viper.ReadInConfig(); err != nil {
 		return fmt.Errorf("failed to read config file: %v", err)
 	}

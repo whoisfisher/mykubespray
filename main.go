@@ -2,112 +2,160 @@ package main
 
 import (
 	"fmt"
-	"github.com/xiaoming/offline-kubespray/pkg/entity"
-	"github.com/xiaoming/offline-kubespray/pkg/utils"
-	"log"
+	"github.com/toolkits/pkg/runner"
+	"github.com/urfave/cli/v2"
+	"github.com/xiaoming/offline-kubespray/pkg/server"
 	"os"
 )
 
-func main() {
-	// Example usage with SSHExecutor
-	sshConfig := utils.SSHConfig{
-		Host:     "172.30.1.13",
-		Port:     22,
-		User:     "root",
-		Password: "Def@u1tpwd",
-	}
-	logChan := make(chan utils.LogEntry)
-	go func() {
-		for logEntry := range logChan {
-			if logEntry.IsError {
-				fmt.Fprintf(os.Stderr, "[ERROR] %s\n", logEntry.Message)
-			} else {
-				fmt.Printf("[INFO] %s\n", logEntry.Message)
-			}
-		}
-	}()
+var VERSION = "not specified"
 
-	connection, err := utils.NewSSHConnection(sshConfig)
-
-	if err != nil {
-		log.Fatalf("Failed to create SSH connection: %s", err)
-	}
-
-	osCOnf := utils.OSConf{}
-	localExecutor := utils.NewLocalExecutor()
-	sshExecutor := utils.NewSSHExecutor(*connection)
-	osclient := utils.NewOSClient(osCOnf, *sshExecutor, *localExecutor)
-
-	kubekeyConf := entity.KubekeyConf{
-		ClusterName: "wangcluster",
-		Hosts: []entity.Host{{
-			Name:            "node1",
-			Address:         "1.1.1.1",
-			InternalAddress: "1.1.1.1",
-			Port:            2222,
-			User:            "root",
-			Password:        "Def@u1tpwd",
-		}, {
-			Name:            "node2",
-			Address:         "1.1.1.2",
-			InternalAddress: "1.1.1.2",
-			Port:            2222,
-			User:            "root",
-			Password:        "Def@u1tpwd",
-		}, {
-			Name:            "node3",
-			Address:         "1.1.1.3",
-			InternalAddress: "1.1.1.3",
-			Port:            2222,
-			User:            "root",
-			Password:        "Def@u1tpwd",
-		}, {
-			Name:            "node4",
-			Address:         "1.1.1.4",
-			InternalAddress: "1.1.1.4",
-			Port:            2222,
-			User:            "root",
-			Password:        "Def@u1tpwd",
-		}, {
-			Name:            "node5",
-			Address:         "1.1.1.5",
-			InternalAddress: "1.1.1.5",
-			Port:            2222,
-			User:            "root",
-			Password:        "Def@u1tpwd",
-		}, {
-			Name:            "node6",
-			Address:         "1.1.1.6",
-			InternalAddress: "1.1.1.6",
-			Port:            2222,
-			User:            "root",
-			Password:        "Def@u1tpwd",
-		}},
-		Etcds:             []string{"node1", "node2", "node3"},
-		ContronPlanes:     []string{"node1", "node2", "node3"},
-		Workers:           []string{"node1", "node2", "node3", "node4", "node5"},
-		NtpServers:        []string{"node1", "aliyun.com"},
-		KubernetesVersion: "v1.24.9",
-		ContainerManager:  "containerd",
-		ProxyMode:         "iptables",
-		Registry: entity.Registry{
-			NodeName:  "node6",
-			Url:       "dockerhub.kubekey.local",
-			User:      "admin",
-			Password:  "Def@u1tpwd",
-			SkipTLS:   false,
-			PlainHttp: false,
-			Type:      "harbor",
-		},
-		KubePodsCIDR:      "10.233.64.0/18",
-		KubeServiceCIDR:   "10.233.0.0/18",
-		KKPath:            "/root/cluster1/kk",
-		TaichuPackagePath: "/root/cluster1/kubesphere2.tar.gz",
-	}
-	client := utils.NewKubekeyClient(kubekeyConf, *osclient)
-	client.GenerateConfig()
-	client.CreateCluster(logChan)
+func printEnv() {
+	runner.Init()
+	fmt.Println("runner.cwd:", runner.Cwd)
+	fmt.Println("runner.hostname:", runner.Hostname)
+	fmt.Println("runner.fd_limits:", runner.FdLimits())
+	fmt.Println("runner.vm_limits:", runner.VMLimits())
 }
+
+func NewServerCmd() *cli.Command {
+	return &cli.Command{
+		Name:  "server",
+		Usage: "Run Server",
+		Flags: []cli.Flag{
+			&cli.StringFlag{
+				Name:    "conf",
+				Aliases: []string{"c"},
+				Usage:   "Spefify configuration file(.toml)",
+			},
+		},
+		Action: func(context *cli.Context) error {
+			printEnv()
+			var options []server.ServerOption
+			if context.String("conf") != "" {
+				options = append(options, server.SetConfigFile(context.String("conf")))
+			}
+			options = append(options, server.SetVersion(VERSION))
+			server.Run(options...)
+			return nil
+		},
+	}
+}
+
+func main() {
+	app := cli.NewApp()
+	app.Name = "cluster-utils"
+	app.Version = "1.0.0"
+	app.Usage = "cluster-utils"
+	app.Commands = []*cli.Command{
+		NewServerCmd(),
+	}
+	err := app.Run(os.Args)
+	if err != nil {
+		return
+	}
+}
+
+//func main() {
+//	// Example usage with SSHExecutor
+//	sshConfig := utils.SSHConfig{
+//		Host:     "172.30.1.13",
+//		Port:     22,
+//		User:     "root",
+//		Password: "Def@u1tpwd",
+//	}
+//	logChan := make(chan utils.LogEntry)
+//	go func() {
+//		for logEntry := range logChan {
+//			if logEntry.IsError {
+//				fmt.Fprintf(os.Stderr, "[ERROR] %s\n", logEntry.Message)
+//			} else {
+//				fmt.Printf("[INFO] %s\n", logEntry.Message)
+//			}
+//		}
+//	}()
+//
+//	connection, err := utils.NewSSHConnection(sshConfig)
+//
+//	if err != nil {
+//		log.Fatalf("Failed to create SSH connection: %s", err)
+//	}
+//
+//	osCOnf := utils.OSConf{}
+//	localExecutor := utils.NewLocalExecutor()
+//	sshExecutor := utils.NewSSHExecutor(*connection)
+//	osclient := utils.NewOSClient(osCOnf, *sshExecutor, *localExecutor)
+//
+//	kubekeyConf := entity.KubekeyConf{
+//		ClusterName: "wangcluster",
+//		Hosts: []entity.Host{{
+//			Name:            "node1",
+//			Address:         "1.1.1.1",
+//			InternalAddress: "1.1.1.1",
+//			Port:            2222,
+//			User:            "root",
+//			Password:        "Def@u1tpwd",
+//		}, {
+//			Name:            "node2",
+//			Address:         "1.1.1.2",
+//			InternalAddress: "1.1.1.2",
+//			Port:            2222,
+//			User:            "root",
+//			Password:        "Def@u1tpwd",
+//		}, {
+//			Name:            "node3",
+//			Address:         "1.1.1.3",
+//			InternalAddress: "1.1.1.3",
+//			Port:            2222,
+//			User:            "root",
+//			Password:        "Def@u1tpwd",
+//		}, {
+//			Name:            "node4",
+//			Address:         "1.1.1.4",
+//			InternalAddress: "1.1.1.4",
+//			Port:            2222,
+//			User:            "root",
+//			Password:        "Def@u1tpwd",
+//		}, {
+//			Name:            "node5",
+//			Address:         "1.1.1.5",
+//			InternalAddress: "1.1.1.5",
+//			Port:            2222,
+//			User:            "root",
+//			Password:        "Def@u1tpwd",
+//		}, {
+//			Name:            "node6",
+//			Address:         "1.1.1.6",
+//			InternalAddress: "1.1.1.6",
+//			Port:            2222,
+//			User:            "root",
+//			Password:        "Def@u1tpwd",
+//		}},
+//		Etcds:             []string{"node1", "node2", "node3"},
+//		ContronPlanes:     []string{"node1", "node2", "node3"},
+//		Workers:           []string{"node1", "node2", "node3", "node4", "node5"},
+//		NtpServers:        []string{"node1", "aliyun.com"},
+//		KubernetesVersion: "v1.24.9",
+//		ContainerManager:  "containerd",
+//		ProxyMode:         "iptables",
+//		Registry: entity.Registry{
+//			NodeName:  "node6",
+//			Url:       "dockerhub.kubekey.local",
+//			User:      "admin",
+//			Password:  "Def@u1tpwd",
+//			SkipTLS:   false,
+//			PlainHttp: false,
+//			Type:      "harbor",
+//		},
+//		KubePodsCIDR:      "10.233.64.0/18",
+//		KubeServiceCIDR:   "10.233.0.0/18",
+//		KKPath:            "/root/cluster1/kk",
+//		TaichuPackagePath: "/root/cluster1/kubesphere2.tar.gz",
+//	}
+//	client := utils.NewKubekeyClient(kubekeyConf, *osclient)
+//	client.GenerateConfig()
+//	client.CreateCluster(logChan)
+//}
 
 //func main() {
 //	// Example usage with SSHExecutor

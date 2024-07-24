@@ -3,36 +3,37 @@ package utils
 import (
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
+	"github.com/xiaoming/offline-kubespray/pkg/logger"
 )
 
 // Info logs an informational message
 func Info(message string) {
-	GetLogger().Info(message)
+	logger.GetLogger().Info(message)
 }
 
 // Warn logs a warning message
 func Warn(message string) {
-	GetLogger().Warn(message)
+	logger.GetLogger().Warn(message)
 }
 
 // Error logs an error message
 func Error(message string) {
-	GetLogger().Error(message)
+	logger.GetLogger().Error(message)
 }
 
 // Fatal logs a fatal error message and exits
 func Fatal(message string) {
-	GetLogger().Fatal(message)
+	logger.GetLogger().Fatal(message)
 }
 
 // Panic logs a panic message and panics
 func Panic(message string) {
-	GetLogger().Panic(message)
+	logger.GetLogger().Panic(message)
 }
 
 // SetLogLevel sets the log level of the global logger
 func SetLogLevel(level logrus.Level) {
-	GetLogger().SetLevel(level)
+	logger.GetLogger().SetLevel(level)
 }
 
 // SetOutputType sets the output type of the global logger
