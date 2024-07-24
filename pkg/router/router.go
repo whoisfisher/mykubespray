@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/spf13/viper"
-	"github.com/xiaoming/offline-kubespray/pkg/aop"
+	"github.com/whoisfisher/mykubespray/pkg/aop"
 	"os"
 )
 

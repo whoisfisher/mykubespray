@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"github.com/golang-jwt/jwt"
 	"github.com/spf13/viper"
-	"github.com/xiaoming/offline-kubespray/pkg/entity"
+	"github.com/whoisfisher/mykubespray/pkg/entity"
 	"net/http"
 	"strings"
 )

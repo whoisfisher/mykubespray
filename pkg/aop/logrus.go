@@ -3,7 +3,7 @@ package aop
 import (
 	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
-	"github.com/xiaoming/offline-kubespray/pkg/logger"
+	"github.com/whoisfisher/mykubespray/pkg/logger"
 	"time"
 )
 

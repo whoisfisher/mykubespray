@@ -3,7 +3,7 @@ package aop
 import (
 	"github.com/gin-gonic/gin"
 	"github.com/toolkits/pkg/ginx"
-	"github.com/xiaoming/offline-kubespray/pkg/jwt"
+	"github.com/whoisfisher/mykubespray/pkg/jwt"
 	"net/http"
 )
 

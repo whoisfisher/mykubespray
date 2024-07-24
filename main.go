@@ -4,9 +4,9 @@ import (
 	"fmt"
 	"github.com/toolkits/pkg/runner"
 	"github.com/urfave/cli/v2"
-	"github.com/xiaoming/offline-kubespray/pkg/entity"
-	"github.com/xiaoming/offline-kubespray/pkg/server"
-	"github.com/xiaoming/offline-kubespray/pkg/utils"
+	"github.com/whoisfisher/mykubespray/pkg/entity"
+	"github.com/whoisfisher/mykubespray/pkg/server"
+	"github.com/whoisfisher/mykubespray/pkg/utils"
 	"log"
 	"os"
 )

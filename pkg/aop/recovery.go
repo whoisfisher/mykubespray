@@ -8,7 +8,7 @@ import (
 	"bytes"
 	"fmt"
 	"github.com/toolkits/pkg/errorx"
-	"github.com/xiaoming/offline-kubespray/pkg/logger"
+	"github.com/whoisfisher/mykubespray/pkg/logger"
 	"io"
 	"io/ioutil"
 	"net"

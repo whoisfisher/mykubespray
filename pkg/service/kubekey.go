@@ -1,6 +1,6 @@
 package service
 
-import "github.com/xiaoming/offline-kubespray/pkg/utils"
+import "github.com/whoisfisher/mykubespray/pkg/utils"
 
 type KubekeyService interface {
 	GenerateConfig() error
