@@ -9,7 +9,7 @@ import (
 
 type SSHConfig struct {
 	Host        string
-	Port        int
+	Port        int32
 	User        string
 	PrivateKey  string
 	Password    string

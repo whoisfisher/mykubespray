@@ -3,22 +3,18 @@ package utils
 import (
 	"bytes"
 	"fmt"
+	"github.com/xiaoming/offline-kubespray/pkg/entity"
 	"log"
 	"strings"
 	"text/template"
 )
 
-type HaproxyConf struct {
-	Servers    []string
-	StrServers string
-}
-
 type HaproxyClient struct {
-	HaproxyConf HaproxyConf
+	HaproxyConf entity.HaproxyConf
 	OSClient    OSClient
 }
 
-func NewHaproxyClient(haproxyConf HaproxyConf, osClient OSClient) *HaproxyClient {
+func NewHaproxyClient(haproxyConf entity.HaproxyConf, osClient OSClient) *HaproxyClient {
 	return &HaproxyClient{
 		HaproxyConf: haproxyConf,
 		OSClient:    osClient,

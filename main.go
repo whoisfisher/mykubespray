@@ -2,8 +2,8 @@ package main
 
 import (
 	"fmt"
-	"github.com/offline-kubespray/pkg/entity"
-	"github.com/offline-kubespray/pkg/utils"
+	"github.com/xiaoming/offline-kubespray/pkg/entity"
+	"github.com/xiaoming/offline-kubespray/pkg/utils"
 	"log"
 	"os"
 )
@@ -44,42 +44,42 @@ func main() {
 			Name:            "node1",
 			Address:         "1.1.1.1",
 			InternalAddress: "1.1.1.1",
-			Port:            "2222",
+			Port:            2222,
 			User:            "root",
 			Password:        "Def@u1tpwd",
 		}, {
 			Name:            "node2",
 			Address:         "1.1.1.2",
 			InternalAddress: "1.1.1.2",
-			Port:            "2222",
+			Port:            2222,
 			User:            "root",
 			Password:        "Def@u1tpwd",
 		}, {
 			Name:            "node3",
 			Address:         "1.1.1.3",
 			InternalAddress: "1.1.1.3",
-			Port:            "2222",
+			Port:            2222,
 			User:            "root",
 			Password:        "Def@u1tpwd",
 		}, {
 			Name:            "node4",
 			Address:         "1.1.1.4",
 			InternalAddress: "1.1.1.4",
-			Port:            "2222",
+			Port:            2222,
 			User:            "root",
 			Password:        "Def@u1tpwd",
 		}, {
 			Name:            "node5",
 			Address:         "1.1.1.5",
 			InternalAddress: "1.1.1.5",
-			Port:            "2222",
+			Port:            2222,
 			User:            "root",
 			Password:        "Def@u1tpwd",
 		}, {
 			Name:            "node6",
 			Address:         "1.1.1.6",
 			InternalAddress: "1.1.1.6",
-			Port:            "2222",
+			Port:            2222,
 			User:            "root",
 			Password:        "Def@u1tpwd",
 		}},
@@ -99,9 +99,6 @@ func main() {
 			PlainHttp: false,
 			Type:      "harbor",
 		},
-		RegistryUrI:       "dockerhub.kubekey.local",
-		RegistryUser:      "admin",
-		RegistryPassword:  "Def@u1tpwd",
 		KubePodsCIDR:      "10.233.64.0/18",
 		KubeServiceCIDR:   "10.233.0.0/18",
 		KKPath:            "/root/cluster1/kk",

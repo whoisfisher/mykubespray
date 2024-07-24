@@ -3,7 +3,7 @@ package utils
 import (
 	"bytes"
 	"fmt"
-	"github.com/offline-kubespray/pkg/entity"
+	"github.com/xiaoming/offline-kubespray/pkg/entity"
 	"log"
 	"strings"
 	"text/template"
@@ -48,10 +48,10 @@ func (client *KubekeyClient) ParseToTemplate() *entity.KubekeyTemplate {
 	}
 	template.NtpServerList = strings.TrimSpace(template.NtpServerList)
 	template.Registry += fmt.Sprintf("- %s", client.KubekeyConf.Registry.NodeName)
-	template.RegistryType = client.KubekeyConf.RegistryType
-	template.RegistryUrI = client.KubekeyConf.RegistryUrI
-	template.RegistryUser = client.KubekeyConf.RegistryUser
-	template.RegistryPassword = client.KubekeyConf.RegistryPassword
+	template.RegistryType = client.KubekeyConf.Registry.Type
+	template.RegistryUrI = client.KubekeyConf.Registry.Url
+	template.RegistryUser = client.KubekeyConf.Registry.User
+	template.RegistryPassword = client.KubekeyConf.Registry.Password
 	template.ProxyMode = client.KubekeyConf.ProxyMode
 	template.ContainerManager = client.KubekeyConf.ContainerManager
 	template.ClusterName = client.KubekeyConf.ClusterName

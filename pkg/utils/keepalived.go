@@ -3,29 +3,18 @@ package utils
 import (
 	"bytes"
 	"fmt"
+	"github.com/xiaoming/offline-kubespray/pkg/entity"
 	"log"
 	"strings"
 	"text/template"
 )
 
-type KeepalivedConf struct {
-	State    string
-	IntFace  string
-	Priority int
-	AuthType string
-	AuthPass string
-	SrcIP    string
-	Peers    []string
-	StrPeers string
-	VIP      string
-}
-
 type KeepalivedClient struct {
-	KeepalivedConf KeepalivedConf
+	KeepalivedConf entity.KeepalivedConf
 	OSClient       OSClient
 }
 
-func NewKeepAlivedClient(keepalivedConf KeepalivedConf, osClient OSClient) *KeepalivedClient {
+func NewKeepAlivedClient(keepalivedConf entity.KeepalivedConf, osClient OSClient) *KeepalivedClient {
 	return &KeepalivedClient{
 		KeepalivedConf: keepalivedConf,
 		OSClient:       osClient,

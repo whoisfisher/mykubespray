@@ -15,10 +15,6 @@ type KubekeyConf struct {
 	ProxyMode         string
 	KKPath            string
 	TaichuPackagePath string
-	RegistryType      string
-	RegistryUrI       string
-	RegistryUser      string
-	RegistryPassword  string
 	KubernetesVersion string
 }
 

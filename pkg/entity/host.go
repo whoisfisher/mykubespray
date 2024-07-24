@@ -6,5 +6,6 @@ type Host struct {
 	InternalAddress string
 	User            string
 	Password        string
-	Port            string
+	Port            int32
+	Arch            string
 }
