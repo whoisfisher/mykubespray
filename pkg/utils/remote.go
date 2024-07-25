@@ -6,8 +6,6 @@ import (
 	"io"
 	"log"
 	"os"
-	"strings"
-	"sync"
 )
 
 // SSHExecutor implements Executor for SSH connections.
@@ -91,80 +89,6 @@ func (executor *SSHExecutor) ExecuteCommand(command string, logChan chan LogEntr
 		log.Printf("SSH command execution failed: %s", err.Error())
 		return err
 	}
-	return nil
-}
-
-func (executor *SSHExecutor) ExecuteCommandWithTTY(command string, logChan chan LogEntry) error {
-	session, err := executor.Connection.Client.NewSession()
-	if err != nil {
-		log.Printf("Failed to create SSH session: %s", err.Error())
-		return err
-	}
-	defer session.Close()
-
-	// 设置标准输入、输出和错误
-	stdin, err := session.StdinPipe()
-	if err != nil {
-		log.Printf("Unable to setup stdin for session: %v", err)
-		return err
-	}
-	stdout, err := session.StdoutPipe()
-	if err != nil {
-		log.Printf("Unable to setup stdout for session: %v", err)
-		return err
-	}
-	stderr, err := session.StderrPipe()
-	if err != nil {
-		log.Printf("Unable to setup stderr for session: %v", err)
-		return err
-	}
-
-	// 启动 shell
-	err = session.Shell()
-	if err != nil {
-		log.Printf("Failed to start shell: %s", err.Error())
-		return err
-	}
-
-	// 使用 bufio.Scanner 读取输出
-	wg := sync.WaitGroup{}
-	wg.Add(1)
-	go func() {
-		defer wg.Done()
-		scanner := bufio.NewScanner(stdout)
-		for scanner.Scan() {
-			text := scanner.Text()
-			logChan <- LogEntry{Message: text, IsError: false}
-			if strings.Contains(text, "Are you sure to delete this") && strings.Contains(text, "? [yes/no]: ") {
-				// 发送 "yes" 到标准输入
-				_, err := fmt.Fprintln(stdin, "yes")
-				if err != nil {
-					log.Printf("Failed to send 'yes' to stdin: %v", err)
-					return
-				}
-			}
-		}
-	}()
-
-	// 同样读取 stderr
-	go func() {
-		scanner := bufio.NewScanner(stderr)
-		for scanner.Scan() {
-			text := scanner.Text()
-			logChan <- LogEntry{Message: text, IsError: true}
-		}
-	}()
-
-	// 执行命令
-	err = session.Run(command)
-	if err != nil {
-		log.Printf("Failed to run SSH command: %s", err.Error())
-		return err
-	}
-
-	// 等待命令完成
-	wg.Wait()
-
 	return nil
 }
 
