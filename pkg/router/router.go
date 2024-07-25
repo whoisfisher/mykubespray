@@ -5,6 +5,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/spf13/viper"
 	"github.com/whoisfisher/mykubespray/pkg/aop"
+	"github.com/whoisfisher/mykubespray/pkg/controller"
 	"os"
 )
 
@@ -35,6 +36,7 @@ func configRoute(r *gin.Engine, version string) {
 
 func configWebsocketRouter(rg *gin.RouterGroup) {
 	rg.Use(aop.Cors())
+	rg.GET("/cluster", controller.CreateCluster)
 }
 
 func configHttpRouter(rg *gin.RouterGroup, version string) {

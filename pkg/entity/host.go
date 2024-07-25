@@ -1,5 +1,7 @@
 package entity
 
+import "golang.org/x/crypto/ssh"
+
 type Host struct {
 	Name            string
 	Address         string
@@ -8,4 +10,7 @@ type Host struct {
 	Password        string
 	Port            int32
 	Arch            string
+	Registry        *Registry
+	PrivateKey      string
+	AuthMethods     []ssh.AuthMethod
 }

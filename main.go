@@ -45,24 +45,24 @@ func NewServerCmd() *cli.Command {
 	}
 }
 
-//func main() {
-//	app := cli.NewApp()
-//	app.Name = "cluster-utils"
-//	app.Version = "1.0.0"
-//	app.Usage = "cluster-utils"
-//	app.Commands = []*cli.Command{
-//		NewServerCmd(),
-//	}
-//	err := app.Run(os.Args)
-//	if err != nil {
-//		return
-//	}
-//}
-
 func main() {
-	// Example usage with SSHExecutor
-	test2_install_cluster()
+	app := cli.NewApp()
+	app.Name = "cluster-utils"
+	app.Version = "1.0.0"
+	app.Usage = "cluster-utils"
+	app.Commands = []*cli.Command{
+		NewServerCmd(),
+	}
+	err := app.Run(os.Args)
+	if err != nil {
+		return
+	}
 }
+
+//func main() {
+//	// Example usage with SSHExecutor
+//	test2_install_cluster()
+//}
 
 //func main() {
 //	// Example usage with SSHExecutor
