@@ -166,7 +166,7 @@ func (client *KubekeyClient) CreateCluster(logChan chan LogEntry) error {
 }
 
 func (client *KubekeyClient) DeleteCluster(logChan chan LogEntry) error {
-	command := fmt.Sprintf("%s delete cluster -f /tmp/$%s/config-sample.yaml --force", client.KubekeyConf.KKPath, client.KubekeyConf.ClusterName)
+	command := fmt.Sprintf("%s delete cluster -f /tmp/%s/config-sample.yaml --yes", client.KubekeyConf.KKPath, client.KubekeyConf.ClusterName)
 	err := client.OSClient.SSExecutor.ExecuteCommand(command, logChan)
 	if err != nil {
 		log.Printf("Failed to delete cluster %s: %s", client.KubekeyConf.ClusterName, err.Error())

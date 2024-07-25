@@ -3,6 +3,7 @@ module github.com/whoisfisher/mykubespray
 go 1.20
 
 require (
+	github.com/creack/pty v1.1.9
 	github.com/fatih/color v1.17.0
 	github.com/gin-gonic/gin v1.9.1
 	github.com/golang-jwt/jwt v3.2.2+incompatible

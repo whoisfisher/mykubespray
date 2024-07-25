@@ -57,3 +57,31 @@ func CreateCluster(ctx *gin.Context) {
 	kubekeyController.kubekeyService.CreateCluster(conf, logChan)
 
 }
+
+func DeleteCluster(ctx *gin.Context) {
+	var conf entity.KubekeyConf
+	ws, err := aop.UpGrader.Upgrade(ctx.Writer, ctx.Request, nil)
+	if err != nil {
+		logger.GetLogger().Errorf("Create websocket channel failed: %s", err.Error())
+		ws.WriteMessage(websocket.TextMessage, []byte(err.Error()))
+	}
+	err = ws.ReadJSON(&conf)
+	if err != nil {
+		logger.GetLogger().Errorf("Failed to read postgres info: %s", err.Error())
+		ws.WriteMessage(websocket.TextMessage, []byte(err.Error()))
+	}
+	logChan := make(chan utils.LogEntry)
+	go func() {
+		for logEntry := range logChan {
+			if logEntry.IsError {
+				fmt.Fprintf(os.Stderr, "[ERROR] %s\n", logEntry.Message)
+				ws.WriteMessage(websocket.TextMessage, []byte(logEntry.Message))
+			} else {
+				fmt.Printf("[INFO] %s\n", logEntry.Message)
+				ws.WriteMessage(websocket.TextMessage, []byte(logEntry.Message))
+			}
+		}
+	}()
+	kubekeyController.kubekeyService.DeleteCluster(conf, logChan)
+
+}
