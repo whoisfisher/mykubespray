@@ -10,4 +10,5 @@ type KeepalivedConf struct {
 	Peers    []string
 	StrPeers string
 	VIP      string
+	Host     Host
 }

@@ -53,7 +53,6 @@ func CreateCluster(ctx *gin.Context) {
 		}
 	}()
 	kubekeyController.kubekeyService.CreateCluster(conf, logChan)
-
 }
 
 func DeleteCluster(ctx *gin.Context) {

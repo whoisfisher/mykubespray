@@ -144,7 +144,7 @@ func main() {
 //	sshExecutor := pkg.NewSSHExecutor(*connection)
 //	osclient := pkg.NewOSClient(osCOnf, *sshExecutor, *localExecutor)
 //
-//	keepalivedConf := pkg.KeepalivedConf{
+//	HaproxyConf := pkg.HaproxyConf{
 //		State:    "MASTER",
 //		IntFace:  "enp4s0",
 //		Priority: 100,
@@ -155,20 +155,20 @@ func main() {
 //		VIP:      "182.168.21.21",
 //	}
 //
-//	client := pkg.NewKeepAlivedClient(keepalivedConf, *osclient)
+//	client := pkg.NewHaproxyClient(HaproxyConf, *osclient)
 //	fmt.Println(client.OSClient.GetSpecifyNetCard(sshConfig.Host))
 //	fmt.Println(client.OSClient.OSConf.NetCardList)
 //
-//	err = client.InstallKeepalived(sshConfig, logChan)
+//	err = client.InstallHaproxy(sshConfig, logChan)
 //	if err != nil {
 //		log.Fatalf("Failed to execute command: %s", err)
 //	}
-//	err = client.ConfigureKeepalived()
+//	err = client.ConfigureHaproxy()
 //	if err != nil {
 //		log.Fatalf("Failed to execute command: %s", err)
 //	}
 //	client.OSClient.DaemonReload()
-//	client.OSClient.StartService("keepalived")
+//	client.OSClient.StartService("Haproxy")
 //}
 
 //func main() {

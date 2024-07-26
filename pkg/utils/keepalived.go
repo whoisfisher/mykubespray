@@ -14,9 +14,9 @@ type KeepalivedClient struct {
 	OSClient       OSClient
 }
 
-func NewKeepAlivedClient(keepalivedConf entity.KeepalivedConf, osClient OSClient) *KeepalivedClient {
+func NewKeepalivedClient(KeepalivedConf entity.KeepalivedConf, osClient OSClient) *KeepalivedClient {
 	return &KeepalivedClient{
-		KeepalivedConf: keepalivedConf,
+		KeepalivedConf: KeepalivedConf,
 		OSClient:       osClient,
 	}
 }
@@ -57,7 +57,7 @@ vrrp_script chk_haproxy {
   interval 2
   weight 2
 }
-vrrp_instance haproxy-vip {
+vrrp_instance keepalived-vip {
   state {{ .State }}
   priority {{ .Priority }}
   interface {{ .IntFace }}
@@ -83,7 +83,7 @@ vrrp_instance haproxy-vip {
 		client.KeepalivedConf.StrPeers += fmt.Sprintf("%s\n    ", peer)
 	}
 	client.KeepalivedConf.StrPeers = strings.TrimSpace(client.KeepalivedConf.StrPeers)
-	tmpl, err := template.New("keepalived.conf").Parse(templateText)
+	tmpl, err := template.New("Keepalived.conf").Parse(templateText)
 	if err != nil {
 		log.Printf("Failed to generate template object: %s", err.Error())
 		return err
@@ -97,7 +97,7 @@ vrrp_instance haproxy-vip {
 	command := fmt.Sprintf("echo '%s' > %s", rendered.String(), configFile)
 	err = client.OSClient.SSExecutor.ExecuteCommandWithoutReturn(command)
 	if err != nil {
-		log.Printf("Failed to generate keepalived config: %s", err.Error())
+		log.Printf("Failed to generate Keepalived config: %s", err.Error())
 		return err
 	}
 	return nil
@@ -107,7 +107,7 @@ func (client *KeepalivedClient) IsVirtualIPActive() bool {
 	command := "ip addr show dev" + client.KeepalivedConf.IntFace
 	output, err := client.OSClient.SSExecutor.ExecuteShortCommand(command)
 	if err != nil {
-		log.Printf("Failed to query keepalived vip: %s", err.Error())
+		log.Printf("Failed to query Keepalived vip: %s", err.Error())
 		return false
 	}
 	return strings.Contains(output, client.KeepalivedConf.VIP)

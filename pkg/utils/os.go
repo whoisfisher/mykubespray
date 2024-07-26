@@ -2,6 +2,7 @@ package utils
 
 import (
 	"fmt"
+	"github.com/whoisfisher/mykubespray/pkg/logger"
 	"log"
 	"strings"
 )
@@ -68,90 +69,90 @@ func (client *OSClient) GetOSConf() bool {
 func (client *OSClient) GetDistribution() (string, error) {
 	output, err := client.SSExecutor.ExecuteShortCommand("cat /etc/os-release")
 	if err != nil {
-		log.Printf("Failed to get distribution: %s", err.Error())
+		logger.GetLogger().Errorf("Failed to get distribution: %s", err.Error())
 		return "", err
 	}
 	res := parseOSRelease(output)
 	return res, nil
 }
 
-func (client *OSClient) DaemonReload() bool {
+func (client *OSClient) DaemonReload() error {
 	_, err := client.SSExecutor.ExecuteShortCommand("systemctl daemon-reload")
 	if err != nil {
-		log.Printf("Failed to reload daemon: %s", err.Error())
-		return false
+		logger.GetLogger().Errorf("Failed to reload daemon: %s", err.Error())
+		return err
 	}
-	return true
+	return nil
 }
 
-func (client *OSClient) RestartService(service string) bool {
+func (client *OSClient) RestartService(service string) error {
 	command := fmt.Sprintf("systemctl restart %s", service)
 	_, err := client.SSExecutor.ExecuteShortCommand(command)
 	if err != nil {
-		log.Printf("Failed to restart %s: %s", service, err.Error())
-		return false
+		logger.GetLogger().Errorf("Failed to restart %s: %s", service, err.Error())
+		return err
 	}
-	return true
+	return nil
 }
 
-func (client *OSClient) StartService(service string) bool {
+func (client *OSClient) StartService(service string) error {
 	command := fmt.Sprintf("systemctl start %s", service)
 	_, err := client.SSExecutor.ExecuteShortCommand(command)
 	if err != nil {
-		log.Printf("Failed to start %s: %s", service, err.Error())
-		return false
+		logger.GetLogger().Errorf("Failed to start %s: %s", service, err.Error())
+		return err
 	}
-	return true
+	return nil
 }
 
-func (client *OSClient) StopService(service string) bool {
+func (client *OSClient) StopService(service string) error {
 	command := fmt.Sprintf("systemctl stop %s", service)
 	_, err := client.SSExecutor.ExecuteShortCommand(command)
 	if err != nil {
 		log.Printf("Failed to stop %s: %s", service, err.Error())
-		return false
+		return err
 	}
-	return true
+	return nil
 }
 
-func (client *OSClient) DisableService(service string) bool {
+func (client *OSClient) DisableService(service string) error {
 	command := fmt.Sprintf("systemctl disable %s", service)
 	_, err := client.SSExecutor.ExecuteShortCommand(command)
 	if err != nil {
 		log.Printf("Failed to disable %s: %s", service, err.Error())
-		return false
+		return err
 	}
-	return true
+	return nil
 }
 
-func (client *OSClient) EnableService(service string) bool {
+func (client *OSClient) EnableService(service string) error {
 	command := fmt.Sprintf("systemctl enable %s", service)
 	_, err := client.SSExecutor.ExecuteShortCommand(command)
 	if err != nil {
 		log.Printf("Failed to enable %s: %s", service, err.Error())
-		return false
+		return err
 	}
-	return true
+	return nil
 }
 
-func (client *OSClient) MaskService(service string) bool {
+func (client *OSClient) MaskService(service string) error {
 	command := fmt.Sprintf("systemctl mask %s", service)
 	_, err := client.SSExecutor.ExecuteShortCommand(command)
 	if err != nil {
 		log.Printf("Failed to mask %s: %s", service, err.Error())
-		return false
+		return err
 	}
-	return true
+	return nil
 }
 
-func (client *OSClient) UNMaskService(service string) bool {
+func (client *OSClient) UNMaskService(service string) error {
 	command := fmt.Sprintf("systemctl unmask %s", service)
 	_, err := client.SSExecutor.ExecuteShortCommand(command)
 	if err != nil {
 		log.Printf("Failed to unmask %s: %s", service, err.Error())
-		return false
+		return err
 	}
-	return true
+	return nil
 }
 
 func (client *OSClient) StatusService(service string) bool {

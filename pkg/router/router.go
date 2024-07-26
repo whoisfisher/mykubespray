@@ -55,4 +55,6 @@ func configHttpRouter(rg *gin.RouterGroup, version string) {
 	rg.GET("/version", func(c *gin.Context) {
 		c.String(200, version)
 	})
+	rg.POST("/keepalived/configure", controller.ConfigureKeepalived)
+	rg.POST("/haproxy/configure", controller.ConfigureHaproxy)
 }

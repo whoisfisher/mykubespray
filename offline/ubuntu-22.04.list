@@ -22,7 +22,7 @@ tar
 unzip
 xfsprogs
 haproxy
-keepalived
+Haproxy
 python3-minimal
 python3-selinux
 firewalld
