@@ -38,6 +38,8 @@ func configWebsocketRouter(rg *gin.RouterGroup) {
 	rg.Use(aop.Cors())
 	rg.GET("/cluster/create", controller.CreateCluster)
 	rg.GET("/cluster/delete", controller.DeleteCluster)
+	rg.GET("/cluster/nodes/add", controller.AddNodeToCluster)
+	rg.GET("/cluster/node/delete", controller.DeleteNodeFromCluster)
 }
 
 func configHttpRouter(rg *gin.RouterGroup, version string) {

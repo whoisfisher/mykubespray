@@ -176,7 +176,7 @@ func (client *KubekeyClient) DeleteCluster(logChan chan LogEntry) error {
 }
 
 func (client *KubekeyClient) AddNode(logChan chan LogEntry) error {
-	command := fmt.Sprintf("%s add node %s-f /tmp/$%s/config-sample.yaml", client.KubekeyConf.KKPath, client.KubekeyConf.ClusterName)
+	command := fmt.Sprintf("%s add nodes -f /tmp/%s/config-sample.yaml --yes", client.KubekeyConf.KKPath, client.KubekeyConf.ClusterName)
 	err := client.OSClient.SSExecutor.ExecuteCommand(command, logChan)
 	if err != nil {
 		log.Printf("Failed to add node to cluster %s: %s", client.KubekeyConf.ClusterName, err.Error())
@@ -186,7 +186,7 @@ func (client *KubekeyClient) AddNode(logChan chan LogEntry) error {
 }
 
 func (client *KubekeyClient) DeleteNode(nodeName string, logChan chan LogEntry) error {
-	command := fmt.Sprintf("%s delete node %s -f /tmp/$%s/config-sample.yaml", client.KubekeyConf.KKPath, nodeName, client.KubekeyConf.ClusterName)
+	command := fmt.Sprintf("%s delete node %s -f /tmp/%s/config-sample.yaml", client.KubekeyConf.KKPath, nodeName, client.KubekeyConf.ClusterName)
 	err := client.OSClient.SSExecutor.ExecuteCommand(command, logChan)
 	if err != nil {
 		log.Printf("Failed to delete node %s from cluster %s: %s", nodeName, client.KubekeyConf.ClusterName, err.Error())

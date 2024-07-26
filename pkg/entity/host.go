@@ -13,4 +13,5 @@ type Host struct {
 	Registry        *Registry
 	PrivateKey      string
 	AuthMethods     []ssh.AuthMethod
+	IsDeleted       bool
 }
