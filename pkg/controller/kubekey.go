@@ -2,7 +2,6 @@ package controller
 
 import (
 	"context"
-	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/gorilla/websocket"
 	"github.com/whoisfisher/mykubespray/pkg/aop"
@@ -10,7 +9,6 @@ import (
 	"github.com/whoisfisher/mykubespray/pkg/logger"
 	"github.com/whoisfisher/mykubespray/pkg/service"
 	"github.com/whoisfisher/mykubespray/pkg/utils"
-	"os"
 )
 
 type KubekeyController struct {
@@ -46,10 +44,10 @@ func CreateCluster(ctx *gin.Context) {
 	go func() {
 		for logEntry := range logChan {
 			if logEntry.IsError {
-				fmt.Fprintf(os.Stderr, "[ERROR] %s\n", logEntry.Message)
+				logger.GetLogger().Errorf("%s\n", logEntry.Message)
 				ws.WriteMessage(websocket.TextMessage, []byte(logEntry.Message))
 			} else {
-				fmt.Printf("[INFO] %s\n", logEntry.Message)
+				logger.GetLogger().Infof("%s\n", logEntry.Message)
 				ws.WriteMessage(websocket.TextMessage, []byte(logEntry.Message))
 			}
 		}
@@ -74,10 +72,10 @@ func DeleteCluster(ctx *gin.Context) {
 	go func() {
 		for logEntry := range logChan {
 			if logEntry.IsError {
-				fmt.Fprintf(os.Stderr, "[ERROR] %s\n", logEntry.Message)
+				logger.GetLogger().Errorf("%s\n", logEntry.Message)
 				ws.WriteMessage(websocket.TextMessage, []byte(logEntry.Message))
 			} else {
-				fmt.Printf("[INFO] %s\n", logEntry.Message)
+				logger.GetLogger().Infof("%s\n", logEntry.Message)
 				ws.WriteMessage(websocket.TextMessage, []byte(logEntry.Message))
 			}
 		}
@@ -101,10 +99,10 @@ func AddNodeToCluster(ctx *gin.Context) {
 	go func() {
 		for logEntry := range logChan {
 			if logEntry.IsError {
-				fmt.Fprintf(os.Stderr, "[ERROR] %s\n", logEntry.Message)
+				logger.GetLogger().Errorf("%s\n", logEntry.Message)
 				ws.WriteMessage(websocket.TextMessage, []byte(logEntry.Message))
 			} else {
-				fmt.Printf("[INFO] %s\n", logEntry.Message)
+				logger.GetLogger().Infof("%s\n", logEntry.Message)
 				ws.WriteMessage(websocket.TextMessage, []byte(logEntry.Message))
 			}
 		}
@@ -128,10 +126,10 @@ func DeleteNodeFromCluster(ctx *gin.Context) {
 	go func() {
 		for logEntry := range logChan {
 			if logEntry.IsError {
-				fmt.Fprintf(os.Stderr, "[ERROR] %s\n", logEntry.Message)
+				logger.GetLogger().Errorf("%s\n", logEntry.Message)
 				ws.WriteMessage(websocket.TextMessage, []byte(logEntry.Message))
 			} else {
-				fmt.Printf("[INFO] %s\n", logEntry.Message)
+				logger.GetLogger().Infof("%s\n", logEntry.Message)
 				ws.WriteMessage(websocket.TextMessage, []byte(logEntry.Message))
 			}
 		}

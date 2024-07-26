@@ -155,6 +155,91 @@ spec:
 	return nil
 }
 
+func (client *KubekeyClient) GenerateConfigWithVIP() error {
+	dirPath := fmt.Sprintf("/tmp/%s", client.KubekeyConf.ClusterName)
+	path := fmt.Sprintf("/tmp/%s/config-sample.yaml", client.KubekeyConf.ClusterName)
+	templateText := `
+apiVersion: kubekey.kubesphere.io/v1alpha2
+kind: Cluster
+metadata:
+  name: {{ .ClusterName }}
+spec:
+  hosts:
+  {{ .HostList }}
+  roleGroups:
+    etcd:
+    {{ .EtcdList }}
+    control-plane: 
+    {{ .ControlPlaneList }}
+    worker:
+    {{ .WorkerList }}
+    registry:
+    {{ .Registry }}
+  controlPlaneEndpoint:
+    domain: lb.kubesphere.local
+    address: "{{ .VIPServer }}"
+    port: 6443
+  system:
+    ntpServers:
+      {{ .NtpServerList }}
+    timezone: "Asia/Shanghai"
+  kubernetes:
+    version: {{ .KubernetesVersion }}
+    clusterName: cluster.local
+    autoRenewCerts: true
+    containerManager: {{ .ContainerManager }}
+    apiserverCertExtraSans:  
+      - lb.rdev.local
+    proxyMode: {{ .ProxyMode }}
+  etcd:
+    type: kubekey
+  network:
+    plugin: calico
+    kubePodsCIDR: {{ .KubePodsCIDR }}
+    kubeServiceCIDR: {{ .KubeServiceCIDR }}
+    multusCNI:
+      enabled: false
+  registry:
+    auths:
+      "{{ .RegistryUrI }}":
+        username: {{ .RegistryUser }}
+        password: {{ .RegistryPassword }}
+        skipTLSVerify: {{ .RegistrySkipTLS }}
+        plainHTTP: {{ .RegistryPlainHttp }}
+    privateRegistry: "{{ .RegistryUrI }}"
+    namespaceOverride: "kubesphereio"
+    registryMirrors: []
+    insecureRegistries: []
+  addons: []
+`
+	kubekeyTemplate := client.ParseToTemplate()
+	tmpl, err := template.New("config-sample.yaml").Parse(templateText)
+	if err != nil {
+		log.Printf("Failed to generate template object: %s", err.Error())
+		return err
+	}
+	var rendered bytes.Buffer
+	err = tmpl.Execute(&rendered, kubekeyTemplate)
+	if err != nil {
+		log.Printf("Failed to generate template: %s", err.Error())
+		return err
+	}
+	err = client.OSClient.SSExecutor.MkDirALL(dirPath, func(s string) {
+		log.Println(s)
+	})
+	if err != nil {
+		log.Printf("Failed to generate dir %s: %s", dirPath, err.Error())
+		return err
+	}
+	command := fmt.Sprintf("echo '%s' > %s", rendered.String(), path)
+	err = client.OSClient.SSExecutor.ExecuteCommandWithoutReturn(command)
+	if err != nil {
+		log.Printf("Failed to generate kubekey config: %s", err.Error())
+		return err
+	}
+	return nil
+}
+
 func (client *KubekeyClient) CreateCluster(logChan chan LogEntry) error {
 	command := fmt.Sprintf("%s create cluster -f /tmp/%s/config-sample.yaml -a %s --with-packages --yes", client.KubekeyConf.KKPath, client.KubekeyConf.ClusterName, client.KubekeyConf.TaichuPackagePath)
 	err := client.OSClient.SSExecutor.ExecuteCommand(command, logChan)

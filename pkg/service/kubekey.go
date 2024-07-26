@@ -43,7 +43,11 @@ func (ks kubekeyService) CreateCluster(conf entity.KubekeyConf, logChan chan uti
 	sshExecutor := utils.NewSSHExecutor(*connection)
 	osclient := utils.NewOSClient(osCOnf, *sshExecutor, *localExecutor)
 	client := utils.NewKubekeyClient(conf, *osclient)
-	client.GenerateConfig()
+	if len(conf.VIPServer) > 0 {
+		client.GenerateConfigWithVIP()
+	} else {
+		client.GenerateConfig()
+	}
 	client.CreateCluster(logChan)
 	return nil
 }
@@ -70,7 +74,11 @@ func (ks kubekeyService) DeleteCluster(conf entity.KubekeyConf, logChan chan uti
 	sshExecutor := utils.NewSSHExecutor(*connection)
 	osclient := utils.NewOSClient(osCOnf, *sshExecutor, *localExecutor)
 	client := utils.NewKubekeyClient(conf, *osclient)
-	client.GenerateConfig()
+	if len(conf.VIPServer) > 0 {
+		client.GenerateConfigWithVIP()
+	} else {
+		client.GenerateConfig()
+	}
 	client.DeleteCluster(logChan)
 	return nil
 }
@@ -97,7 +105,11 @@ func (ks kubekeyService) AddNodeToCluster(conf entity.KubekeyConf, logChan chan 
 	sshExecutor := utils.NewSSHExecutor(*connection)
 	osclient := utils.NewOSClient(osCOnf, *sshExecutor, *localExecutor)
 	client := utils.NewKubekeyClient(conf, *osclient)
-	client.GenerateConfig()
+	if len(conf.VIPServer) > 0 {
+		client.GenerateConfigWithVIP()
+	} else {
+		client.GenerateConfig()
+	}
 	client.AddNode(logChan)
 	return nil
 }
@@ -128,7 +140,11 @@ func (ks kubekeyService) DeleteNodeFromCluster(conf entity.KubekeyConf, logChan 
 	sshExecutor := utils.NewSSHExecutor(*connection)
 	osclient := utils.NewOSClient(osCOnf, *sshExecutor, *localExecutor)
 	client := utils.NewKubekeyClient(conf, *osclient)
-	client.GenerateConfig()
+	if len(conf.VIPServer) > 0 {
+		client.GenerateConfigWithVIP()
+	} else {
+		client.GenerateConfig()
+	}
 	client.DeleteNode(deleteNode, logChan)
 	return nil
 }
