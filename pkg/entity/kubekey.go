@@ -13,6 +13,8 @@ type KubekeyConf struct {
 	KubeServiceCIDR   string
 	ContainerManager  string
 	ProxyMode         string
+	IPIPMode          string
+	VxlanMode         string
 	KKPath            string
 	TaichuPackagePath string
 	KubernetesVersion string
@@ -31,6 +33,8 @@ type KubekeyTemplate struct {
 	KubeServiceCIDR   string
 	ContainerManager  string
 	ProxyMode         string
+	IPIPMode          string
+	VxlanMode         string
 	KKPath            string
 	TaichuPackagePath string
 	RegistryType      string

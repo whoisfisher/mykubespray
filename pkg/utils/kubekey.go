@@ -58,6 +58,8 @@ func (client *KubekeyClient) ParseToTemplate() *entity.KubekeyTemplate {
 	template.RegistryPlainHttp = client.KubekeyConf.Registry.PlainHttp
 	template.RegistryNodeName = client.KubekeyConf.Registry.NodeName
 	template.ProxyMode = client.KubekeyConf.ProxyMode
+	template.IPIPMode = client.KubekeyConf.IPIPMode
+	template.VxlanMode = client.KubekeyConf.VxlanMode
 	template.ContainerManager = client.KubekeyConf.ContainerManager
 	template.ClusterName = client.KubekeyConf.ClusterName
 	template.KubernetesVersion = client.KubekeyConf.KubernetesVersion
@@ -110,6 +112,9 @@ spec:
     type: kubekey
   network:
     plugin: calico
+    calico:
+      ipipMode: {{ .IPIPMode }}
+      vxlanMode: {{ .VxlanMode }}
     kubePodsCIDR: {{ .KubePodsCIDR }}
     kubeServiceCIDR: {{ .KubeServiceCIDR }}
     multusCNI:
@@ -195,6 +200,9 @@ spec:
     type: kubekey
   network:
     plugin: calico
+    calico:
+      ipipMode: {{ .IPIPMode }}
+      vxlanMode: {{ .VxlanMode }}
     kubePodsCIDR: {{ .KubePodsCIDR }}
     kubeServiceCIDR: {{ .KubeServiceCIDR }}
     multusCNI:
