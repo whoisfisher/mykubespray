@@ -37,7 +37,7 @@ func CreateCluster(ctx *gin.Context) {
 	}
 	err = ws.ReadJSON(&conf)
 	if err != nil {
-		logger.GetLogger().Errorf("Failed to read postgres info: %s", err.Error())
+		logger.GetLogger().Errorf("Failed to read kkconf info: %s", err.Error())
 		ws.WriteMessage(websocket.TextMessage, []byte(err.Error()))
 	}
 	logChan := make(chan utils.LogEntry)
@@ -64,7 +64,7 @@ func DeleteCluster(ctx *gin.Context) {
 	}
 	err = ws.ReadJSON(&conf)
 	if err != nil {
-		logger.GetLogger().Errorf("Failed to read postgres info: %s", err.Error())
+		logger.GetLogger().Errorf("Failed to read kkconf info: %s", err.Error())
 		ws.WriteMessage(websocket.TextMessage, []byte(err.Error()))
 	}
 	logChan := make(chan utils.LogEntry)
@@ -91,7 +91,7 @@ func AddNodeToCluster(ctx *gin.Context) {
 	}
 	err = ws.ReadJSON(&conf)
 	if err != nil {
-		logger.GetLogger().Errorf("Failed to read postgres info: %s", err.Error())
+		logger.GetLogger().Errorf("Failed to read kkconf info: %s", err.Error())
 		ws.WriteMessage(websocket.TextMessage, []byte(err.Error()))
 	}
 	logChan := make(chan utils.LogEntry)
@@ -118,7 +118,7 @@ func DeleteNodeFromCluster(ctx *gin.Context) {
 	}
 	err = ws.ReadJSON(&conf)
 	if err != nil {
-		logger.GetLogger().Errorf("Failed to read postgres info: %s", err.Error())
+		logger.GetLogger().Errorf("Failed to read kkconf info: %s", err.Error())
 		ws.WriteMessage(websocket.TextMessage, []byte(err.Error()))
 	}
 	logChan := make(chan utils.LogEntry)

@@ -2,8 +2,8 @@ package service
 
 import (
 	"github.com/whoisfisher/mykubespray/pkg/entity"
+	"github.com/whoisfisher/mykubespray/pkg/logger"
 	"github.com/whoisfisher/mykubespray/pkg/utils"
-	"log"
 )
 
 type KubekeyService interface {
@@ -36,7 +36,8 @@ func (ks kubekeyService) CreateCluster(conf entity.KubekeyConf, logChan chan uti
 	}
 	connection, err := utils.NewSSHConnection(sshConfig)
 	if err != nil {
-		log.Fatalf("Failed to create SSH connection: %s", err)
+		logger.GetLogger().Errorf("Failed to create SSH connection: %s", err)
+		return err
 	}
 	osCOnf := utils.OSConf{}
 	localExecutor := utils.NewLocalExecutor()
@@ -67,7 +68,8 @@ func (ks kubekeyService) DeleteCluster(conf entity.KubekeyConf, logChan chan uti
 	}
 	connection, err := utils.NewSSHConnection(sshConfig)
 	if err != nil {
-		log.Fatalf("Failed to create SSH connection: %s", err)
+		logger.GetLogger().Errorf("Failed to create SSH connection: %s", err)
+		return err
 	}
 	osCOnf := utils.OSConf{}
 	localExecutor := utils.NewLocalExecutor()
@@ -98,7 +100,8 @@ func (ks kubekeyService) AddNodeToCluster(conf entity.KubekeyConf, logChan chan 
 	}
 	connection, err := utils.NewSSHConnection(sshConfig)
 	if err != nil {
-		log.Fatalf("Failed to create SSH connection: %s", err)
+		logger.GetLogger().Errorf("Failed to create SSH connection: %s", err)
+		return err
 	}
 	osCOnf := utils.OSConf{}
 	localExecutor := utils.NewLocalExecutor()
@@ -133,7 +136,8 @@ func (ks kubekeyService) DeleteNodeFromCluster(conf entity.KubekeyConf, logChan 
 	}
 	connection, err := utils.NewSSHConnection(sshConfig)
 	if err != nil {
-		log.Fatalf("Failed to create SSH connection: %s", err)
+		logger.GetLogger().Errorf("Failed to create SSH connection: %s", err)
+		return err
 	}
 	osCOnf := utils.OSConf{}
 	localExecutor := utils.NewLocalExecutor()

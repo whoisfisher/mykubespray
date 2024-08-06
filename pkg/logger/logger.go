@@ -80,8 +80,12 @@ func getLogFile() string {
 }
 
 func initFileLogging(logfile string) {
+	now := time.Now()
+	timestamp := now.Format("200601021504")
+	logFileName := fmt.Sprintf("%s.%s.log", logfile, timestamp)
+
 	fileWriter, err := rotatelogs.New(
-		logfile+".%Y%m%d%H%M",
+		logFileName,
 		rotatelogs.WithLinkName(logfile),
 		rotatelogs.WithMaxAge(7*24*time.Hour),
 		rotatelogs.WithRotationTime(24*time.Hour),

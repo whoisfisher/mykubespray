@@ -242,3 +242,7 @@ func (client *OSClient) GetSpecifyNetCard(ipaddr string) string {
 	client.OSConf.SpecifyNetCard = strings.TrimSpace(res)
 	return client.OSConf.SpecifyNetCard
 }
+
+func (client *OSClient) IsProcessExist(processName string) bool {
+	
+}

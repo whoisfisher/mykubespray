@@ -1,6 +1,6 @@
 log:
   level: debug
-  output_type: file_and_stdout
+  output_type: file
   logfile: logs/app.log
 bind:
   host: 0.0.0.0

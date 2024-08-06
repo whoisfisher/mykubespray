@@ -7,7 +7,11 @@ import (
 	"time"
 )
 
-func main1() {
+func main() {
+	ParsePrivatekey()
+}
+
+func ParsePrivatekey() {
 	// 读取私钥文件
 	privateKeyFile := "C:\\Users\\Administrator\\workspace\\previous\\work\\work\\workspace\\mykubespray\\pkg\\keycloak\\private_key.pem"
 	privateKeyBytes, err := os.ReadFile(privateKeyFile)
@@ -25,17 +29,17 @@ func main1() {
 	expiresIn := time.Now().Add(time.Hour * 24 * 10).Unix()
 
 	claims1 := jwt.MapClaims{
-		"exp":                expiresIn,
-		"iat":                time.Now().Add(time.Hour * 1).Unix(),
-		"auth_time":          0,
-		"jti":                "29b10c11-b6a6-446f-9735-45483f253d30",
-		"iss":                "https://keycloak.kmpp.io/auth/realms/cars",
-		"aud":                "kubernetes",
-		"sub":                "4391c288-965f-4d50-adca-499b0ccecb37",
-		"typ":                "ID",
-		"azp":                "kubernetes",
-		"session_state":      "9807a7bf-988f-49a6-88b0-1613ebd270bb",
-		"at_hash":            "rF3atus0eQvMvUxD5banYw",
+		"exp":           expiresIn,
+		"iat":           time.Now().Add(time.Hour * 1).Unix(),
+		"auth_time":     0,
+		"jti":           "29b10c11-b6a6-446f-9735-45483f253d30",
+		"iss":           "https://keycloak.kmpp.io/auth/realms/cars",
+		"aud":           "kubernetes",
+		"sub":           "4391c288-965f-4d50-adca-499b0ccecb37",
+		"typ":           "ID",
+		"azp":           "kubernetes",
+		"session_state": "9807a7bf-988f-49a6-88b0-1613ebd270bb",
+		//"at_hash":            "rF3atus0eQvMvUxD5banYw",
 		"acr":                "1",
 		"sid":                "9807a7bf-988f-49a6-88b0-1613ebd270aa",
 		"email_verified":     false,
