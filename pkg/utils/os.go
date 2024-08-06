@@ -3,7 +3,6 @@ package utils
 import (
 	"fmt"
 	"github.com/whoisfisher/mykubespray/pkg/logger"
-	"log"
 	"strings"
 )
 
@@ -57,7 +56,7 @@ func (client *OSClient) GetOSConf() bool {
 	}
 	res, err := client.SSExecutor.ExecuteShortCommand("arch")
 	if err != nil {
-		log.Printf("Failed to get os arch: %s", err.Error())
+		logger.GetLogger().Errorf("Failed to get os arch: %s", err.Error())
 		client.OSConf.Arch = "Unknown"
 		return false
 	}
@@ -109,7 +108,7 @@ func (client *OSClient) StopService(service string) error {
 	command := fmt.Sprintf("systemctl stop %s", service)
 	_, err := client.SSExecutor.ExecuteShortCommand(command)
 	if err != nil {
-		log.Printf("Failed to stop %s: %s", service, err.Error())
+		logger.GetLogger().Errorf("Failed to stop %s: %s", service, err.Error())
 		return err
 	}
 	return nil
@@ -119,7 +118,7 @@ func (client *OSClient) DisableService(service string) error {
 	command := fmt.Sprintf("systemctl disable %s", service)
 	_, err := client.SSExecutor.ExecuteShortCommand(command)
 	if err != nil {
-		log.Printf("Failed to disable %s: %s", service, err.Error())
+		logger.GetLogger().Errorf("Failed to disable %s: %s", service, err.Error())
 		return err
 	}
 	return nil
@@ -129,7 +128,7 @@ func (client *OSClient) EnableService(service string) error {
 	command := fmt.Sprintf("systemctl enable %s", service)
 	_, err := client.SSExecutor.ExecuteShortCommand(command)
 	if err != nil {
-		log.Printf("Failed to enable %s: %s", service, err.Error())
+		logger.GetLogger().Errorf("Failed to enable %s: %s", service, err.Error())
 		return err
 	}
 	return nil
@@ -139,7 +138,7 @@ func (client *OSClient) MaskService(service string) error {
 	command := fmt.Sprintf("systemctl mask %s", service)
 	_, err := client.SSExecutor.ExecuteShortCommand(command)
 	if err != nil {
-		log.Printf("Failed to mask %s: %s", service, err.Error())
+		logger.GetLogger().Errorf("Failed to mask %s: %s", service, err.Error())
 		return err
 	}
 	return nil
@@ -149,7 +148,7 @@ func (client *OSClient) UNMaskService(service string) error {
 	command := fmt.Sprintf("systemctl unmask %s", service)
 	_, err := client.SSExecutor.ExecuteShortCommand(command)
 	if err != nil {
-		log.Printf("Failed to unmask %s: %s", service, err.Error())
+		logger.GetLogger().Errorf("Failed to unmask %s: %s", service, err.Error())
 		return err
 	}
 	return nil
@@ -159,7 +158,7 @@ func (client *OSClient) StatusService(service string) bool {
 	command := fmt.Sprintf("systemctl status %s | grep -iE active", service)
 	res, err := client.SSExecutor.ExecuteShortCommand(command)
 	if err != nil {
-		log.Printf("Failed to view %s status: %s", service, err.Error())
+		logger.GetLogger().Errorf("Failed to view %s status: %s", service, err.Error())
 		return false
 	}
 	if strings.Contains(res, "inactive") {
@@ -172,7 +171,7 @@ func (client *OSClient) GetCPUCores() bool {
 	command := "grep -c ^processor /proc/cpuinfo"
 	res, err := client.SSExecutor.ExecuteShortCommand(command)
 	if err != nil {
-		log.Printf("Failed to get cpu cores: %s", err.Error())
+		logger.GetLogger().Errorf("Failed to get cpu cores: %s", err.Error())
 		client.OSConf.CPUCores = "Unknown"
 		return false
 	}
@@ -185,7 +184,7 @@ func (client *OSClient) GetCPU() bool {
 	command := "grep -iE \"^model\\s+name\\s+:\" /proc/cpuinfo | awk -F':' '{print $NF}' | sort -u"
 	res, err := client.SSExecutor.ExecuteShortCommand(command)
 	if err != nil {
-		log.Printf("Failed to get cpu info: %s", err.Error())
+		logger.GetLogger().Errorf("Failed to get cpu info: %s", err.Error())
 		client.OSConf.CPU = "Unknown"
 		return false
 	}
@@ -198,7 +197,7 @@ func (client *OSClient) GetMemorySize() bool {
 	command := "free -m | grep Mem | awk '{print $2}'"
 	res, err := client.SSExecutor.ExecuteShortCommand(command)
 	if err != nil {
-		log.Printf("Failed to get memory info: %s", err.Error())
+		logger.GetLogger().Errorf("Failed to get memory info: %s", err.Error())
 		client.OSConf.MemorySize = "Unknown"
 		return false
 	}
@@ -211,7 +210,7 @@ func (client *OSClient) GetDiskSize() bool {
 	command := "df -h / | tail -n 1 | awk '{print $2}'"
 	res, err := client.SSExecutor.ExecuteShortCommand(command)
 	if err != nil {
-		log.Printf("Failed to get disk size: %s", err.Error())
+		logger.GetLogger().Errorf("Failed to get disk size: %s", err.Error())
 		client.OSConf.DiskSize = "Unknown"
 		return false
 	}
@@ -224,7 +223,7 @@ func (client *OSClient) GetNetCardList() bool {
 	command := "ip addr show | grep -o '^[0-9]\\+: [a-zA-Z0-9]*' | awk '{print $2}'"
 	res, err := client.SSExecutor.ExecuteShortCommand(command)
 	if err != nil {
-		log.Printf("Failed to get netcard list: %s", err.Error())
+		logger.GetLogger().Errorf("Failed to get netcard list: %s", err.Error())
 		client.OSConf.NetCardList = []string{"Unknown"}
 		return false
 	}
@@ -236,7 +235,7 @@ func (client *OSClient) GetSpecifyNetCard(ipaddr string) string {
 	command := fmt.Sprintf("ip addr | grep -B 2 '%s' | head -n 1 | awk -F':' '{print $2}'", ipaddr)
 	res, err := client.SSExecutor.ExecuteShortCommand(command)
 	if err != nil {
-		log.Printf("Failed to get netcard info for %s: %s", ipaddr, err.Error())
+		logger.GetLogger().Errorf("Failed to get netcard info for %s: %s", ipaddr, err.Error())
 		client.OSConf.SpecifyNetCard = res
 	}
 	client.OSConf.SpecifyNetCard = strings.TrimSpace(res)
@@ -244,5 +243,11 @@ func (client *OSClient) GetSpecifyNetCard(ipaddr string) string {
 }
 
 func (client *OSClient) IsProcessExist(processName string) bool {
-	
+	command := fmt.Sprintf("pgrep %s", processName)
+	_, err := client.SSExecutor.ExecuteShortCommand(command)
+	if err != nil {
+		logger.GetLogger().Errorf("The process %s is non-exist: %s", processName, err.Error())
+		return false
+	}
+	return true
 }
