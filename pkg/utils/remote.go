@@ -3,6 +3,7 @@ package utils
 import (
 	"bufio"
 	"fmt"
+	"github.com/whoisfisher/mykubespray/pkg/logger"
 	"io"
 	"log"
 	"os"
@@ -23,13 +24,13 @@ func NewSSHExecutor(connection SSHConnection) *SSHExecutor {
 func (executor *SSHExecutor) ExecuteShortCommand(command string) (string, error) {
 	session, err := executor.Connection.Client.NewSession()
 	if err != nil {
-		log.Printf("Failed to create SSH session: %s", err.Error())
+		logger.GetLogger().Errorf("Failed to create SSH session: %s", err.Error())
 		return "", err
 	}
 	defer session.Close()
 	res, err := session.CombinedOutput(command)
 	if err != nil {
-		log.Printf("Failed to create SSH session: %s", err.Error())
+		logger.GetLogger().Errorf("Failed to create SSH session: %s", err.Error())
 		return "", err
 	}
 	return string(res), nil
@@ -38,7 +39,7 @@ func (executor *SSHExecutor) ExecuteShortCommand(command string) (string, error)
 func (executor *SSHExecutor) ExecuteCommand(command string, logChan chan LogEntry) error {
 	session, err := executor.Connection.Client.NewSession()
 	if err != nil {
-		log.Printf("Failed to create SSH session: %s", err.Error())
+		logger.GetLogger().Errorf("Failed to create SSH session: %s", err.Error())
 		return err
 	}
 	defer session.Close()
@@ -46,18 +47,18 @@ func (executor *SSHExecutor) ExecuteCommand(command string, logChan chan LogEntr
 
 	stdin, err := session.StdinPipe()
 	if err != nil {
-		log.Printf("Unable to setup stdin for session: %v", err)
+		logger.GetLogger().Errorf("Unable to setup stdin for session: %v", err)
 		return err
 	}
 
 	stdoutPipe, err := session.StdoutPipe()
 	if err != nil {
-		log.Printf("Unable to create stdout pipe: %v", err.Error())
+		logger.GetLogger().Errorf("Unable to create stdout pipe: %v", err.Error())
 		return err
 	}
 	stderrPipe, err := session.StderrPipe()
 	if err != nil {
-		log.Printf("Failed to create stderr pipe: %s", err.Error())
+		logger.GetLogger().Errorf("Failed to create stderr pipe: %s", err.Error())
 		return err
 	}
 
@@ -82,13 +83,13 @@ func (executor *SSHExecutor) ExecuteCommand(command string, logChan chan LogEntr
 	err = session.Start(command)
 	if err != nil {
 		logChan <- LogEntry{Message: "Pipeline Done", IsError: true}
-		log.Printf("Failed to run SSH command: %s", err.Error())
+		logger.GetLogger().Errorf("Failed to run SSH command: %s", err.Error())
 		return err
 	}
 
 	err = session.Wait()
 	if err != nil {
-		log.Printf("SSH command execution failed: %s", err.Error())
+		logger.GetLogger().Errorf("SSH command execution failed: %s", err.Error())
 		logChan <- LogEntry{Message: "Pipeline Done", IsError: false}
 		return err
 	}
@@ -99,7 +100,7 @@ func (executor *SSHExecutor) ExecuteCommand(command string, logChan chan LogEntr
 func (executor *SSHExecutor) ExecuteCommandWithoutReturn(command string) error {
 	session, err := executor.Connection.Client.NewSession()
 	if err != nil {
-		log.Printf("Failed to create SSH session: %s", err.Error())
+		logger.GetLogger().Errorf("Failed to create SSH session: %s", err.Error())
 		return err
 	}
 	defer session.Close()
@@ -115,28 +116,28 @@ func (executor *SSHExecutor) ExecuteCommandWithoutReturn(command string) error {
 func (executor *SSHExecutor) CopyFile(srcFile, destFile string, outputHandler func(string)) error {
 	src, err := os.Open(srcFile)
 	if err != nil {
-		log.Printf("Failed to open source file: %s", err.Error())
+		logger.GetLogger().Errorf("Failed to open source file: %s", err.Error())
 		return err
 	}
 	defer src.Close()
 
 	session, err := executor.Connection.Client.NewSession()
 	if err != nil {
-		log.Printf("Failed to create SSH session: %s", err.Error())
+		logger.GetLogger().Errorf("Failed to create SSH session: %s", err.Error())
 		return err
 	}
 	defer session.Close()
 
 	dest, err := session.StdinPipe()
 	if err != nil {
-		log.Printf("Failed to setup stdin for SCP: %s", err.Error())
+		logger.GetLogger().Errorf("Failed to setup stdin for SCP: %s", err.Error())
 		return err
 	}
 
 	go func() {
 		srcStat, err := src.Stat()
 		if err != nil {
-			log.Printf("Failed to get source file info: %s\n", err)
+			logger.GetLogger().Errorf("Failed to get source file info: %s\n", err)
 			return
 		}
 		defer dest.Close()
@@ -153,7 +154,7 @@ func (executor *SSHExecutor) CopyFile(srcFile, destFile string, outputHandler fu
 func (executor *SSHExecutor) MkDirALL(path string, outputHandler func(string)) error {
 	session, err := executor.Connection.Client.NewSession()
 	if err != nil {
-		log.Printf("Failed to create SSH session: %s", err.Error())
+		logger.GetLogger().Errorf("Failed to create SSH session: %s", err.Error())
 		return err
 	}
 	defer session.Close()
