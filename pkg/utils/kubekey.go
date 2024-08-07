@@ -4,7 +4,9 @@ import (
 	"bytes"
 	"fmt"
 	"github.com/whoisfisher/mykubespray/pkg/entity"
+	"github.com/whoisfisher/mykubespray/pkg/logger"
 	"log"
+	"path/filepath"
 	"strings"
 	"text/template"
 )
@@ -72,8 +74,9 @@ func (client *KubekeyClient) ParseToTemplate() *entity.KubekeyTemplate {
 }
 
 func (client *KubekeyClient) GenerateConfig() error {
-	dirPath := fmt.Sprintf("/tmp/%s", client.KubekeyConf.ClusterName)
-	path := fmt.Sprintf("/tmp/%s/config-sample.yaml", client.KubekeyConf.ClusterName)
+	dirPath := filepath.Dir(client.KubekeyConf.KKPath)
+	configPath := filepath.Join(dirPath, client.KubekeyConf.ClusterName)
+	path := filepath.Join(configPath, "config-sample.yaml")
 	templateText := `
 apiVersion: kubekey.kubesphere.io/v1alpha2
 kind: Cluster
@@ -93,7 +96,7 @@ spec:
     {{ .Registry }}
   controlPlaneEndpoint:
     internalLoadbalancer: haproxy
-    domain: lb.kubesphere.local
+    domain: lb.cars.local
     address: ""
     port: 6443
   system:
@@ -135,34 +138,35 @@ spec:
 	kubekeyTemplate := client.ParseToTemplate()
 	tmpl, err := template.New("config-sample.yaml").Parse(templateText)
 	if err != nil {
-		log.Printf("Failed to generate template object: %s", err.Error())
+		logger.GetLogger().Errorf("Failed to generate template object: %s", err.Error())
 		return err
 	}
 	var rendered bytes.Buffer
 	err = tmpl.Execute(&rendered, kubekeyTemplate)
 	if err != nil {
-		log.Printf("Failed to generate template: %s", err.Error())
+		logger.GetLogger().Errorf("Failed to generate template: %s", err.Error())
 		return err
 	}
 	err = client.OSClient.SSExecutor.MkDirALL(dirPath, func(s string) {
 		log.Println(s)
 	})
 	if err != nil {
-		log.Printf("Failed to generate dir %s: %s", dirPath, err.Error())
+		logger.GetLogger().Errorf("Failed to generate dir %s: %s", dirPath, err.Error())
 		return err
 	}
 	command := fmt.Sprintf("echo '%s' > %s", rendered.String(), path)
 	err = client.OSClient.SSExecutor.ExecuteCommandWithoutReturn(command)
 	if err != nil {
-		log.Printf("Failed to generate kubekey config: %s", err.Error())
+		logger.GetLogger().Errorf("Failed to generate kubekey config: %s", err.Error())
 		return err
 	}
 	return nil
 }
 
 func (client *KubekeyClient) GenerateConfigWithVIP() error {
-	dirPath := fmt.Sprintf("/tmp/%s", client.KubekeyConf.ClusterName)
-	path := fmt.Sprintf("/tmp/%s/config-sample.yaml", client.KubekeyConf.ClusterName)
+	dirPath := filepath.Dir(client.KubekeyConf.KKPath)
+	configPath := filepath.Join(dirPath, client.KubekeyConf.ClusterName)
+	path := filepath.Join(configPath, "config-sample.yaml")
 	templateText := `
 apiVersion: kubekey.kubesphere.io/v1alpha2
 kind: Cluster
@@ -181,7 +185,7 @@ spec:
     registry:
     {{ .Registry }}
   controlPlaneEndpoint:
-    domain: lb.kubesphere.local
+    domain: lb.cars.local
     address: "{{ .VIPServer }}"
     port: 6443
   system:
@@ -223,66 +227,78 @@ spec:
 	kubekeyTemplate := client.ParseToTemplate()
 	tmpl, err := template.New("config-sample.yaml").Parse(templateText)
 	if err != nil {
-		log.Printf("Failed to generate template object: %s", err.Error())
+		logger.GetLogger().Errorf("Failed to generate template object: %s", err.Error())
 		return err
 	}
 	var rendered bytes.Buffer
 	err = tmpl.Execute(&rendered, kubekeyTemplate)
 	if err != nil {
-		log.Printf("Failed to generate template: %s", err.Error())
+		logger.GetLogger().Errorf("Failed to generate template: %s", err.Error())
 		return err
 	}
-	err = client.OSClient.SSExecutor.MkDirALL(dirPath, func(s string) {
+	err = client.OSClient.SSExecutor.MkDirALL(configPath, func(s string) {
 		log.Println(s)
 	})
 	if err != nil {
-		log.Printf("Failed to generate dir %s: %s", dirPath, err.Error())
+		logger.GetLogger().Errorf("Failed to generate dir %s: %s", configPath, err.Error())
 		return err
 	}
 	command := fmt.Sprintf("echo '%s' > %s", rendered.String(), path)
 	err = client.OSClient.SSExecutor.ExecuteCommandWithoutReturn(command)
 	if err != nil {
-		log.Printf("Failed to generate kubekey config: %s", err.Error())
+		logger.GetLogger().Errorf("Failed to generate kubekey config: %s", err.Error())
 		return err
 	}
 	return nil
 }
 
 func (client *KubekeyClient) CreateCluster(logChan chan LogEntry) error {
-	command := fmt.Sprintf("%s create cluster -f /tmp/%s/config-sample.yaml -a %s --with-packages --yes", client.KubekeyConf.KKPath, client.KubekeyConf.ClusterName, client.KubekeyConf.TaichuPackagePath)
+	dirPath := filepath.Dir(client.KubekeyConf.KKPath)
+	configPath := filepath.Join(dirPath, client.KubekeyConf.ClusterName)
+	path := filepath.Join(configPath, "config-sample.yaml")
+	command := fmt.Sprintf("kk create cluster -f %s -a %s --with-packages --yes", path, client.KubekeyConf.TaichuPackagePath)
 	err := client.OSClient.SSExecutor.ExecuteCommand(command, logChan)
 	if err != nil {
-		log.Printf("Failed to create cluster %s: %s", client.KubekeyConf.ClusterName, err.Error())
+		logger.GetLogger().Errorf("Failed to create cluster %s: %s", client.KubekeyConf.ClusterName, err.Error())
 		return err
 	}
 	return nil
 }
 
 func (client *KubekeyClient) DeleteCluster(logChan chan LogEntry) error {
-	command := fmt.Sprintf("%s delete cluster -f /tmp/%s/config-sample.yaml --yes", client.KubekeyConf.KKPath, client.KubekeyConf.ClusterName)
+	dirPath := filepath.Dir(client.KubekeyConf.KKPath)
+	configPath := filepath.Join(dirPath, client.KubekeyConf.ClusterName)
+	path := filepath.Join(configPath, "config-sample.yaml")
+	command := fmt.Sprintf("kk delete cluster -f %s --yes", path)
 	err := client.OSClient.SSExecutor.ExecuteCommand(command, logChan)
 	if err != nil {
-		log.Printf("Failed to delete cluster %s: %s", client.KubekeyConf.ClusterName, err.Error())
+		logger.GetLogger().Errorf("Failed to delete cluster %s: %s", client.KubekeyConf.ClusterName, err.Error())
 		return err
 	}
 	return nil
 }
 
 func (client *KubekeyClient) AddNode(logChan chan LogEntry) error {
-	command := fmt.Sprintf("%s add nodes -f /tmp/%s/config-sample.yaml --yes", client.KubekeyConf.KKPath, client.KubekeyConf.ClusterName)
+	dirPath := filepath.Dir(client.KubekeyConf.KKPath)
+	configPath := filepath.Join(dirPath, client.KubekeyConf.ClusterName)
+	path := filepath.Join(configPath, "config-sample.yaml")
+	command := fmt.Sprintf("kk add nodes -f %s --yes", path)
 	err := client.OSClient.SSExecutor.ExecuteCommand(command, logChan)
 	if err != nil {
-		log.Printf("Failed to add node to cluster %s: %s", client.KubekeyConf.ClusterName, err.Error())
+		logger.GetLogger().Errorf("Failed to add node to cluster %s: %s", client.KubekeyConf.ClusterName, err.Error())
 		return err
 	}
 	return nil
 }
 
 func (client *KubekeyClient) DeleteNode(nodeName string, logChan chan LogEntry) error {
-	command := fmt.Sprintf("%s delete node %s -f /tmp/%s/config-sample.yaml", client.KubekeyConf.KKPath, nodeName, client.KubekeyConf.ClusterName)
+	dirPath := filepath.Dir(client.KubekeyConf.KKPath)
+	configPath := filepath.Join(dirPath, client.KubekeyConf.ClusterName)
+	path := filepath.Join(configPath, "config-sample.yaml")
+	command := fmt.Sprintf("kk delete node %s -f %s", nodeName, path)
 	err := client.OSClient.SSExecutor.ExecuteCommand(command, logChan)
 	if err != nil {
-		log.Printf("Failed to delete node %s from cluster %s: %s", nodeName, client.KubekeyConf.ClusterName, err.Error())
+		logger.GetLogger().Errorf("Failed to delete node %s from cluster %s: %s", nodeName, client.KubekeyConf.ClusterName, err.Error())
 		return err
 	}
 	return nil

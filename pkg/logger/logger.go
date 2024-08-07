@@ -20,6 +20,10 @@ var (
 	once         sync.Once
 )
 
+func init() {
+	Init()
+}
+
 // Init initializes the global logger based on configuration
 func Init() error {
 	// Load configuration from file

@@ -42,6 +42,7 @@ func (executor *SSHExecutor) ExecuteCommand(command string, logChan chan LogEntr
 		return err
 	}
 	defer session.Close()
+	//session.RequestPty("xterm", 80, 40, ssh.TerminalModes{})
 
 	stdin, err := session.StdinPipe()
 	if err != nil {
@@ -80,6 +81,7 @@ func (executor *SSHExecutor) ExecuteCommand(command string, logChan chan LogEntr
 
 	err = session.Start(command)
 	if err != nil {
+		logChan <- LogEntry{Message: "Pipeline Done", IsError: true}
 		log.Printf("Failed to run SSH command: %s", err.Error())
 		return err
 	}
@@ -87,8 +89,10 @@ func (executor *SSHExecutor) ExecuteCommand(command string, logChan chan LogEntr
 	err = session.Wait()
 	if err != nil {
 		log.Printf("SSH command execution failed: %s", err.Error())
+		logChan <- LogEntry{Message: "Pipeline Done", IsError: false}
 		return err
 	}
+	logChan <- LogEntry{Message: "Pipeline Done", IsError: true}
 	return nil
 }
 
