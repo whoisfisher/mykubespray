@@ -3,6 +3,7 @@ package utils
 import (
 	"bufio"
 	"fmt"
+	"github.com/whoisfisher/mykubespray/pkg/entity"
 	"github.com/whoisfisher/mykubespray/pkg/logger"
 	"io"
 	"log"
@@ -12,6 +13,14 @@ import (
 // SSHExecutor implements Executor for SSH connections.
 type SSHExecutor struct {
 	Connection SSHConnection
+}
+
+func NewExecutor(host entity.Host) *SSHExecutor {
+	connection, err := NewConnection(host)
+	if err != nil {
+		return nil
+	}
+	return &SSHExecutor{Connection: *connection}
 }
 
 // NewSSHExecutor creates a new instance of SSHExecutor.
@@ -30,7 +39,7 @@ func (executor *SSHExecutor) ExecuteShortCommand(command string) (string, error)
 	defer session.Close()
 	res, err := session.CombinedOutput(command)
 	if err != nil {
-		logger.GetLogger().Errorf("Failed to create SSH session: %s", err.Error())
+		logger.GetLogger().Errorf("Failed to execute command: %s", err.Error())
 		return "", err
 	}
 	return string(res), nil

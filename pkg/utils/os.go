@@ -2,6 +2,7 @@ package utils
 
 import (
 	"fmt"
+	"github.com/whoisfisher/mykubespray/pkg/entity"
 	"github.com/whoisfisher/mykubespray/pkg/logger"
 	"strings"
 )
@@ -22,6 +23,24 @@ type OSClient struct {
 	OSConf        OSConf
 	SSExecutor    SSHExecutor
 	LocalExecutor LocalExecutor
+}
+
+func NewClient(host entity.Host) *OSClient {
+	osConf := OSConf{}
+	localExecutor := NewLocalExecutor()
+	sshExecutor := NewExecutor(host)
+	osclient := &OSClient{
+		OSConf:        osConf,
+		SSExecutor:    *sshExecutor,
+		LocalExecutor: *localExecutor,
+	}
+	osclient.GetOSConf()
+	osclient.GetCPU()
+	osclient.GetCPUCores()
+	osclient.GetMemorySize()
+	osclient.GetDiskSize()
+	osclient.GetNetCardList()
+	return osclient
 }
 
 func NewOSClient(osConf OSConf, sshExecutor SSHExecutor, localExecutor LocalExecutor) *OSClient {
@@ -193,6 +212,17 @@ func (client *OSClient) GetCPU() bool {
 	return true
 }
 
+func (client *OSClient) GetAvailableCPU() string {
+	command := "top -bn1 | grep 'Cpu(s)' | awk '{print $8\"%\"}'"
+	res, err := client.SSExecutor.ExecuteShortCommand(command)
+	if err != nil {
+		logger.GetLogger().Errorf("Failed to get cpu info: %s", err.Error())
+		return ""
+	}
+	availableCPU := strings.TrimSpace(res)
+	return availableCPU
+}
+
 func (client *OSClient) GetMemorySize() bool {
 	command := "free -m | grep Mem | awk '{print $2}'"
 	res, err := client.SSExecutor.ExecuteShortCommand(command)
@@ -204,6 +234,17 @@ func (client *OSClient) GetMemorySize() bool {
 	memCapacity := strings.TrimSpace(res) + "MB"
 	client.OSConf.MemorySize = memCapacity
 	return true
+}
+
+func (client *OSClient) GetAvailableMemory() string {
+	command := "free -m | grep Mem | awk '{print $4}'"
+	res, err := client.SSExecutor.ExecuteShortCommand(command)
+	if err != nil {
+		logger.GetLogger().Errorf("Failed to get memory info: %s", err.Error())
+		return ""
+	}
+	availableMemCapacity := strings.TrimSpace(res) + "MB"
+	return availableMemCapacity
 }
 
 func (client *OSClient) GetDiskSize() bool {
@@ -246,7 +287,7 @@ func (client *OSClient) IsProcessExist(processName string) bool {
 	command := fmt.Sprintf("pgrep %s", processName)
 	_, err := client.SSExecutor.ExecuteShortCommand(command)
 	if err != nil {
-		logger.GetLogger().Errorf("The process %s is non-exist: %s", processName, err.Error())
+		logger.GetLogger().Warnf("The process %s is non-exist: %s", processName, err.Error())
 		return false
 	}
 	return true

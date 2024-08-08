@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"io"
 	"os"
+	"path/filepath"
 	"strings"
 	"sync"
 	"time"
@@ -21,17 +22,14 @@ var (
 )
 
 func init() {
+	configFile := filepath.Join("pkg", "conf", "config.yaml")
+	viper.SetConfigFile(configFile)
+	viper.ReadInConfig()
 	Init()
 }
 
 // Init initializes the global logger based on configuration
 func Init() error {
-	// Load configuration from file
-	//if err := loadConfig(); err != nil {
-	//	return err
-	//}
-
-	// Initialize logger once
 	once.Do(func() {
 		globalLogger = logrus.New()
 		globalLogger.SetLevel(getLogLevel())
@@ -53,15 +51,6 @@ func Init() error {
 		}
 	})
 
-	return nil
-}
-
-func loadConfig() error {
-	viper.SetConfigName("config")
-	viper.AddConfigPath("./")
-	if err := viper.ReadInConfig(); err != nil {
-		return fmt.Errorf("failed to read config file: %v", err)
-	}
 	return nil
 }
 
