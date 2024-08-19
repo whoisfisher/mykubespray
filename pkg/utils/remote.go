@@ -114,10 +114,10 @@ func (executor *SSHExecutor) ExecuteCommand(command string, logChan chan LogEntr
 	err = session.Wait()
 	if err != nil {
 		logger.GetLogger().Errorf("SSH command execution failed: %s", err.Error())
-		logChan <- LogEntry{Message: "Pipeline Done", IsError: false}
+		logChan <- LogEntry{Message: "Pipeline Done", IsError: true}
 		return err
 	}
-	logChan <- LogEntry{Message: "Pipeline Done", IsError: true}
+	logChan <- LogEntry{Message: "Pipeline Done", IsError: false}
 	return nil
 }
 
