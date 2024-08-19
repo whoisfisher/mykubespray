@@ -109,7 +109,7 @@ spec:
     autoRenewCerts: true
     containerManager: {{ .ContainerManager }}
     apiserverCertExtraSans:  
-      - lb.rdev.local
+      - lb.cars.local
     proxyMode: {{ .ProxyMode }}
   etcd:
     type: kubekey
@@ -198,7 +198,7 @@ spec:
     autoRenewCerts: true
     containerManager: {{ .ContainerManager }}
     apiserverCertExtraSans:  
-      - lb.rdev.local
+      - lb.cars.local
     proxyMode: {{ .ProxyMode }}
   etcd:
     type: kubekey

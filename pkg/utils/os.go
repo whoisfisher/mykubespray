@@ -292,3 +292,69 @@ func (client *OSClient) IsProcessExist(processName string) bool {
 	}
 	return true
 }
+
+func (client *OSClient) WhoAmI() string {
+	command := fmt.Sprintf("whoami")
+	user, err := client.SSExecutor.ExecuteShortCommand(command)
+	if err != nil {
+		logger.GetLogger().Warnf("Read username failed: %v", err.Error())
+		return ""
+	}
+	return user
+}
+
+func (client *OSClient) Chmod(file string, mode string) error {
+	cmd := fmt.Sprintf("chmod %s %s", mode, file)
+	if client.WhoAmI() != "root" {
+		cmd = SudoPrefix(cmd)
+	}
+	_, err := client.SSExecutor.ExecuteShortCommand(cmd)
+	if err != nil {
+		logger.GetLogger().Errorf("Chmod %s failed: %v", file, err)
+		return err
+	}
+	return nil
+}
+
+func (client *OSClient) ReadFile(file string) (string, error) {
+	cmd := fmt.Sprintf("cat %s", file)
+	if client.WhoAmI() != "root" {
+		cmd = SudoPrefix(cmd)
+	}
+	data, err := client.SSExecutor.ExecuteShortCommand(cmd)
+	if err != nil {
+		logger.GetLogger().Errorf("Read %s failed: %v", file, err)
+		return "", err
+	}
+	return strings.TrimSpace(data), nil
+}
+
+func (client *OSClient) ReadBytes(file string) ([]byte, error) {
+	cmd := fmt.Sprintf("cat %s", file)
+	if client.WhoAmI() != "root" {
+		cmd = SudoPrefix(cmd)
+	}
+	data, err := client.SSExecutor.ExecuteShortCMD(cmd)
+	if err != nil {
+		logger.GetLogger().Errorf("Read %s failed: %v", file, err)
+		return nil, err
+	}
+	return data, nil
+}
+
+func (client *OSClient) WriteFile(content, file string) error {
+	cmd := fmt.Sprintf("echo '%s' > %s", content, file)
+	if client.WhoAmI() != "root" {
+		cmd = SudoPrefix(cmd)
+	}
+	_, err := client.SSExecutor.ExecuteShortCommand(cmd)
+	if err != nil {
+		logger.GetLogger().Errorf("Write %s failed: %v", file, err)
+		return err
+	}
+	return nil
+}
+
+func SudoPrefix(cmd string) string {
+	return fmt.Sprintf("sudo -E /bin/bash <<EOF\n%s\nEOF", cmd)
+}

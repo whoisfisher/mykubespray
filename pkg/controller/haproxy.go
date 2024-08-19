@@ -29,7 +29,7 @@ func init() {
 func ConfigureHaproxy(ctx *gin.Context) {
 	var haproxyDTO entity.HaproxyConf
 	if err := ctx.ShouldBind(&haproxyDTO); err != nil {
-		logger.GetLogger().Errorf("KeepalivedConf bind failed: %s", err.Error())
+		logger.GetLogger().Errorf("haproxyconf bind failed: %s", err.Error())
 		ginx.Dangerous(err)
 	}
 	err := haproxyController.haproxyService.Configure(haproxyDTO)

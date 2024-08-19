@@ -47,3 +47,20 @@ func parseOSRelease(output string) string {
 	}
 	return "Unknown"
 }
+
+func contains(slice []interface{}, item interface{}) bool {
+	for _, elem := range slice {
+		if elem == item {
+			return true
+		}
+	}
+	return false
+}
+
+func toInterfaceSlice(slice []string) []interface{} {
+	var result []interface{}
+	for _, s := range slice {
+		result = append(result, s)
+	}
+	return result
+}
