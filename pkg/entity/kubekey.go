@@ -1,24 +1,23 @@
 package entity
 
 type KubekeyConf struct {
-	ClusterName        string
-	Hosts              []Host
-	Etcds              []string
-	ContronPlanes      []string
-	Workers            []string
-	NtpServers         []string
-	Registry           Registry
-	VIPServer          string
-	KubePodsCIDR       string
-	KubeServiceCIDR    string
-	ContainerManager   string
-	ProxyMode          string
-	IPIPMode           string
-	VxlanMode          string
-	KKPath             string
-	TaichuPackagePath  string
-	KubernetesVersion  string
-	InsecureRegistries []string
+	ClusterName       string
+	Hosts             []Host
+	Etcds             []string
+	ContronPlanes     []string
+	Workers           []string
+	NtpServers        []string
+	Registry          Registry
+	VIPServer         string
+	KubePodsCIDR      string
+	KubeServiceCIDR   string
+	ContainerManager  string
+	ProxyMode         string
+	IPIPMode          string
+	VxlanMode         string
+	KKPath            string
+	TaichuPackagePath string
+	KubernetesVersion string
 }
 
 type KubekeyTemplate struct {

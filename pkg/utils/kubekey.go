@@ -27,6 +27,13 @@ func (client *KubekeyClient) ParseToTemplate() *entity.KubekeyTemplate {
 	template := &entity.KubekeyTemplate{}
 	for _, host := range client.KubekeyConf.Hosts {
 		template.HostList += fmt.Sprintf("- {name: %s, address: %s, internalAddress: %s, port: %d, user: %s, password: %s}\n  ", host.Name, host.Address, host.InternalAddress, host.Port, host.User, host.Password)
+		if host.Registry != nil {
+			for _, ir := range host.Registry.InsecureRegistries {
+				template.InsecureRegistry += fmt.Sprintf("%s", ir)
+				template.InsecureRegistry += ","
+			}
+			template.InsecureRegistry = template.InsecureRegistry[:len(template.InsecureRegistry)-1]
+		}
 	}
 	template.HostList = strings.TrimSpace(template.HostList)
 
@@ -48,11 +55,7 @@ func (client *KubekeyClient) ParseToTemplate() *entity.KubekeyTemplate {
 	for _, ns := range client.KubekeyConf.NtpServers {
 		template.NtpServerList += fmt.Sprintf("- %s\n      ", ns)
 	}
-	for _, ir := range client.KubekeyConf.InsecureRegistries {
-		template.InsecureRegistry += fmt.Sprintf("%s", ir)
-		template.InsecureRegistry += ","
-	}
-	template.InsecureRegistry = template.InsecureRegistry[:len(template.InsecureRegistry)-1]
+
 	template.NtpServerList = strings.TrimSpace(template.NtpServerList)
 	template.Registry += fmt.Sprintf("- %s", client.KubekeyConf.Registry.NodeName)
 	template.RegistryType = client.KubekeyConf.Registry.Type
