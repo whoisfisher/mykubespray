@@ -147,11 +147,11 @@ spec:
 		logger.GetLogger().Errorf("Failed to generate template: %s", err.Error())
 		return err
 	}
-	err = client.OSClient.SSExecutor.MkDirALL(dirPath, func(s string) {
+	err = client.OSClient.SSExecutor.MkDirALL(configPath, func(s string) {
 		log.Println(s)
 	})
 	if err != nil {
-		logger.GetLogger().Errorf("Failed to generate dir %s: %s", dirPath, err.Error())
+		logger.GetLogger().Errorf("Failed to generate dir %s: %s", configPath, err.Error())
 		return err
 	}
 	command := fmt.Sprintf("echo '%s' > %s", rendered.String(), path)
