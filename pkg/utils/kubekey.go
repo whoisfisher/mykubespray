@@ -48,6 +48,11 @@ func (client *KubekeyClient) ParseToTemplate() *entity.KubekeyTemplate {
 	for _, ns := range client.KubekeyConf.NtpServers {
 		template.NtpServerList += fmt.Sprintf("- %s\n      ", ns)
 	}
+	for _, ir := range client.KubekeyConf.InsecureRegistries {
+		template.InsecureRegistry += fmt.Sprintf("%s", ir)
+		template.InsecureRegistry += ","
+	}
+	template.InsecureRegistry = template.InsecureRegistry[:len(template.InsecureRegistry)-1]
 	template.NtpServerList = strings.TrimSpace(template.NtpServerList)
 	template.Registry += fmt.Sprintf("- %s", client.KubekeyConf.Registry.NodeName)
 	template.RegistryType = client.KubekeyConf.Registry.Type
@@ -132,7 +137,7 @@ spec:
     privateRegistry: "{{ .RegistryUrI }}"
     namespaceOverride: "kubesphereio"
     registryMirrors: []
-    insecureRegistries: []
+    insecureRegistries: ["{{ .InsecureRegistry }}"]
   addons: []
 `
 	kubekeyTemplate := client.ParseToTemplate()
@@ -221,7 +226,7 @@ spec:
     privateRegistry: "{{ .RegistryUrI }}"
     namespaceOverride: "kubesphereio"
     registryMirrors: []
-    insecureRegistries: []
+    insecureRegistries: ["{{ .InsecureRegistry }}"]
   addons: []
 `
 	kubekeyTemplate := client.ParseToTemplate()
