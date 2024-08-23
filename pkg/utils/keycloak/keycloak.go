@@ -238,7 +238,12 @@ func (client *keycloakClient) CreateUser(token string, user KeycloakUser) error 
 		logger.GetLogger().Errorf("failed to send request: %v", err)
 		return err
 	}
-	defer resp.Body.Close()
+	defer func(Body io.ReadCloser) {
+		err := Body.Close()
+		if err != nil {
+			return
+		}
+	}(resp.Body)
 
 	if resp.StatusCode != http.StatusCreated {
 		logger.GetLogger().Errorf("failed to create user: %v", resp.StatusCode)
