@@ -1,4 +1,4 @@
-package main
+package keycloak
 
 type KeycloakUser struct {
 	Username    string       `json:"username"`
