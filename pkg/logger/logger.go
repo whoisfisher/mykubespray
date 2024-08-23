@@ -19,6 +19,7 @@ import (
 var (
 	globalLogger *logrus.Logger
 	once         sync.Once
+	mu           sync.Mutex
 )
 
 func init() {
@@ -31,6 +32,8 @@ func init() {
 // Init initializes the global logger based on configuration
 func Init() error {
 	once.Do(func() {
+		mu.Lock()
+		defer mu.Unlock()
 		globalLogger = logrus.New()
 		globalLogger.SetLevel(getLogLevel())
 
@@ -135,6 +138,8 @@ func initFileAndStdoutLogging(logfile string) {
 
 // GetLogger returns the global logger instance
 func GetLogger() *logrus.Logger {
+	mu.Lock()
+	defer mu.Unlock()
 	return globalLogger
 }
 
