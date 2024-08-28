@@ -39,7 +39,7 @@ func (executor *SSHExecutor) ExecuteShortCommand(command string) (string, error)
 	defer session.Close()
 	res, err := session.CombinedOutput(command)
 	if err != nil {
-		logger.GetLogger().Errorf("Failed to execute command: %s", err.Error())
+		logger.GetLogger().Errorf("Failed to execute command: %s, %s", err.Error(), res)
 		return "", err
 	}
 	return string(res), nil

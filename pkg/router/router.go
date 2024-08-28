@@ -58,4 +58,5 @@ func configHttpRouter(rg *gin.RouterGroup, version string) {
 	rg.POST("/keepalived/configure", controller.ConfigureKeepalived)
 	rg.POST("/haproxy/configure", controller.ConfigureHaproxy)
 	rg.POST("/apiserver/configure", controller.ConfigureApiServer)
+	rg.POST("/server/mount", controller.MountDisk)
 }

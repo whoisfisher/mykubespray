@@ -300,7 +300,7 @@ func (client *OSClient) WhoAmI() string {
 		logger.GetLogger().Warnf("Read username failed: %v", err.Error())
 		return ""
 	}
-	return user
+	return strings.TrimSpace(user)
 }
 
 func (client *OSClient) Chmod(file string, mode string) error {
@@ -347,9 +347,111 @@ func (client *OSClient) WriteFile(content, file string) error {
 	if client.WhoAmI() != "root" {
 		cmd = SudoPrefix(cmd)
 	}
-	_, err := client.SSExecutor.ExecuteShortCommand(cmd)
+	err := client.SSExecutor.ExecuteCommandWithoutReturn(cmd)
 	if err != nil {
 		logger.GetLogger().Errorf("Write %s failed: %v", file, err)
+		return err
+	}
+	return nil
+}
+
+func (client *OSClient) QueryVGName() (*entity.LVS, error) {
+	lvs := &entity.LVS{}
+	cmd := "lvs"
+	if client.WhoAmI() != "root" {
+		cmd = SudoPrefix(cmd)
+	}
+	data, err := client.SSExecutor.ExecuteShortCommand(cmd)
+	if err != nil {
+		logger.GetLogger().Errorf("Query VGName failed: %v", err)
+		return nil, err
+	}
+	lines := strings.Split(data, "\n")
+	for _, line := range lines {
+		item := strings.TrimSpace(line)
+		if strings.HasPrefix(item, "root") {
+			items := strings.Split(item, " ")
+			lvs.LVName = strings.TrimSpace(items[0])
+			lvs.VGName = strings.TrimSpace(items[1])
+		}
+	}
+	return lvs, nil
+}
+
+func (client *OSClient) CreatePV(diskConf entity.DiskConf) error {
+	cmd := fmt.Sprintf("pvcreate %s", diskConf.Device)
+	if client.WhoAmI() != "root" {
+		cmd = SudoPrefix(cmd)
+	}
+	data, err := client.SSExecutor.ExecuteShortCommand(cmd)
+	if err != nil {
+		logger.GetLogger().Errorf("pvcreate failed: %v,%s", err, data)
+		return err
+	}
+	fmt.Println(data)
+	return nil
+}
+
+func (client *OSClient) ExtendVG(diskConf entity.DiskConf) error {
+	cmd := fmt.Sprintf("vgextend %s %s", diskConf.VGName, diskConf.Device)
+	if client.WhoAmI() != "root" {
+		cmd = SudoPrefix(cmd)
+	}
+	data, err := client.SSExecutor.ExecuteShortCommand(cmd)
+	if err != nil {
+		logger.GetLogger().Errorf("vgextend failed: %v,%s", err, data)
+		return err
+	}
+	return nil
+}
+
+func (client *OSClient) ExtendLVPercent100(diskConf entity.DiskConf) error {
+	cmd := fmt.Sprintf("lvextend -l +100%%FREE /dev/mapper/%s-%s", diskConf.VGName, diskConf.LVName)
+	if client.WhoAmI() != "root" {
+		cmd = SudoPrefix(cmd)
+	}
+	data, err := client.SSExecutor.ExecuteShortCommand(cmd)
+	if err != nil {
+		logger.GetLogger().Errorf("lvextend failed: %v,%s", err, data)
+		return err
+	}
+	return nil
+}
+
+func (client *OSClient) ExtendLV(diskConf entity.DiskConf) error {
+	cmd := fmt.Sprintf("lvextend -L +%s /dev/mapper/%s-%s", diskConf.Size, diskConf.VGName, diskConf.LVName)
+	if client.WhoAmI() != "root" {
+		cmd = SudoPrefix(cmd)
+	}
+	data, err := client.SSExecutor.ExecuteShortCommand(cmd)
+	if err != nil {
+		logger.GetLogger().Errorf("lvextend failed: %v,%s", err, data)
+		return err
+	}
+	return nil
+}
+
+func (client *OSClient) XGrowFS(diskConf entity.DiskConf) error {
+	cmd := fmt.Sprintf("xfs_growfs /dev/mapper/%s-%s", diskConf.VGName, diskConf.LVName)
+	if client.WhoAmI() != "root" {
+		cmd = SudoPrefix(cmd)
+	}
+	data, err := client.SSExecutor.ExecuteShortCommand(cmd)
+	if err != nil {
+		logger.GetLogger().Errorf("xfs_growfs failed: %v,%s", err, data)
+		return err
+	}
+	return nil
+}
+
+func (client *OSClient) Resize2FS(diskConf entity.DiskConf) error {
+	cmd := fmt.Sprintf("resize2fs /dev/mapper/%s-%s", diskConf.VGName, diskConf.LVName)
+	if client.WhoAmI() != "root" {
+		cmd = SudoPrefix(cmd)
+	}
+	data, err := client.SSExecutor.ExecuteShortCommand(cmd)
+	if err != nil {
+		logger.GetLogger().Errorf("xfs_growfs failed: %v,%s", err, data)
 		return err
 	}
 	return nil
