@@ -45,6 +45,20 @@ type UserAttributeRepresentation struct {
 	Attributes map[string][]string `json:"attributes"`
 }
 
+type ClientMapperRepresentation struct {
+	Protocol                  string
+	Name                      string
+	MapperType                string
+	UserAttribute             string
+	TokenClaimName            string
+	ClaimJsonType             string
+	AddToIDToken              bool
+	AddToAccessToken          bool
+	AddToUserInfo             bool
+	Multivalued               bool
+	AggregatedAttributeValues bool
+}
+
 type BaseConfig struct {
 	ClientID     string
 	ClientSecret string
@@ -402,6 +416,34 @@ func (client *keycloakClient) AddUserAttribute(token, userID string, attributes 
 	}
 
 	req, err := http.NewRequest("PATCH", fmt.Sprintf("%s/%s", client.Config.BaseConfig.UserURL, userID), bytes.NewBuffer(data))
+	if err != nil {
+		logger.GetLogger().Errorf("failed to create request: %v", err)
+		return err
+	}
+	req.Header.Set("Content-Type", "application/json")
+	req.Header.Set("Authorization", "Bearer "+token)
+
+	resp, err := client.HTTPClient.Do(req)
+	if err != nil {
+		logger.GetLogger().Errorf("failed to send request: %v", err)
+		return err
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusNoContent {
+		logger.GetLogger().Errorf("failed to patch user: %v", resp.StatusCode)
+		return fmt.Errorf("failed to patch user: %s", resp.Status)
+	}
+	return nil
+}
+
+func (client *keycloakClient) AddClientMapper(token, clientID string, representation ClientMapperRepresentation) error {
+	data, err := json.Marshal(representation)
+	if err != nil {
+		return err
+	}
+
+	req, err := http.NewRequest("PATCH", fmt.Sprintf("%s/%s/protocol-mappers/models", client.Config.BaseConfig.ClientURL, clientID), bytes.NewBuffer(data))
 	if err != nil {
 		logger.GetLogger().Errorf("failed to create request: %v", err)
 		return err

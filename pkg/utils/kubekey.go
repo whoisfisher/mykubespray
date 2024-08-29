@@ -131,6 +131,9 @@ spec:
     multusCNI:
       enabled: false
   registry:
+    {{- if .RegistryType }}
+    type: {{ .RegistryType }}
+    {{- end }}
     auths:
       "{{ .RegistryUrI }}":
         username: {{ .RegistryUser }}
@@ -220,6 +223,9 @@ spec:
     multusCNI:
       enabled: false
   registry:
+    {{- if .RegistryType }}
+    type: {{ .RegistryType }}
+    {{- end }}
     auths:
       "{{ .RegistryUrI }}":
         username: {{ .RegistryUser }}
