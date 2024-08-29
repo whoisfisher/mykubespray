@@ -443,7 +443,7 @@ func (client *keycloakClient) AddClientMapper(token, clientID string, representa
 		return err
 	}
 
-	req, err := http.NewRequest("PATCH", fmt.Sprintf("%s/%s/protocol-mappers/models", client.Config.BaseConfig.ClientURL, clientID), bytes.NewBuffer(data))
+	req, err := http.NewRequest("POST", fmt.Sprintf("%s/%s/protocol-mappers/models", client.Config.BaseConfig.ClientURL, clientID), bytes.NewBuffer(data))
 	if err != nil {
 		logger.GetLogger().Errorf("failed to create request: %v", err)
 		return err
@@ -459,8 +459,8 @@ func (client *keycloakClient) AddClientMapper(token, clientID string, representa
 	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusNoContent {
-		logger.GetLogger().Errorf("failed to patch user: %v", resp.StatusCode)
-		return fmt.Errorf("failed to patch user: %s", resp.Status)
+		logger.GetLogger().Errorf("failed to add mapper: %v", resp.StatusCode)
+		return fmt.Errorf("failed to add mapper: %s", resp.Status)
 	}
 	return nil
 }
