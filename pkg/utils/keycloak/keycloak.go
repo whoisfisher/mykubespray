@@ -27,6 +27,10 @@ type KeycloakClient interface {
 	DeleteUser(token, userID string) error
 	UpdateUser(token, userID string, user KeycloakUser) error
 }
+type RealmsRepresentation struct {
+	Realm   string
+	Enabled string
+}
 
 type ClientRepresentation struct {
 	ClientID     string
@@ -68,6 +72,7 @@ type BaseConfig struct {
 	UserURL      string
 	ClientURL    string
 	GroupURL     string
+	AdminURL     string
 }
 
 func TokenURL(baseURL, realms string) string {
@@ -84,6 +89,10 @@ func ClientURL(baseURL, realms string) string {
 
 func GroupURL(baseURL, realms string) string {
 	return fmt.Sprintf("%s/auth/admin/realms/%s/groups", baseURL, realms)
+}
+
+func AdminURL(baseURL, realms string) string {
+	return fmt.Sprintf("%s/auth/admin/realms", baseURL, realms)
 }
 
 type PasswordConfig struct {
@@ -170,6 +179,7 @@ func NewBaseConfig(config KeycloakConfig) *BaseConfig {
 		UserURL:      UserURL(config.BaseConfig.BaseUrl, config.BaseConfig.Reamls),
 		ClientURL:    ClientURL(config.BaseConfig.BaseUrl, config.BaseConfig.Reamls),
 		GroupURL:     GroupURL(config.BaseConfig.BaseUrl, config.BaseConfig.Reamls),
+		AdminURL:     AdminURL(config.BaseConfig.BaseUrl, config.BaseConfig.Reamls),
 	}
 	return &baseClient
 }
@@ -343,6 +353,35 @@ func (client *keycloakClient) UpdateUser(token, userID string, user KeycloakUser
 	if resp.StatusCode != http.StatusNoContent {
 		logger.GetLogger().Errorf("failed to update user: %v", resp.StatusCode)
 		return fmt.Errorf("failed to update user: %s", resp.Status)
+	}
+
+	return nil
+}
+
+func (client *keycloakClient) CreateRealms(token string, realmsRepresent *RealmsRepresentation) error {
+	realmsRepresentation, err := json.Marshal(realmsRepresent)
+	if err != nil {
+		return err
+	}
+
+	req, err := http.NewRequest("POST", fmt.Sprintf("%s", client.Config.BaseConfig.AdminURL), bytes.NewBuffer(realmsRepresentation))
+	if err != nil {
+		logger.GetLogger().Errorf("failed to create realm: %v", err)
+		return err
+	}
+	req.Header.Set("Content-Type", "application/json")
+	req.Header.Set("Authorization", "Bearer "+token)
+
+	resp, err := client.HTTPClient.Do(req)
+	if err != nil {
+		logger.GetLogger().Errorf("failed to send request: %v", err)
+		return err
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusNoContent {
+		logger.GetLogger().Errorf("failed to create realm: %v", resp.StatusCode)
+		return fmt.Errorf("failed to  create realm: %s", resp.Status)
 	}
 
 	return nil
