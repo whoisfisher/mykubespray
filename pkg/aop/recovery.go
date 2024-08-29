@@ -16,6 +16,7 @@ import (
 	"os"
 	"runtime"
 	"strings"
+	"sync"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -46,7 +47,7 @@ func RecoveryWithWriter(out io.Writer, recovery ...RecoveryFunc) gin.HandlerFunc
 	if len(recovery) > 0 {
 		return CustomRecoveryWithWriter(out, recovery[0])
 	}
-	return CustomRecoveryWithWriter(out, defaultHandleRecovery)
+	return HandleCustomRecoveryWithWriter(out, defaultHandleRecovery)
 }
 
 // CustomRecoveryWithWriter returns a middleware for a given writer that recovers from any panics and calls the provided handle func to handle it.
@@ -92,6 +93,77 @@ func CustomRecoveryWithWriter(out io.Writer, handle RecoveryFunc) gin.HandlerFun
 			}
 		}()
 		c.Next()
+	}
+}
+
+// CustomRecoveryWithWriter returns a middleware for a given writer that recovers from any panics and calls the provided handle func to handle it.
+func HandleCustomRecoveryWithWriter(out io.Writer, handle RecoveryFunc) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		var wg sync.WaitGroup
+		var mu sync.Mutex
+		var capturedErr interface{}
+		done := make(chan struct{})
+
+		// Function to recover panic in the context of HTTP request
+		recoverPanic := func() {
+			if err := recover(); err != nil {
+				mu.Lock()
+				if capturedErr == nil {
+					capturedErr = err
+				}
+				mu.Unlock()
+			}
+			close(done)
+		}
+
+		wg.Add(1)
+		go func() {
+			defer wg.Done()
+			defer recoverPanic()
+			c.Next()
+		}()
+
+		// Wait for the goroutine to finish
+		<-done
+
+		// Handle the captured error if any
+		if capturedErr != nil {
+			var brokenPipe bool
+			if ne, ok := capturedErr.(*net.OpError); ok {
+				if se, ok := ne.Err.(*os.SyscallError); ok {
+					if strings.Contains(strings.ToLower(se.Error()), "broken pipe") || strings.Contains(strings.ToLower(se.Error()), "connection reset by peer") {
+						brokenPipe = true
+					}
+				}
+			}
+			if logger.GetLogger() != nil {
+				stack := stack(3)
+				httpRequest, _ := httputil.DumpRequest(c.Request, false)
+				headers := strings.Split(string(httpRequest), "\r\n")
+				for idx, header := range headers {
+					current := strings.Split(header, ":")
+					if current[0] == "Authorization" {
+						headers[idx] = current[0] + ": *"
+					}
+				}
+				headersToStr := strings.Join(headers, "\r\n")
+				if brokenPipe {
+					logger.GetLogger().Printf("%s\n%s%s", capturedErr, headersToStr, reset)
+				} else if gin.IsDebugging() {
+					logger.GetLogger().Printf("[Recovery] %s panic recovered:\n%s\n%s\n%s%s",
+						timeFormat(time.Now()), headersToStr, capturedErr, stack, reset)
+				} else {
+					logger.GetLogger().Printf("[Recovery] %s panic recovered:\n%s\n%s%s",
+						timeFormat(time.Now()), capturedErr, stack, reset)
+				}
+			}
+			if brokenPipe {
+				c.Error(capturedErr.(error))
+				c.Abort()
+			} else {
+				handle(c, capturedErr)
+			}
+		}
 	}
 }
 
