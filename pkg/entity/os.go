@@ -11,3 +11,19 @@ type LVS struct {
 	VGName string
 	Size   string
 }
+
+type RecordConf struct {
+	Host   Host
+	Record Record
+}
+
+type CertConf struct {
+	Host     Host
+	CertPath string
+	DestPath string
+}
+
+type Record struct {
+	IP     string
+	Domain string
+}

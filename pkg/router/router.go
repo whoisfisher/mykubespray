@@ -59,4 +59,9 @@ func configHttpRouter(rg *gin.RouterGroup, version string) {
 	rg.POST("/haproxy/configure", controller.ConfigureHaproxy)
 	rg.POST("/apiserver/configure", controller.ConfigureApiServer)
 	rg.POST("/server/mount", controller.MountDisk)
+	rg.POST("/server/hosts", controller.AddHosts)
+	rg.POST("/server/cert/copy", controller.CopyFile)
+	rg.POST("/server/cert/copyparallel", controller.CopyFileParallel)
+	rg.POST("/server/hostsparallel", controller.AddHostsParallel)
+	rg.POST("/server/execmdparallel", controller.ExecuteCommandParallel)
 }

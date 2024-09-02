@@ -2,12 +2,15 @@ package utils
 
 import (
 	"bufio"
+	"bytes"
 	"fmt"
+	"github.com/pkg/sftp"
 	"github.com/whoisfisher/mykubespray/pkg/entity"
 	"github.com/whoisfisher/mykubespray/pkg/logger"
 	"io"
 	"log"
 	"os"
+	"strings"
 )
 
 // SSHExecutor implements Executor for SSH connections.
@@ -136,6 +139,22 @@ func (executor *SSHExecutor) ExecuteCommandWithoutReturn(command string) error {
 	return nil
 }
 
+func (executor *SSHExecutor) ExecuteCMDWithoutReturn(command string, outputHandler func(string)) error {
+	session, err := executor.Connection.Client.NewSession()
+	if err != nil {
+		logger.GetLogger().Errorf("Failed to create SSH session: %s", err.Error())
+		return err
+	}
+	defer session.Close()
+	err = session.Run(command)
+	if err != nil {
+		log.Printf("Failed to execute command: %s", err.Error())
+		return err
+	}
+	outputHandler(fmt.Sprintf("Successfully to execute command:%s", command))
+	return nil
+}
+
 // CopyFile copies a file over SSH using SCP.
 func (executor *SSHExecutor) CopyFile(srcFile, destFile string, outputHandler func(string)) error {
 	src, err := os.Open(srcFile)
@@ -145,31 +164,24 @@ func (executor *SSHExecutor) CopyFile(srcFile, destFile string, outputHandler fu
 	}
 	defer src.Close()
 
-	session, err := executor.Connection.Client.NewSession()
+	sftpClient, err := sftp.NewClient(executor.Connection.Client)
 	if err != nil {
-		logger.GetLogger().Errorf("Failed to create SSH session: %s", err.Error())
+		logger.GetLogger().Errorf("Failed to create SFTP client: %s", err.Error())
 		return err
 	}
-	defer session.Close()
+	defer sftpClient.Close()
 
-	dest, err := session.StdinPipe()
+	dest, err := sftpClient.Create(destFile)
 	if err != nil {
-		logger.GetLogger().Errorf("Failed to setup stdin for SCP: %s", err.Error())
+		logger.GetLogger().Errorf("Failed to create destination file: %s", err.Error())
 		return err
 	}
+	defer dest.Close()
 
-	go func() {
-		srcStat, err := src.Stat()
-		if err != nil {
-			logger.GetLogger().Errorf("Failed to get source file info: %s\n", err)
-			return
-		}
-		defer dest.Close()
-
-		fmt.Fprintln(dest, "C0644", srcStat.Size(), destFile)
-		io.Copy(dest, src)
-		fmt.Fprint(dest, "\x00")
-	}()
+	if _, err := io.Copy(dest, src); err != nil {
+		logger.GetLogger().Errorf("Failed to copy file: %s", err.Error())
+		return err
+	}
 
 	outputHandler(fmt.Sprintf("Copied file %s to %s", srcFile, destFile))
 	return nil
@@ -191,5 +203,50 @@ func (executor *SSHExecutor) MkDirALL(path string, outputHandler func(string)) e
 	}
 	_ = fmt.Sprintf("Directory '%s' created successfully on remote host\n", path)
 	outputHandler(fmt.Sprintf("Mkdir Directory: %s", path))
+	return nil
+}
+
+func (executor *SSHExecutor) AddHosts(record entity.Record, outputHandler func(string)) error {
+	session, err := executor.Connection.Client.NewSession()
+	if err != nil {
+		logger.GetLogger().Errorf("Failed to create SSH session: %s", err.Error())
+		return err
+	}
+	defer session.Close()
+	var stdout, stderr bytes.Buffer
+	session.Stdout = &stdout
+	session.Stderr = &stderr
+	err = session.Run("cat /etc/hosts")
+	if err != nil {
+		errMsg := fmt.Errorf("failed to read /etc/hosts: %s: %w", stderr.String(), err)
+		log.Println("%s: %s", errMsg, err.Error())
+		return err
+	}
+	if strings.TrimSpace(stdout.String()) != "" {
+		cmdUpdate := fmt.Sprintf(`
+		#!/bin/bash
+        # Remove all lines containing the hostname
+        sudo sed -i "/^.* %s$/d" /etc/hosts
+        # Add new entry
+        echo "%s %s" | sudo tee -a /etc/hosts > /dev/null
+    `, record.Domain, record.IP, record.Domain)
+		_, err = executor.ExecuteShortCommand(cmdUpdate)
+		if err != nil {
+			logger.GetLogger().Errorf("failed to update /etc/hosts: %v", err)
+			return fmt.Errorf("failed to update /etc/hosts: %v", err)
+		}
+		logger.GetLogger().Infof("Updated %s to IP %s\n", record.Domain, record.IP)
+		fmt.Printf("Updated %s to IP %s\n", record.Domain, record.IP)
+	} else {
+		cmdAdd := fmt.Sprintf(`echo "%s %s" >> /etc/hosts`, record.IP, record.Domain)
+		_, err = executor.ExecuteShortCommand(cmdAdd)
+		if err != nil {
+			logger.GetLogger().Errorf("failed to add to /etc/hosts: %v", err)
+			return fmt.Errorf("failed to add to /etc/hosts: %v", err)
+		}
+		logger.GetLogger().Infof("Added %s with IP %s\n", record.Domain, record.IP)
+		fmt.Printf("Added %s with IP %s\n", record.Domain, record.IP)
+	}
+	outputHandler(fmt.Sprintf("Add Hosts"))
 	return nil
 }

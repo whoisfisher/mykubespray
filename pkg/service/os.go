@@ -8,6 +8,8 @@ import (
 
 type OSService interface {
 	Mount(conf entity.DiskConf) error
+	AddHost(conf entity.RecordConf) error
+	CopyFile(conf entity.CertConf) error
 }
 
 type osService struct {
@@ -61,4 +63,44 @@ func (os osService) Mount(conf entity.DiskConf) error {
 		return err
 	}
 	return nil
+}
+
+func (os osService) AddHost(conf entity.RecordConf) error {
+	sshConfig := utils.SSHConfig{}
+	sshConfig.Host = conf.Host.Address
+	sshConfig.Port = conf.Host.Port
+	sshConfig.User = conf.Host.User
+	sshConfig.Password = conf.Host.Password
+	sshConfig.PrivateKey = conf.Host.PrivateKey
+	sshConfig.AuthMethods = conf.Host.AuthMethods
+	connection, err := utils.NewSSHConnection(sshConfig)
+	if err != nil {
+		logger.GetLogger().Errorf("Failed to create SSH connection: %s", err)
+		return err
+	}
+	osCOnf := utils.OSConf{}
+	localExecutor := utils.NewLocalExecutor()
+	sshExecutor := utils.NewSSHExecutor(*connection)
+	client := utils.NewOSClient(osCOnf, *sshExecutor, *localExecutor)
+	return client.AddHost(conf.Record)
+}
+
+func (os osService) CopyFile(conf entity.CertConf) error {
+	sshConfig := utils.SSHConfig{}
+	sshConfig.Host = conf.Host.Address
+	sshConfig.Port = conf.Host.Port
+	sshConfig.User = conf.Host.User
+	sshConfig.Password = conf.Host.Password
+	sshConfig.PrivateKey = conf.Host.PrivateKey
+	sshConfig.AuthMethods = conf.Host.AuthMethods
+	connection, err := utils.NewSSHConnection(sshConfig)
+	if err != nil {
+		logger.GetLogger().Errorf("Failed to create SSH connection: %s", err)
+		return err
+	}
+	osCOnf := utils.OSConf{}
+	localExecutor := utils.NewLocalExecutor()
+	sshExecutor := utils.NewSSHExecutor(*connection)
+	client := utils.NewOSClient(osCOnf, *sshExecutor, *localExecutor)
+	return client.CopyFile(conf.CertPath, conf.DestPath)
 }

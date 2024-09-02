@@ -457,6 +457,16 @@ func (client *OSClient) Resize2FS(diskConf entity.DiskConf) error {
 	return nil
 }
 
+func (client *OSClient) CopyFile(srcFile, destFile string) error {
+	outputHandler := func(string) { logger.GetLogger().Infof("Copy file") }
+	return client.SSExecutor.CopyFile(srcFile, destFile, outputHandler)
+}
+
+func (client *OSClient) AddHost(record entity.Record) error {
+	outputHandler := func(string) { logger.GetLogger().Infof("Add Hosts") }
+	return client.SSExecutor.AddHosts(record, outputHandler)
+}
+
 func SudoPrefix(cmd string) string {
 	return fmt.Sprintf("sudo -E /bin/bash <<EOF\n%s\nEOF", cmd)
 }
