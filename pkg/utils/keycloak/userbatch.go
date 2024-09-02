@@ -1,4 +1,4 @@
-package keycloak
+package main
 
 import (
 	"encoding/json"
@@ -120,27 +120,40 @@ func main() {
 			},
 		},
 	}
-	config := UserBatchConfig{
-		KeycloakConfig: kconfig,
-		MaxConcurrent:  50,
-		MaxRetries:     3,
-		RetryDelay:     2 * time.Second,
-		ClientTimeout:  10 * time.Second,
-		TickerInterval: 5 * time.Second,
-		LogFilePath:    "failed_users.log",
-	}
+	//config := UserBatchConfig{
+	//	KeycloakConfig: kconfig,
+	//	MaxConcurrent:  50,
+	//	MaxRetries:     3,
+	//	RetryDelay:     2 * time.Second,
+	//	ClientTimeout:  10 * time.Second,
+	//	TickerInterval: 5 * time.Second,
+	//	LogFilePath:    "failed_users.log",
+	//}
 
 	client := NewKeycloakClient("client_credentials", kconfig, 10*time.Second)
 
-	userBatch := UserBatch{
-		Config:         config,
-		keycloakClient: *client,
+	//userBatch := UserBatch{
+	//	Config:         config,
+	//	keycloakClient: *client,
+	//}
+	//
+	//users := []KeycloakUser{
+	//	NewUser("user1", "user1@example.com", "User", "One"),
+	//	NewUser("user2", "user2@example.com", "User", "Two"),
+	//	// Add more users as needed
+	//}
+	//userBatch.ProcessUsers(users, "create")
+	token, _ := client.GetToken()
+	objToken := make(map[string]interface{})
+	err := json.Unmarshal([]byte(token), &objToken)
+	if err != nil {
+		logger.GetLogger().Errorf("Error getting token: %v", err)
+		return
 	}
-
-	users := []KeycloakUser{
-		NewUser("user1", "user1@example.com", "User", "One"),
-		NewUser("user2", "user2@example.com", "User", "Two"),
-		// Add more users as needed
+	acessToken := objToken["access_token"].(string)
+	group := GroupRepresentation{
+		Name: "my-new-group3",
+		Path: "/my-new-group3",
 	}
-	userBatch.ProcessUsers(users, "create")
+	client.CreateGroup(acessToken, &group)
 }

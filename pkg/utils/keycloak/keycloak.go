@@ -1,4 +1,4 @@
-package keycloak
+package main
 
 import (
 	"bytes"
@@ -42,7 +42,8 @@ type ClientRepresentation struct {
 }
 
 type GroupRepresentation struct {
-	Name string
+	Name string `json:"name"`
+	Path string `json:"path"`
 }
 
 type UserAttributeRepresentation struct {
@@ -91,8 +92,8 @@ func GroupURL(baseURL, realms string) string {
 	return fmt.Sprintf("%s/auth/admin/realms/%s/groups", baseURL, realms)
 }
 
-func AdminURL(baseURL, realms string) string {
-	return fmt.Sprintf("%s/auth/admin/realms", baseURL, realms)
+func AdminURL(baseURL string) string {
+	return fmt.Sprintf("%s/auth/admin/realms", baseURL)
 }
 
 type PasswordConfig struct {
@@ -179,7 +180,7 @@ func NewBaseConfig(config KeycloakConfig) *BaseConfig {
 		UserURL:      UserURL(config.BaseConfig.BaseUrl, config.BaseConfig.Reamls),
 		ClientURL:    ClientURL(config.BaseConfig.BaseUrl, config.BaseConfig.Reamls),
 		GroupURL:     GroupURL(config.BaseConfig.BaseUrl, config.BaseConfig.Reamls),
-		AdminURL:     AdminURL(config.BaseConfig.BaseUrl, config.BaseConfig.Reamls),
+		AdminURL:     AdminURL(config.BaseConfig.BaseUrl),
 	}
 	return &baseClient
 }
@@ -379,7 +380,7 @@ func (client *keycloakClient) CreateRealms(token string, realmsRepresent *Realms
 	}
 	defer resp.Body.Close()
 
-	if resp.StatusCode != http.StatusNoContent {
+	if resp.StatusCode != http.StatusCreated {
 		logger.GetLogger().Errorf("failed to create realm: %v", resp.StatusCode)
 		return fmt.Errorf("failed to  create realm: %s", resp.Status)
 	}
@@ -408,7 +409,7 @@ func (client *keycloakClient) CreateClient(token string, clientRepresent *Client
 	}
 	defer resp.Body.Close()
 
-	if resp.StatusCode != http.StatusNoContent {
+	if resp.StatusCode != http.StatusCreated {
 		logger.GetLogger().Errorf("failed to create client: %v", resp.StatusCode)
 		return fmt.Errorf("failed to  create client: %s", resp.Status)
 	}
@@ -437,7 +438,7 @@ func (client *keycloakClient) CreateGroup(token string, groupRepresent *GroupRep
 	}
 	defer resp.Body.Close()
 
-	if resp.StatusCode != http.StatusNoContent {
+	if resp.StatusCode != http.StatusCreated {
 		logger.GetLogger().Errorf("failed to create group: %v", resp.StatusCode)
 		return fmt.Errorf("failed to  create group: %s", resp.Status)
 	}

@@ -27,7 +27,7 @@ func (client *KubekeyClient) ParseToTemplate() *entity.KubekeyTemplate {
 	template := &entity.KubekeyTemplate{}
 	for _, host := range client.KubekeyConf.Hosts {
 		template.HostList += fmt.Sprintf("- {name: %s, address: %s, internalAddress: %s, port: %d, user: %s, password: %s}\n  ", host.Name, host.Address, host.InternalAddress, host.Port, host.User, host.Password)
-		if host.Registry != nil {
+		if host.Registry != nil && host.Registry.InsecureRegistries != nil {
 			for _, ir := range host.Registry.InsecureRegistries {
 				template.InsecureRegistry += fmt.Sprintf("%s", ir)
 				template.InsecureRegistry += ","

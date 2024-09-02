@@ -92,20 +92,26 @@ func (executor *SSHExecutor) ExecuteCommand(command string, logChan chan LogEntr
 	go func() {
 		scanner := bufio.NewScanner(stdoutPipe)
 		for scanner.Scan() {
-			//fmt.Fprintln(stdin, "yes\n")
-			stdin.Write([]byte("yes\n"))
+			go fmt.Fprintln(stdin, "yes\n")
 			text := scanner.Text()
-			logChan <- LogEntry{Message: text, IsError: false}
+			if strings.Contains(text, "[yes/no]") {
+				continue
+			} else {
+				logChan <- LogEntry{Message: text, IsError: false}
+			}
 		}
 	}()
 
 	go func() {
 		scanner := bufio.NewScanner(stderrPipe)
 		for scanner.Scan() {
-			//fmt.Fprintln(stdin, "yes\n")
-			stdin.Write([]byte("yes\n"))
+			go fmt.Fprintln(stdin, "yes\n")
 			text := scanner.Text()
-			logChan <- LogEntry{Message: text, IsError: true}
+			if strings.Contains(text, "[yes/no]") {
+				continue
+			} else {
+				logChan <- LogEntry{Message: text, IsError: false}
+			}
 		}
 	}()
 
