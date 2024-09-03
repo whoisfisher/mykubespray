@@ -11,6 +11,7 @@ import (
 	"log"
 	"os"
 	"strings"
+	"sync"
 )
 
 // SSHExecutor implements Executor for SSH connections.
@@ -129,6 +130,111 @@ func (executor *SSHExecutor) ExecuteCommand(command string, logChan chan LogEntr
 		return err
 	}
 	logChan <- LogEntry{Message: "Pipeline Done", IsError: false}
+	return nil
+}
+
+func (executor *SSHExecutor) ExecuteCommandNew(command string, logChan chan LogEntry) error {
+	session, err := executor.Connection.Client.NewSession()
+	if err != nil {
+		logger.GetLogger().Errorf("Failed to create SSH session: %s", err.Error())
+		return err
+	}
+	defer session.Close()
+	//session.RequestPty("xterm", 80, 40, ssh.TerminalModes{})
+
+	stdin, err := session.StdinPipe()
+	if err != nil {
+		logger.GetLogger().Errorf("Unable to setup stdin for session: %v", err)
+		return err
+	}
+
+	stdoutPipe, err := session.StdoutPipe()
+	if err != nil {
+		logger.GetLogger().Errorf("Unable to create stdout pipe: %v", err.Error())
+		return err
+	}
+	stderrPipe, err := session.StderrPipe()
+	if err != nil {
+		logger.GetLogger().Errorf("Failed to create stderr pipe: %s", err.Error())
+		return err
+	}
+
+	var wg sync.WaitGroup
+
+	doneStdout := make(chan struct{})
+	doneStderr := make(chan struct{})
+
+	wg.Add(1)
+	go func() {
+		defer func() {
+			if r := recover(); r != nil {
+				logger.GetLogger().Errorf("Recovered from panic in stdout pipe: %v", r)
+			}
+			wg.Done()
+		}()
+		defer close(doneStdout)
+		scanner := bufio.NewScanner(stdoutPipe)
+		for scanner.Scan() {
+			go fmt.Fprintln(stdin, "yes\n")
+			text := scanner.Text()
+			if strings.Contains(text, "[yes/no]") {
+				continue
+			} else {
+				select {
+				case logChan <- LogEntry{Message: text, IsError: false}:
+				case <-doneStdout:
+					return
+				}
+			}
+		}
+		if err := scanner.Err(); err != nil {
+			logger.GetLogger().Errorf("Error reading stdout pipe: %v", err)
+		}
+	}()
+
+	wg.Add(1)
+	go func() {
+		defer func() {
+			if r := recover(); r != nil {
+				logger.GetLogger().Errorf("Recovered from panic in stderr pipe: %v", r)
+			}
+			wg.Done()
+		}()
+		defer close(doneStderr)
+		scanner := bufio.NewScanner(stderrPipe)
+		for scanner.Scan() {
+			go fmt.Fprintln(stdin, "yes\n")
+			text := scanner.Text()
+			if strings.Contains(text, "[yes/no]") {
+				continue
+			} else {
+				select {
+				case logChan <- LogEntry{Message: text, IsError: true}:
+				case <-doneStderr:
+					return
+				}
+			}
+		}
+		if err := scanner.Err(); err != nil {
+			logger.GetLogger().Errorf("Error reading stderr pipe: %v", err)
+		}
+	}()
+
+	err = session.Start(command)
+	if err != nil {
+		logChan <- LogEntry{Message: "Pipeline Done", IsError: true}
+		logger.GetLogger().Errorf("Failed to run SSH command: %s", err.Error())
+		return err
+	}
+
+	err = session.Wait()
+	if err != nil {
+		logger.GetLogger().Errorf("SSH command execution failed: %s", err.Error())
+		logChan <- LogEntry{Message: "Pipeline Done", IsError: true}
+		return err
+	}
+	logChan <- LogEntry{Message: "Pipeline Done", IsError: false}
+	close(logChan)
 	return nil
 }
 
