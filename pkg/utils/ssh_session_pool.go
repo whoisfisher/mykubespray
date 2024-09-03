@@ -270,8 +270,8 @@ func (pool *SSHExecutorPool) CopyFile(srcFile, destFile string, host entity.Host
 func (pool *SSHExecutorPool) AddHostsParallel(record entity.Record, hosts []entity.Host) *CopyResult {
 	var wg sync.WaitGroup
 	results := make(chan MachineResult, len(hosts))
-	for index, host := range hosts {
-		wg.Add(index)
+	for _, host := range hosts {
+		wg.Add(1)
 		go func(host entity.Host) {
 			defer wg.Done()
 			pool.mutex.Lock()
