@@ -6,7 +6,9 @@ require (
 	github.com/fatih/color v1.17.0
 	github.com/gin-gonic/gin v1.9.1
 	github.com/golang-jwt/jwt v3.2.2+incompatible
+	github.com/golang-migrate/migrate/v4 v4.17.1
 	github.com/gorilla/websocket v1.5.3
+	github.com/jinzhu/gorm v1.9.16
 	github.com/lestrrat-go/file-rotatelogs v2.4.0+incompatible
 	github.com/mattn/go-isatty v0.0.20
 	github.com/pkg/sftp v1.13.6
@@ -22,6 +24,7 @@ require (
 	k8s.io/api v0.30.3
 	k8s.io/apimachinery v0.31.0
 	k8s.io/client-go v0.30.3
+	modernc.org/db v1.0.0
 )
 
 require (
@@ -48,6 +51,8 @@ require (
 	github.com/google/go-cmp v0.6.0 // indirect
 	github.com/google/gofuzz v1.2.0 // indirect
 	github.com/google/uuid v1.6.0 // indirect
+	github.com/hashicorp/errwrap v1.1.0 // indirect
+	github.com/hashicorp/go-multierror v1.1.1 // indirect
 	github.com/hashicorp/hcl v1.0.0 // indirect
 	github.com/imdario/mergo v0.3.6 // indirect
 	github.com/jinzhu/inflection v1.0.0 // indirect
@@ -68,6 +73,7 @@ require (
 	github.com/munnerz/goautoneg v0.0.0-20191010083416-a7dc8b61c822 // indirect
 	github.com/pelletier/go-toml/v2 v2.2.2 // indirect
 	github.com/pkg/errors v0.9.1 // indirect
+	github.com/remyoudompheng/bigfft v0.0.0-20200410134404-eec4a21b6bb0 // indirect
 	github.com/russross/blackfriday/v2 v2.1.0 // indirect
 	github.com/sagikazarmark/locafero v0.4.0 // indirect
 	github.com/sagikazarmark/slog-shim v0.1.0 // indirect
@@ -98,6 +104,8 @@ require (
 	k8s.io/klog/v2 v2.130.1 // indirect
 	k8s.io/kube-openapi v0.0.0-20240228011516-70dd3763d340 // indirect
 	k8s.io/utils v0.0.0-20240711033017-18e509b52bc8 // indirect
+	modernc.org/internal v1.0.0 // indirect
+	modernc.org/mathutil v1.5.0 // indirect
 	sigs.k8s.io/json v0.0.0-20221116044647-bc3834ca7abd // indirect
 	sigs.k8s.io/structured-merge-diff/v4 v4.4.1 // indirect
 	sigs.k8s.io/yaml v1.4.0 // indirect

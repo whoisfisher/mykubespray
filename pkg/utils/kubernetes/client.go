@@ -13,7 +13,6 @@ import (
 	"k8s.io/client-go/util/homedir"
 )
 
-// K8sClient wraps the various Kubernetes clients
 type K8sClient struct {
 	Clientset       *kubernetes.Clientset
 	DynamicClient   dynamic.Interface
@@ -22,26 +21,32 @@ type K8sClient struct {
 }
 
 type K8sConfig struct {
-	Kubeconfig string
-	ApiServer  string
-	Token      string
-	Cacert     string
+	Kubeconfig     string
+	KubeConfigFile string
+	ApiServer      string
+	Token          string
+	Cacert         string
 }
 
-// NewK8sClient creates a new K8sClient based on the provided configuration.
 func NewK8sClient(config K8sConfig) (*K8sClient, error) {
 	var cfg *rest.Config
 	var err error
 
-	// Determine which configuration to use
 	if config.Kubeconfig != "" {
-		// Use kubeconfig file
 		cfg, err = clientcmd.BuildConfigFromFlags("", config.Kubeconfig)
 		if err != nil {
 			return nil, fmt.Errorf("failed to build kubeconfig: %v", err)
 		}
+	} else if config.KubeConfigFile != "" {
+		data, err := os.ReadFile(config.KubeConfigFile)
+		if err != nil {
+			return nil, fmt.Errorf("failed to read kubeconfig: %v", err)
+		}
+		cfg, err = clientcmd.BuildConfigFromFlags("", string(data))
+		if err != nil {
+			return nil, fmt.Errorf("failed to build kubeconfig: %v", err)
+		}
 	} else if config.ApiServer != "" && config.Token != "" {
-		// Use API server URL and token
 		cfg = &rest.Config{
 			Host:        config.ApiServer,
 			BearerToken: config.Token,
@@ -50,7 +55,6 @@ func NewK8sClient(config K8sConfig) (*K8sClient, error) {
 			},
 		}
 	} else {
-		// Use in-cluster config
 		cfg, err = rest.InClusterConfig()
 		if err != nil {
 			return nil, fmt.Errorf("failed to create in-cluster config: %v", err)
@@ -82,7 +86,6 @@ func NewK8sClient(config K8sConfig) (*K8sClient, error) {
 	}, nil
 }
 
-// NewDefaultClient creates a new K8sClient using the default kubeconfig file.
 func NewDefaultClient() (*K8sClient, error) {
 	kubeconfig := os.Getenv("KUBECONFIG")
 	if kubeconfig == "" && homedir.HomeDir() != "" {

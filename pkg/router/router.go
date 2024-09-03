@@ -22,6 +22,7 @@ func New(version string) *gin.Engine {
 	if PrintAccessLog {
 		r.Use(loggerMid)
 	}
+	r.Use(aop.LogRequest())
 	configRoute(r, version)
 	return r
 }
@@ -64,4 +65,6 @@ func configHttpRouter(rg *gin.RouterGroup, version string) {
 	rg.POST("/server/cert/copyparallel", controller.CopyFileParallel)
 	rg.POST("/server/hostsparallel", controller.AddHostsParallel)
 	rg.POST("/server/execmdparallel", controller.ExecuteCommandParallel)
+	rg.POST("/keycloak/group", controller.CreateGroup)
+	rg.POST("/kubernetes/apply", controller.ApplyYAMLs)
 }
