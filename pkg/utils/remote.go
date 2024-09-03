@@ -40,6 +40,7 @@ func (executor *SSHExecutor) ExecuteShortCommand(command string) (string, error)
 		logger.GetLogger().Errorf("Failed to create SSH session: %s", err.Error())
 		return "", err
 	}
+	defer executor.Connection.Client.Close()
 	defer session.Close()
 	res, err := session.CombinedOutput(command)
 	if err != nil {
@@ -55,6 +56,7 @@ func (executor *SSHExecutor) ExecuteShortCMD(command string) ([]byte, error) {
 		logger.GetLogger().Errorf("Failed to create SSH session: %s", err.Error())
 		return nil, err
 	}
+	defer executor.Connection.Client.Close()
 	defer session.Close()
 	res, err := session.CombinedOutput(command)
 	if err != nil {
@@ -70,6 +72,7 @@ func (executor *SSHExecutor) ExecuteCommand(command string, logChan chan LogEntr
 		logger.GetLogger().Errorf("Failed to create SSH session: %s", err.Error())
 		return err
 	}
+	defer executor.Connection.Client.Close()
 	defer session.Close()
 	//session.RequestPty("xterm", 80, 40, ssh.TerminalModes{})
 
@@ -139,6 +142,7 @@ func (executor *SSHExecutor) ExecuteCommandNew(command string, logChan chan LogE
 		logger.GetLogger().Errorf("Failed to create SSH session: %s", err.Error())
 		return err
 	}
+	defer executor.Connection.Client.Close()
 	defer session.Close()
 	//session.RequestPty("xterm", 80, 40, ssh.TerminalModes{})
 
@@ -244,6 +248,7 @@ func (executor *SSHExecutor) ExecuteCommandWithoutReturn(command string) error {
 		logger.GetLogger().Errorf("Failed to create SSH session: %s", err.Error())
 		return err
 	}
+	defer executor.Connection.Client.Close()
 	defer session.Close()
 	err = session.Run(command)
 	if err != nil {
@@ -259,6 +264,7 @@ func (executor *SSHExecutor) ExecuteCMDWithoutReturn(command string, outputHandl
 		logger.GetLogger().Errorf("Failed to create SSH session: %s", err.Error())
 		return err
 	}
+	defer executor.Connection.Client.Close()
 	defer session.Close()
 	err = session.Run(command)
 	if err != nil {
@@ -307,6 +313,7 @@ func (executor *SSHExecutor) MkDirALL(path string, outputHandler func(string)) e
 		logger.GetLogger().Errorf("Failed to create SSH session: %s", err.Error())
 		return err
 	}
+	defer executor.Connection.Client.Close()
 	defer session.Close()
 	cmd := fmt.Sprintf("mkdir -p %s", path)
 	err = session.Run(cmd)
@@ -326,6 +333,7 @@ func (executor *SSHExecutor) AddHosts(record entity.Record, outputHandler func(s
 		logger.GetLogger().Errorf("Failed to create SSH session: %s", err.Error())
 		return err
 	}
+	defer executor.Connection.Client.Close()
 	defer session.Close()
 	var stdout, stderr bytes.Buffer
 	session.Stdout = &stdout
