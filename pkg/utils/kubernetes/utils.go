@@ -12,7 +12,7 @@ import (
 )
 
 func getNamespace(obj map[string]interface{}) string {
-	if metadata, ok := obj["metadata"].(map[string]interface{}); ok {
+	if metadata, ok := obj["metadata"].(map[interface{}]interface{}); ok {
 		if namespace, ok := metadata["namespace"].(string); ok {
 			return namespace
 		}
@@ -21,7 +21,7 @@ func getNamespace(obj map[string]interface{}) string {
 }
 
 func applyNonNamespaced(resourceClient dynamic.ResourceInterface, obj map[string]interface{}) error {
-	name := obj["metadata"].(map[string]interface{})["name"].(string)
+	name := obj["metadata"].(map[interface{}]interface{})["name"].(string)
 	if name == "" {
 		return fmt.Errorf("name not found in YAML")
 	}
@@ -30,7 +30,7 @@ func applyNonNamespaced(resourceClient dynamic.ResourceInterface, obj map[string
 }
 
 func applyInNamespace(resourceClient dynamic.NamespaceableResourceInterface, namespace string, obj map[string]interface{}) error {
-	name := obj["metadata"].(map[string]interface{})["name"].(string)
+	name := obj["metadata"].(map[interface{}]interface{})["name"].(string)
 	if name == "" {
 		return fmt.Errorf("name not found in YAML")
 	}

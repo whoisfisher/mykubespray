@@ -21,11 +21,10 @@ type K8sClient struct {
 }
 
 type K8sConfig struct {
-	Kubeconfig     string
-	KubeConfigFile string
-	ApiServer      string
-	Token          string
-	Cacert         string
+	Kubeconfig string
+	ApiServer  string
+	Token      string
+	Cacert     string
 }
 
 func NewK8sClient(config K8sConfig) (*K8sClient, error) {
@@ -34,15 +33,6 @@ func NewK8sClient(config K8sConfig) (*K8sClient, error) {
 
 	if config.Kubeconfig != "" {
 		cfg, err = clientcmd.BuildConfigFromFlags("", config.Kubeconfig)
-		if err != nil {
-			return nil, fmt.Errorf("failed to build kubeconfig: %v", err)
-		}
-	} else if config.KubeConfigFile != "" {
-		data, err := os.ReadFile(config.KubeConfigFile)
-		if err != nil {
-			return nil, fmt.Errorf("failed to read kubeconfig: %v", err)
-		}
-		cfg, err = clientcmd.BuildConfigFromFlags("", string(data))
 		if err != nil {
 			return nil, fmt.Errorf("failed to build kubeconfig: %v", err)
 		}

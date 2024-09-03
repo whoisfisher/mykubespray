@@ -138,6 +138,7 @@ func (executor *SSHExecutor) ExecuteCommand(command string, logChan chan LogEntr
 	session, err := executor.Connection.Client.NewSession()
 	if err != nil {
 		logger.GetLogger().Errorf("Failed to create SSH session: %s", err.Error())
+		logChan <- LogEntry{Message: "Pipeline Failed", IsError: true}
 		return err
 	}
 	defer session.Close()
@@ -146,17 +147,20 @@ func (executor *SSHExecutor) ExecuteCommand(command string, logChan chan LogEntr
 	stdin, err := session.StdinPipe()
 	if err != nil {
 		logger.GetLogger().Errorf("Unable to setup stdin for session: %v", err)
+		logChan <- LogEntry{Message: "Pipeline Failed", IsError: true}
 		return err
 	}
 
 	stdoutPipe, err := session.StdoutPipe()
 	if err != nil {
 		logger.GetLogger().Errorf("Unable to create stdout pipe: %v", err.Error())
+		logChan <- LogEntry{Message: "Pipeline Failed", IsError: true}
 		return err
 	}
 	stderrPipe, err := session.StderrPipe()
 	if err != nil {
 		logger.GetLogger().Errorf("Failed to create stderr pipe: %s", err.Error())
+		logChan <- LogEntry{Message: "Pipeline Failed", IsError: true}
 		return err
 	}
 
@@ -223,18 +227,18 @@ func (executor *SSHExecutor) ExecuteCommand(command string, logChan chan LogEntr
 
 	err = session.Start(command)
 	if err != nil {
-		logChan <- LogEntry{Message: "Pipeline Done", IsError: true}
 		logger.GetLogger().Errorf("Failed to run SSH command: %s", err.Error())
+		logChan <- LogEntry{Message: "Pipeline Failed", IsError: true}
 		return err
 	}
 
 	err = session.Wait()
 	if err != nil {
 		logger.GetLogger().Errorf("SSH command execution failed: %s", err.Error())
-		logChan <- LogEntry{Message: "Pipeline Done", IsError: true}
+		logChan <- LogEntry{Message: "Pipeline Failed", IsError: true}
 		return err
 	}
-	logChan <- LogEntry{Message: "Pipeline Done", IsError: false}
+	logChan <- LogEntry{Message: "Pipeline Success", IsError: false}
 	close(logChan)
 	return nil
 }
