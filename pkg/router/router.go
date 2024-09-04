@@ -67,4 +67,6 @@ func configHttpRouter(rg *gin.RouterGroup, version string) {
 	rg.POST("/server/execmdparallel", controller.ExecuteCommandParallel)
 	rg.POST("/keycloak/group", controller.CreateGroup)
 	rg.POST("/kubernetes/apply", controller.ApplyYAMLs)
+	rg.POST("/kubernetes/helm/repo", controller.AddRepo)
+	rg.POST("/kubernetes/helm/chart", controller.InstallChart)
 }

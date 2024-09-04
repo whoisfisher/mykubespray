@@ -12,7 +12,7 @@ import (
 )
 
 func getNamespace(obj map[string]interface{}) string {
-	if metadata, ok := obj["metadata"].(map[interface{}]interface{}); ok {
+	if metadata, ok := obj["metadata"].(map[string]interface{}); ok {
 		if namespace, ok := metadata["namespace"].(string); ok {
 			return namespace
 		}
@@ -20,29 +20,31 @@ func getNamespace(obj map[string]interface{}) string {
 	return ""
 }
 
-func applyNonNamespaced(resourceClient dynamic.ResourceInterface, obj map[string]interface{}) error {
-	name := obj["metadata"].(map[interface{}]interface{})["name"].(string)
+func applyNonNamespaced(resourceClient dynamic.ResourceInterface, unstructuredData *unstructured.Unstructured) error {
+	obj := unstructuredData.Object
+	name := obj["metadata"].(map[string]interface{})["name"].(string)
 	if name == "" {
 		return fmt.Errorf("name not found in YAML")
 	}
 
-	return applyResourceWithRetry(resourceClient, name, obj)
+	return applyResourceWithRetry(resourceClient, name, unstructuredData)
 }
 
-func applyInNamespace(resourceClient dynamic.NamespaceableResourceInterface, namespace string, obj map[string]interface{}) error {
-	name := obj["metadata"].(map[interface{}]interface{})["name"].(string)
+func applyInNamespace(resourceClient dynamic.NamespaceableResourceInterface, namespace string, unstructuredData *unstructured.Unstructured) error {
+	obj := unstructuredData.Object
+	name := obj["metadata"].(map[string]interface{})["name"].(string)
 	if name == "" {
 		return fmt.Errorf("name not found in YAML")
 	}
 
-	return applyNamespacedResourceWithRetry(resourceClient, name, obj)
+	return applyNamespacedResourceWithRetry(resourceClient, namespace, name, unstructuredData)
 }
 
-func createOrUpdateNamespacedResource(resourceClient dynamic.NamespaceableResourceInterface, name string, obj map[string]interface{}) error {
+func createOrUpdateNamespacedResource(resourceClient dynamic.NamespaceableResourceInterface, namespace, name string, unstructuredData *unstructured.Unstructured) error {
 	_, err := resourceClient.Get(context.TODO(), name, v1.GetOptions{})
 	if err != nil {
 		if errors.IsNotFound(err) {
-			_, err = resourceClient.Create(context.TODO(), &unstructured.Unstructured{Object: obj}, v1.CreateOptions{})
+			_, err = resourceClient.Namespace(namespace).Create(context.TODO(), unstructuredData, v1.CreateOptions{})
 			if err != nil {
 				return fmt.Errorf("error creating resource: %w", err)
 			}
@@ -51,7 +53,7 @@ func createOrUpdateNamespacedResource(resourceClient dynamic.NamespaceableResour
 		return fmt.Errorf("error checking resource existence: %w", err)
 	}
 
-	_, err = resourceClient.Update(context.TODO(), &unstructured.Unstructured{Object: obj}, v1.UpdateOptions{})
+	_, err = resourceClient.Update(context.TODO(), unstructuredData, v1.UpdateOptions{})
 	if err != nil {
 		if errors.IsConflict(err) {
 			return fmt.Errorf("resource update conflict: %w", err)
@@ -61,11 +63,11 @@ func createOrUpdateNamespacedResource(resourceClient dynamic.NamespaceableResour
 	return nil
 }
 
-func createOrUpdateResource(resourceClient dynamic.ResourceInterface, name string, obj map[string]interface{}) error {
+func createOrUpdateResource(resourceClient dynamic.ResourceInterface, name string, unstructuredData *unstructured.Unstructured) error {
 	_, err := resourceClient.Get(context.TODO(), name, v1.GetOptions{})
 	if err != nil {
 		if errors.IsNotFound(err) {
-			_, err = resourceClient.Create(context.TODO(), &unstructured.Unstructured{Object: obj}, v1.CreateOptions{})
+			_, err = resourceClient.Create(context.TODO(), unstructuredData, v1.CreateOptions{})
 			if err != nil {
 				return fmt.Errorf("error creating resource: %w", err)
 			}
@@ -74,7 +76,7 @@ func createOrUpdateResource(resourceClient dynamic.ResourceInterface, name strin
 		return fmt.Errorf("error checking resource existence: %w", err)
 	}
 
-	_, err = resourceClient.Update(context.TODO(), &unstructured.Unstructured{Object: obj}, v1.UpdateOptions{})
+	_, err = resourceClient.Update(context.TODO(), unstructuredData, v1.UpdateOptions{})
 	if err != nil {
 		if errors.IsConflict(err) {
 			return fmt.Errorf("resource update conflict: %w", err)
@@ -84,9 +86,9 @@ func createOrUpdateResource(resourceClient dynamic.ResourceInterface, name strin
 	return nil
 }
 
-func applyNamespacedResourceWithRetry(resourceClient dynamic.NamespaceableResourceInterface, name string, obj map[string]interface{}) error {
+func applyNamespacedResourceWithRetry(resourceClient dynamic.NamespaceableResourceInterface, namespace, name string, unstructuredData *unstructured.Unstructured) error {
 	return wait.ExponentialBackoff(wait.Backoff{Steps: 5, Duration: time.Second, Factor: 2}, func() (bool, error) {
-		err := createOrUpdateNamespacedResource(resourceClient, name, obj)
+		err := createOrUpdateNamespacedResource(resourceClient, namespace, name, unstructuredData)
 		if err == nil {
 			return true, nil
 		}
@@ -97,9 +99,9 @@ func applyNamespacedResourceWithRetry(resourceClient dynamic.NamespaceableResour
 	})
 }
 
-func applyResourceWithRetry(resourceClient dynamic.ResourceInterface, name string, obj map[string]interface{}) error {
+func applyResourceWithRetry(resourceClient dynamic.ResourceInterface, name string, unstructuredData *unstructured.Unstructured) error {
 	return wait.ExponentialBackoff(wait.Backoff{Steps: 5, Duration: time.Second, Factor: 2}, func() (bool, error) {
-		err := createOrUpdateResource(resourceClient, name, obj)
+		err := createOrUpdateResource(resourceClient, name, unstructuredData)
 		if err == nil {
 			return true, nil
 		}

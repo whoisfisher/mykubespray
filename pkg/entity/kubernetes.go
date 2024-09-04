@@ -1,8 +1,25 @@
 package entity
 
-import "github.com/whoisfisher/mykubespray/pkg/utils/kubernetes"
+type K8sConfig struct {
+	Kubeconfig     string
+	KubeconfigPath string
+	ApiServer      string
+	Token          string
+	Cacert         string
+}
 
 type KubernetesFilesConf struct {
-	kubernetes.K8sConfig
+	K8sConfig
 	Files []string
+}
+
+type SingleApplyResult struct {
+	FileName string
+	Success  bool
+	Error    string
+}
+
+type ApplyResults struct {
+	OverallSuccess bool
+	Results        []SingleApplyResult
 }

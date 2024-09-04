@@ -1,9 +1,15 @@
 package kubernetes
 
 import (
+	"context"
 	"fmt"
+	"github.com/ghodss/yaml"
+	helm "github.com/mittwald/go-helm-client"
+	"github.com/whoisfisher/mykubespray/pkg/entity"
 	"github.com/whoisfisher/mykubespray/pkg/logger"
-	"gopkg.in/yaml.v2"
+	"helm.sh/helm/v3/pkg/release"
+	"helm.sh/helm/v3/pkg/repo"
+	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
 	"k8s.io/apimachinery/pkg/runtime/schema"
 	"os"
 	"sync"
@@ -16,11 +22,12 @@ func (client *K8sClient) ApplyYAML(file string) error {
 		return err
 	}
 
-	var obj map[string]interface{}
-	if err := yaml.Unmarshal(data, &obj); err != nil {
+	var unstructuredData *unstructured.Unstructured
+	if err := yaml.Unmarshal(data, &unstructuredData); err != nil {
 		logger.GetLogger().Printf("Error unmarshalling YAML: %s", err)
 		return err
 	}
+	obj := unstructuredData.Object
 
 	apiVersion, kind := obj["apiVersion"].(string), obj["kind"].(string)
 	if apiVersion == "" || kind == "" {
@@ -40,35 +47,24 @@ func (client *K8sClient) ApplyYAML(file string) error {
 	namespace := getNamespace(obj)
 
 	if namespaced && namespace != "" {
-		return applyInNamespace(resourceClient, namespace, obj)
+		return applyInNamespace(resourceClient, namespace, unstructuredData)
 	}
 
-	return applyNonNamespaced(resourceClient, obj)
+	return applyNonNamespaced(resourceClient, unstructuredData)
 }
 
-type SingleApplyResult struct {
-	FileName string
-	Success  bool
-	Error    string
-}
-
-type ApplyResults struct {
-	OverallSuccess bool
-	Results        []SingleApplyResult
-}
-
-func (client *K8sClient) ApplyYAMLs(files []string) (*ApplyResults, error) {
+func (client *K8sClient) ApplyYAMLs(files []string) (*entity.ApplyResults, error) {
 	var wg sync.WaitGroup
 	var mu sync.Mutex
 
-	var results []SingleApplyResult
+	var results []entity.SingleApplyResult
 	var overallSuccess = true
 
 	for _, file := range files {
 		wg.Add(1)
 		go func(file string) {
 			defer wg.Done()
-			var result SingleApplyResult
+			var result entity.SingleApplyResult
 			result.FileName = file
 			if err := client.ApplyYAML(file); err != nil {
 				result.Success = false
@@ -86,8 +82,66 @@ func (client *K8sClient) ApplyYAMLs(files []string) (*ApplyResults, error) {
 	}
 
 	wg.Wait()
-	return &ApplyResults{
+	return &entity.ApplyResults{
 		OverallSuccess: overallSuccess,
 		Results:        results,
 	}, nil
+}
+
+func (client *K8sClient) AddOrUpdateChartRepo(helmRepo entity.HelmRepository) error {
+	var repoEntry repo.Entry
+	repoEntry.Name = helmRepo.Name
+	repoEntry.URL = helmRepo.Url
+	repoEntry.Username = helmRepo.Username
+	repoEntry.Password = helmRepo.Password
+	repoEntry.CertFile = helmRepo.CertFile
+	repoEntry.CAFile = helmRepo.CAFile
+	repoEntry.KeyFile = helmRepo.KeyFile
+	repoEntry.InsecureSkipTLSverify = helmRepo.InsecureSkipTlsVerify
+	if err := client.HelmClient.AddOrUpdateChartRepo(repoEntry); err != nil {
+		logger.GetLogger().Errorf("Faile to add or update helm repository to cluster: %s", err.Error())
+		return err
+	}
+	return nil
+}
+
+func (client *K8sClient) InstallOrUpgradeChart(info entity.HelmChartInfo) (*release.Release, error) {
+	chartSpec := helm.ChartSpec{
+		ReleaseName:     info.ReleaseName,
+		ChartName:       info.ChartName,
+		Namespace:       info.Namespace,
+		ValuesYaml:      info.ValuesYaml,
+		CreateNamespace: info.CreateNamespace,
+	}
+	release1, err := client.HelmClient.InstallOrUpgradeChart(context.TODO(), &chartSpec, &helm.GenericHelmOptions{})
+	if err != nil {
+		logger.GetLogger().Errorf("Faile to install or update chart release: %s", err.Error())
+		return nil, err
+	}
+	return release1, nil
+}
+
+func (client *K8sClient) ListDeployedReleases(info entity.HelmChartInfo) ([]*release.Release, error) {
+	releases, err := client.HelmClient.ListDeployedReleases()
+	if err != nil {
+		logger.GetLogger().Errorf("Faile to list deployed helm chart release: %s", err.Error())
+		return nil, err
+	}
+	return releases, nil
+}
+
+func (client *K8sClient) UninstallRelease(info entity.HelmChartInfo) error {
+	chartSpec := helm.ChartSpec{
+		ReleaseName:     info.ReleaseName,
+		ChartName:       info.ChartName,
+		Namespace:       info.Namespace,
+		ValuesYaml:      info.ValuesYaml,
+		CreateNamespace: info.CreateNamespace,
+	}
+	err := client.HelmClient.UninstallRelease(&chartSpec)
+	if err != nil {
+		logger.GetLogger().Errorf("Faile to uninstall deployed helm chart release[%s]: %s", info.ReleaseName, err.Error())
+		return err
+	}
+	return nil
 }
