@@ -65,7 +65,7 @@ func (executor *SSHExecutor) ExecuteShortCMD(command string) ([]byte, error) {
 	return res, nil
 }
 
-func (executor *SSHExecutor) ExecuteCommandOld(command string, logChan chan LogEntry) error {
+func (executor *SSHExecutor) ExecuteCommand(command string, logChan chan LogEntry) error {
 	session, err := executor.Connection.Client.NewSession()
 	if err != nil {
 		logger.GetLogger().Errorf("Failed to create SSH session: %s", err.Error())
@@ -92,6 +92,11 @@ func (executor *SSHExecutor) ExecuteCommandOld(command string, logChan chan LogE
 	}
 
 	go func() {
+		defer func() {
+			if r := recover(); r != nil {
+				logger.GetLogger().Errorf("Recovered from panic in stderr pipe: %v", r)
+			}
+		}()
 		scanner := bufio.NewScanner(stdoutPipe)
 		for scanner.Scan() {
 			go fmt.Fprintln(stdin, "yes\n")
@@ -105,6 +110,11 @@ func (executor *SSHExecutor) ExecuteCommandOld(command string, logChan chan LogE
 	}()
 
 	go func() {
+		defer func() {
+			if r := recover(); r != nil {
+				logger.GetLogger().Errorf("Recovered from panic in stderr pipe: %v", r)
+			}
+		}()
 		scanner := bufio.NewScanner(stderrPipe)
 		for scanner.Scan() {
 			go fmt.Fprintln(stdin, "yes\n")
@@ -134,7 +144,7 @@ func (executor *SSHExecutor) ExecuteCommandOld(command string, logChan chan LogE
 	return nil
 }
 
-func (executor *SSHExecutor) ExecuteCommand(command string, logChan chan LogEntry) error {
+func (executor *SSHExecutor) ExecuteCommandNew(command string, logChan chan LogEntry) error {
 	session, err := executor.Connection.Client.NewSession()
 	if err != nil {
 		logger.GetLogger().Errorf("Failed to create SSH session: %s", err.Error())
