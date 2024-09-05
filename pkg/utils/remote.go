@@ -284,6 +284,72 @@ func (executor *SSHExecutor) ExecuteCMDWithoutReturn(command string, outputHandl
 	return nil
 }
 
+func (executor *SSHExecutor) CopyMultiFile(files []entity.FileSrcDest, outputHandler func(string)) *CopyResult {
+	var wg sync.WaitGroup
+	results := make(chan MachineResult, len(files))
+	sftpClient, err := sftp.NewClient(executor.Connection.Client)
+	if err != nil {
+		logger.GetLogger().Errorf("Failed to create SFTP client: %s", err.Error())
+		results <- MachineResult{Machine: "", Success: false, Error: fmt.Sprintf("Failed to create SFTP client: %s", err.Error())}
+		return nil
+	}
+	defer sftpClient.Close()
+	for index, file := range files {
+		wg.Add(index)
+		go func(file entity.FileSrcDest) {
+			defer wg.Done()
+			src, err := os.Open(file.SrcFile)
+			if err != nil {
+				logger.GetLogger().Errorf("Failed to open source file: %s", err.Error())
+				results <- MachineResult{Machine: "", Success: false, Error: fmt.Sprintf("Failed to open source file: %s", err.Error())}
+				return
+			}
+			defer src.Close()
+
+			dest, err := sftpClient.Create(file.DestFile)
+			if err != nil {
+				logger.GetLogger().Errorf("Failed to create destination file: %s", err.Error())
+				results <- MachineResult{Machine: "", Success: false, Error: fmt.Sprintf("Failed to create destination file: %s", err.Error())}
+				return
+			}
+			defer dest.Close()
+
+			if _, err := io.Copy(dest, src); err != nil {
+				logger.GetLogger().Errorf("Failed to copy file: %s", err.Error())
+				results <- MachineResult{Machine: "", Success: false, Error: fmt.Sprintf("Failed to copy file: %s", err.Error())}
+				return
+			}
+			results <- MachineResult{Machine: "", Success: true, Error: ""}
+			outputHandler(fmt.Sprintf("Copied file %s to %s", file.SrcFile, file.DestFile))
+			return
+		}(file)
+	}
+	go func() {
+		wg.Wait()
+		close(results)
+	}()
+	var successCount, failureCount int
+	var copyResult CopyResult
+	var machineResults []MachineResult
+	for result := range results {
+		if result.Success {
+			logger.GetLogger().Infof("Successfully copied file to %s\n", result.Machine)
+			successCount++
+		} else {
+			logger.GetLogger().Errorf("Failed to copy file to %s: %s\n", result.Machine, result.Error)
+			failureCount++
+		}
+		machineResults = append(machineResults, result)
+	}
+	copyResult.Results = machineResults
+	if failureCount > 0 {
+		copyResult.OverallSuccess = false
+	} else {
+		copyResult.OverallSuccess = true
+	}
+	return &copyResult
+}
+
 // CopyFile copies a file over SSH using SCP.
 func (executor *SSHExecutor) CopyFile(srcFile, destFile string, outputHandler func(string)) error {
 	src, err := os.Open(srcFile)
@@ -346,7 +412,7 @@ func (executor *SSHExecutor) AddHosts(record entity.Record, outputHandler func(s
 	var stdout, stderr bytes.Buffer
 	session.Stdout = &stdout
 	session.Stderr = &stderr
-	err = session.Run("cat /etc/hosts")
+	err = session.Run("sudo cat /etc/hosts")
 	if err != nil {
 		errMsg := fmt.Errorf("failed to read /etc/hosts: %s: %w", stderr.String(), err)
 		log.Println("%s: %s", errMsg, err.Error())
@@ -376,6 +442,59 @@ func (executor *SSHExecutor) AddHosts(record entity.Record, outputHandler func(s
 		}
 		logger.GetLogger().Infof("Added %s with IP %s\n", record.Domain, record.IP)
 		fmt.Printf("Added %s with IP %s\n", record.Domain, record.IP)
+	}
+	outputHandler(fmt.Sprintf("Add Hosts"))
+	return nil
+}
+
+func (executor *SSHExecutor) AddMultiHosts(records []entity.Record, outputHandler func(string)) error {
+	session, err := executor.Connection.Client.NewSession()
+	if err != nil {
+		logger.GetLogger().Errorf("Failed to create SSH session: %s", err.Error())
+		return err
+	}
+	defer session.Close()
+	var stdout, stderr bytes.Buffer
+	session.Stdout = &stdout
+	session.Stderr = &stderr
+	err = session.Run("sudo cat /etc/hosts")
+	if err != nil {
+		errMsg := fmt.Errorf("failed to read /etc/hosts: %s: %w", stderr.String(), err)
+		log.Println("%s: %s", errMsg, err.Error())
+		return err
+	}
+	hostsContent := stdout.String()
+	lines := strings.Split(hostsContent, "\n")
+	var updateContent strings.Builder
+	domainMap := make(map[string]string)
+
+	for _, line := range lines {
+		parts := strings.Fields(line)
+		if len(parts) >= 2 {
+			ip, domain := parts[0], parts[1]
+			domainMap[domain] = ip
+		}
+	}
+
+	for _, record := range records {
+		domainMap[record.Domain] = record.IP
+	}
+
+	for key, value := range domainMap {
+		updateContent.WriteString(fmt.Sprintf("%s %s\n", value, key))
+	}
+
+	tmpFile := "/tmp/hosts"
+	err = os.WriteFile(tmpFile, []byte(updateContent.String()), 0644)
+	if err != nil {
+		logger.GetLogger().Error("Failed to write to temporary file: %s", err)
+		return fmt.Errorf("Failed to write to temporary file: %s", err)
+	}
+	cmd := fmt.Sprintf("sudo cp %s /etc/hosts", tmpFile)
+	_, err = executor.ExecuteShortCommand(cmd)
+	if err != nil {
+		logger.GetLogger().Errorf("failed to add to /etc/hosts: %v", err)
+		return fmt.Errorf("failed to add to /etc/hosts: %v", err)
 	}
 	outputHandler(fmt.Sprintf("Add Hosts"))
 	return nil

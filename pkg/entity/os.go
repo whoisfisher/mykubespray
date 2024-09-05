@@ -27,3 +27,8 @@ type Record struct {
 	IP     string
 	Domain string
 }
+
+type FileSrcDest struct {
+	SrcFile  string
+	DestFile string
+}

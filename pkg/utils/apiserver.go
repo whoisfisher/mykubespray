@@ -1,7 +1,6 @@
 package utils
 
 import (
-	"fmt"
 	"github.com/whoisfisher/mykubespray/pkg/entity"
 	"github.com/whoisfisher/mykubespray/pkg/logger"
 	"gopkg.in/yaml.v2"
@@ -32,7 +31,6 @@ func (client *ApiServerClient) ModifyConfig() error {
 		logger.GetLogger().Errorf("unmarshal data %v failed", string(data))
 		return err
 	}
-	fmt.Printf("%v", configData["spec"])
 	updateCommandInContainer(configData, "kube-apiserver", []string{
 		"--oidc-issuer-url=" + client.ApiServerConf.OIDCIssuerUrl,
 		"--oidc-client-id=" + client.ApiServerConf.OIDCClientID,

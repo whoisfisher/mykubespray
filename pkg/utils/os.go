@@ -462,9 +462,19 @@ func (client *OSClient) CopyFile(srcFile, destFile string) error {
 	return client.SSExecutor.CopyFile(srcFile, destFile, outputHandler)
 }
 
+func (client *OSClient) CopyMultiFile(files []entity.FileSrcDest) *CopyResult {
+	outputHandler := func(string) { logger.GetLogger().Infof("Copy file") }
+	return client.SSExecutor.CopyMultiFile(files, outputHandler)
+}
+
 func (client *OSClient) AddHost(record entity.Record) error {
 	outputHandler := func(string) { logger.GetLogger().Infof("Add Hosts") }
 	return client.SSExecutor.AddHosts(record, outputHandler)
+}
+
+func (client *OSClient) AddMultiHost(records []entity.Record) error {
+	outputHandler := func(string) { logger.GetLogger().Infof("Add Hosts") }
+	return client.SSExecutor.AddMultiHosts(records, outputHandler)
 }
 
 func SudoPrefix(cmd string) string {

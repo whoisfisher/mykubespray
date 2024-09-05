@@ -446,6 +446,30 @@ func (client *keycloakClient) CreateGroup(token string, groupRepresent *GroupRep
 	return nil
 }
 
+func (client *keycloakClient) AddUserToGroup(token string, groupID, userID string) error {
+	url := fmt.Sprintf("%s/%s/members/%s", client.Config.BaseConfig.GroupURL, groupID, userID)
+	req, err := http.NewRequest("PUT", url, nil)
+	if err != nil {
+		logger.GetLogger().Errorf("failed to add user to group: %v", err)
+		return err
+	}
+	req.Header.Set("Content-Type", "application/json")
+	req.Header.Set("Authorization", "Bearer "+token)
+
+	resp, err := client.HTTPClient.Do(req)
+	if err != nil {
+		logger.GetLogger().Errorf("failed to send request: %v", err)
+		return err
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusNoContent {
+		logger.GetLogger().Errorf("failed to add user to group: %v", resp.StatusCode)
+		return fmt.Errorf("failed to add user to group: %s", resp.Status)
+	}
+	return nil
+}
+
 func (client *keycloakClient) AddUserAttribute(token, userID string, attributes map[string][]string) error {
 	updataData := UserAttributeRepresentation{
 		Attributes: attributes,
@@ -455,7 +479,7 @@ func (client *keycloakClient) AddUserAttribute(token, userID string, attributes 
 		return err
 	}
 
-	req, err := http.NewRequest("PATCH", fmt.Sprintf("%s/%s", client.Config.BaseConfig.UserURL, userID), bytes.NewBuffer(data))
+	req, err := http.NewRequest("PUT", fmt.Sprintf("%s/%s", client.Config.BaseConfig.UserURL, userID), bytes.NewBuffer(data))
 	if err != nil {
 		logger.GetLogger().Errorf("failed to create request: %v", err)
 		return err
@@ -473,6 +497,29 @@ func (client *keycloakClient) AddUserAttribute(token, userID string, attributes 
 	if resp.StatusCode != http.StatusNoContent {
 		logger.GetLogger().Errorf("failed to patch user: %v", resp.StatusCode)
 		return fmt.Errorf("failed to patch user: %s", resp.Status)
+	}
+	return nil
+}
+
+func (client *keycloakClient) QueryUserAttribute(token, userID string) error {
+	req, err := http.NewRequest("GET", fmt.Sprintf("%s/%s", client.Config.BaseConfig.UserURL, userID), nil)
+	if err != nil {
+		logger.GetLogger().Errorf("failed to create request: %v", err)
+		return err
+	}
+	req.Header.Set("Content-Type", "application/json")
+	req.Header.Set("Authorization", "Bearer "+token)
+
+	resp, err := client.HTTPClient.Do(req)
+	if err != nil {
+		logger.GetLogger().Errorf("failed to send request: %v", err)
+		return err
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		logger.GetLogger().Errorf("failed to query user: %v", resp.StatusCode)
+		return fmt.Errorf("failed to query user: %s", resp.Status)
 	}
 	return nil
 }

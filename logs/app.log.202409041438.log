@@ -50,4 +50,20 @@ C:/Program Files/Go/src/runtime/asm_amd64.s:1700 (0x428d60)
 [0m[32m[2024-09-04 14:40:50] INFO 
 [0m[32m[2024-09-04 14:43:04] INFO {{0 2024-09-04 14:43:04.3744497 +0800 CST m=+292.368607401 0001-01-01 00:00:00 +0000 UTC {0001-01-01 00:00:00 +0000 UTC false}} example_user 1725432184 /api/v1/kubernetes/apply /api/v1/kubernetes/apply example_module POST No description available for this endpoint.}
 [0m[32m[2024-09-04 14:43:04] INFO 
+[0m[32m[2024-09-04 16:06:45] INFO Updated registry.dev.rdev.tech to IP 172.30.1.13
+
+[0m[32m[2024-09-04 16:06:45] INFO Successfully add hosts to 192.168.227.160
+
+[0m[32m[2024-09-04 16:06:46] INFO Updated registry.dev.rdev.tech to IP 172.30.1.13
+
+[0m[32m[2024-09-04 16:06:46] INFO Successfully add hosts to 192.168.227.162
+
+[0m[32m[2024-09-04 16:06:46] INFO Updated registry.dev.rdev.tech to IP 172.30.1.13
+
+[0m[32m[2024-09-04 16:06:46] INFO Successfully add hosts to 192.168.227.161
+
+[0m[32m[2024-09-04 16:06:46] INFO {{0 2024-09-04 16:06:45.6530801 +0800 CST m=+5313.647237801 0001-01-01 00:00:00 +0000 UTC {0001-01-01 00:00:00 +0000 UTC false}} example_user 1725437206 /api/v1/server/hostsparallel /api/v1/server/hostsparallel example_module POST No description available for this endpoint.}
+[0m[32m[2024-09-04 16:06:46] INFO 
+[0m[32m[2024-09-04 17:06:49] INFO {{0 2024-09-04 17:06:48.4637504 +0800 CST m=+8916.457908101 0001-01-01 00:00:00 +0000 UTC {0001-01-01 00:00:00 +0000 UTC false}} example_user 1725440809 /api/v1/apiserver/configure /api/v1/apiserver/configure example_module POST No description available for this endpoint.}
+[0m[32m[2024-09-04 17:06:49] INFO 
 [0m

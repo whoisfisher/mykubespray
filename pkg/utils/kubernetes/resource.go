@@ -25,6 +25,7 @@ var gvrMapping = map[string]schema.GroupVersionResource{
 	"ClusterRole":        {Group: "rbac.authorization.k8s.io", Version: "v1", Resource: "clusterroles"},
 	"RoleBinding":        {Group: "rbac.authorization.k8s.io", Version: "v1", Resource: "rolebindings"},
 	"ClusterRoleBinding": {Group: "rbac.authorization.k8s.io", Version: "v1", Resource: "clusterrolebindings"},
+	"ServiceAccount":     {Group: "", Version: "v1", Resource: "serviceaccounts"},
 }
 
 func getGVR(kind, apiVersion string) (schema.GroupVersionResource, bool) {
@@ -82,6 +83,8 @@ func toPlural(kind string) string {
 		return "rolebindings"
 	case "ClusterRoleBinding":
 		return "clusterrolebindings"
+	case "ServiceAccount":
+		return "serviceaccounts"
 	default:
 		return ""
 	}

@@ -255,6 +255,56 @@ func (pool *SSHExecutorPool) CopyFileParallel(srcFile, destFile string, hosts []
 	return &copyResult
 }
 
+func (pool *SSHExecutorPool) CopyMultiFileParallel(files []entity.FileSrcDest, hosts []entity.Host) *CopyResult {
+	var wg sync.WaitGroup
+	results := make(chan MachineResult, len(hosts))
+	for index, host := range hosts {
+		wg.Add(index)
+		go func(host entity.Host) {
+			defer wg.Done()
+			pool.mutex.Lock()
+			executor, err := pool.GetSSHExecutor(host)
+			pool.mutex.Unlock()
+			if err != nil {
+				logger.GetLogger().Errorf("Failed to get SSH executor: %s", err.Error())
+				results <- MachineResult{Machine: host.Address, Success: false, Error: fmt.Sprintf("Failed to connect to %s: %s", host.Address, err.Error())}
+				return
+			}
+			_ = executor.CopyMultiFile(files, func(msg string) {
+				results <- MachineResult{Machine: host.Address, Success: true, Error: ""}
+			})
+			if err != nil {
+				results <- MachineResult{Machine: host.Address, Success: false, Error: fmt.Sprintf("Failed to copy file to %s: %s", host.Address, err.Error())}
+			}
+		}(host)
+	}
+
+	go func() {
+		wg.Wait()
+		close(results)
+	}()
+	var successCount, failureCount int
+	var copyResult CopyResult
+	var machineResults []MachineResult
+	for result := range results {
+		if result.Success {
+			logger.GetLogger().Infof("Successfully copied file to %s\n", result.Machine)
+			successCount++
+		} else {
+			logger.GetLogger().Errorf("Failed to copy file to %s: %s\n", result.Machine, result.Error)
+			failureCount++
+		}
+		machineResults = append(machineResults, result)
+	}
+	copyResult.Results = machineResults
+	if failureCount > 0 {
+		copyResult.OverallSuccess = false
+	} else {
+		copyResult.OverallSuccess = true
+	}
+	return &copyResult
+}
+
 func (pool *SSHExecutorPool) CopyFile(srcFile, destFile string, host entity.Host) error {
 	pool.mutex.Lock()
 	defer pool.mutex.Unlock()
@@ -265,6 +315,18 @@ func (pool *SSHExecutorPool) CopyFile(srcFile, destFile string, host entity.Host
 	}
 	outputHandler := func(string) { logger.GetLogger().Infof("Copy file") }
 	return executor.CopyFile(srcFile, destFile, outputHandler)
+}
+
+func (pool *SSHExecutorPool) CopyMultiFile(files []entity.FileSrcDest, host entity.Host) (*CopyResult, error) {
+	pool.mutex.Lock()
+	defer pool.mutex.Unlock()
+	executor, err := pool.GetSSHExecutor(host)
+	if err != nil {
+		logger.GetLogger().Errorf("Failed to get SSH executor: %s", err.Error())
+		return nil, err
+	}
+	outputHandler := func(string) { logger.GetLogger().Infof("Copy file") }
+	return executor.CopyMultiFile(files, outputHandler), nil
 }
 
 func (pool *SSHExecutorPool) AddHostsParallel(record entity.Record, hosts []entity.Host) *CopyResult {
@@ -317,6 +379,56 @@ func (pool *SSHExecutorPool) AddHostsParallel(record entity.Record, hosts []enti
 	return &copyResult
 }
 
+func (pool *SSHExecutorPool) AddMultiHostsParallel(records []entity.Record, hosts []entity.Host) *CopyResult {
+	var wg sync.WaitGroup
+	results := make(chan MachineResult, len(hosts))
+	for _, host := range hosts {
+		wg.Add(1)
+		go func(host entity.Host) {
+			defer wg.Done()
+			pool.mutex.Lock()
+			executor, err := pool.GetSSHExecutor(host)
+			pool.mutex.Unlock()
+			if err != nil {
+				logger.GetLogger().Errorf("Failed to get SSH executor: %s", err.Error())
+				results <- MachineResult{Machine: host.Address, Success: false, Error: fmt.Sprintf("Failed to connect to %s: %s", host.Address, err.Error())}
+				return
+			}
+			err = executor.AddMultiHosts(records, func(msg string) {
+				results <- MachineResult{Machine: host.Address, Success: true, Error: ""}
+			})
+			if err != nil {
+				results <- MachineResult{Machine: host.Address, Success: false, Error: fmt.Sprintf("Failed to add hosts to %s: %s", host.Address, err.Error())}
+			}
+		}(host)
+	}
+
+	go func() {
+		wg.Wait()
+		close(results)
+	}()
+	var successCount, failureCount int
+	var copyResult CopyResult
+	var machineResults []MachineResult
+	for result := range results {
+		if result.Success {
+			logger.GetLogger().Infof("Successfully add hosts to %s\n", result.Machine)
+			successCount++
+		} else {
+			logger.GetLogger().Errorf("Failed to add hosts %s: %s\n", result.Machine, result.Error)
+			failureCount++
+		}
+		machineResults = append(machineResults, result)
+	}
+	copyResult.Results = machineResults
+	if failureCount > 0 {
+		copyResult.OverallSuccess = false
+	} else {
+		copyResult.OverallSuccess = true
+	}
+	return &copyResult
+}
+
 func (pool *SSHExecutorPool) AddHosts(record entity.Record, host entity.Host) error {
 	pool.mutex.Lock()
 	defer pool.mutex.Unlock()
@@ -327,4 +439,16 @@ func (pool *SSHExecutorPool) AddHosts(record entity.Record, host entity.Host) er
 	}
 	outputHandler := func(string) { logger.GetLogger().Infof("Add hosts") }
 	return executor.AddHosts(record, outputHandler)
+}
+
+func (pool *SSHExecutorPool) AddMultiHosts(records []entity.Record, host entity.Host) error {
+	pool.mutex.Lock()
+	defer pool.mutex.Unlock()
+	executor, err := pool.GetSSHExecutor(host)
+	if err != nil {
+		logger.GetLogger().Errorf("Failed to get SSH executor: %s", err.Error())
+		return err
+	}
+	outputHandler := func(string) { logger.GetLogger().Infof("Add hosts") }
+	return executor.AddMultiHosts(records, outputHandler)
 }
