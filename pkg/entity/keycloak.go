@@ -19,3 +19,8 @@ type GroupConf struct {
 	BaseKeycloakConf
 	keycloak.GroupRepresentation
 }
+
+type UserConf struct {
+	BaseKeycloakConf
+	Name string
+}

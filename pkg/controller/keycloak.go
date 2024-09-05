@@ -39,3 +39,17 @@ func CreateGroup(ctx *gin.Context) {
 	}
 	ginx.NewRender(ctx).Data("Create group success", nil)
 }
+
+func QueryUserByName(ctx *gin.Context) {
+	var userConf entity.UserConf
+	if err := ctx.ShouldBind(&userConf); err != nil {
+		logger.GetLogger().Errorf("GroupConf bind failed: %s", err.Error())
+		ginx.Dangerous(err)
+	}
+	err := keycloakController.keycloakService.QueryUserByName(userConf)
+	if err != nil {
+		logger.GetLogger().Errorf("Query User failed: %s", err.Error())
+		ginx.Dangerous(err)
+	}
+	ginx.NewRender(ctx).Data("Query User success", nil)
+}

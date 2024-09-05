@@ -525,12 +525,13 @@ func (client *keycloakClient) QueryUserAttribute(token, userID string) error {
 }
 
 func (client *keycloakClient) QueryUserByName(token, name string) (*http.Response, error) {
-	req, err := http.NewRequest("GET", fmt.Sprintf("%s?username=%s", client.Config.BaseConfig.UserURL, name), nil)
+	url := fmt.Sprintf("%s?username=%s", client.Config.BaseConfig.UserURL, name)
+	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {
 		logger.GetLogger().Errorf("failed to create request: %v", err)
 		return nil, err
 	}
-	req.Header.Set("Content-Type", "application/json")
+	//req.Header.Set("Content-Type", "application/json")
 	req.Header.Set("Authorization", "Bearer "+token)
 
 	resp, err := client.HTTPClient.Do(req)
