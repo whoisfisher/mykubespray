@@ -518,10 +518,33 @@ func (client *keycloakClient) QueryUserAttribute(token, userID string) error {
 	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
-		logger.GetLogger().Errorf("failed to query user: %v", resp.StatusCode)
-		return fmt.Errorf("failed to query user: %s", resp.Status)
+		logger.GetLogger().Errorf("failed to query user attribute: %v", resp.StatusCode)
+		return fmt.Errorf("failed to query user attribute: %s", resp.Status)
 	}
 	return nil
+}
+
+func (client *keycloakClient) QueryUserByName(token, name string) (*http.Response, error) {
+	req, err := http.NewRequest("GET", fmt.Sprintf("%s?username=%s", client.Config.BaseConfig.UserURL, name), nil)
+	if err != nil {
+		logger.GetLogger().Errorf("failed to create request: %v", err)
+		return nil, err
+	}
+	req.Header.Set("Content-Type", "application/json")
+	req.Header.Set("Authorization", "Bearer "+token)
+
+	resp, err := client.HTTPClient.Do(req)
+	if err != nil {
+		logger.GetLogger().Errorf("failed to send request: %v", err)
+		return nil, err
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		logger.GetLogger().Errorf("failed to get user: %v", resp.StatusCode)
+		return nil, fmt.Errorf("failed to get user: %s", resp.Status)
+	}
+	return resp, nil
 }
 
 func (client *keycloakClient) AddClientMapper(token, clientID string, representation ClientMapperRepresentation) error {
