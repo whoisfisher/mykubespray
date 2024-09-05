@@ -46,10 +46,10 @@ func QueryUserByName(ctx *gin.Context) {
 		logger.GetLogger().Errorf("GroupConf bind failed: %s", err.Error())
 		ginx.Dangerous(err)
 	}
-	err := keycloakController.keycloakService.QueryUserByName(userConf)
+	data, err := keycloakController.keycloakService.QueryUserByName(userConf)
 	if err != nil {
 		logger.GetLogger().Errorf("Query User failed: %s", err.Error())
 		ginx.Dangerous(err)
 	}
-	ginx.NewRender(ctx).Data("Query User success", nil)
+	ginx.NewRender(ctx).Data(data, nil)
 }

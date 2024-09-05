@@ -524,7 +524,7 @@ func (client *keycloakClient) QueryUserAttribute(token, userID string) error {
 	return nil
 }
 
-func (client *keycloakClient) QueryUserByName(token, name string) (*http.Response, error) {
+func (client *keycloakClient) QueryUserByName(token, name string) ([]byte, error) {
 	url := fmt.Sprintf("%s?username=%s", client.Config.BaseConfig.UserURL, name)
 	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {
@@ -545,7 +545,8 @@ func (client *keycloakClient) QueryUserByName(token, name string) (*http.Respons
 		logger.GetLogger().Errorf("failed to get user: %v", resp.StatusCode)
 		return nil, fmt.Errorf("failed to get user: %s", resp.Status)
 	}
-	return resp, nil
+	responseBody, err := io.ReadAll(resp.Body)
+	return responseBody, nil
 }
 
 func (client *keycloakClient) AddClientMapper(token, clientID string, representation ClientMapperRepresentation) error {

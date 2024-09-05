@@ -2,7 +2,6 @@ package service
 
 import (
 	"encoding/json"
-	"fmt"
 	"github.com/whoisfisher/mykubespray/pkg/entity"
 	"github.com/whoisfisher/mykubespray/pkg/logger"
 	"github.com/whoisfisher/mykubespray/pkg/utils/keycloak"
@@ -11,7 +10,7 @@ import (
 
 type KeycloakService interface {
 	CreateGroup(conf entity.GroupConf) error
-	QueryUserByName(conf entity.UserConf) error
+	QueryUserByName(conf entity.UserConf) ([]byte, error)
 }
 
 type keycloakService struct {
@@ -69,7 +68,7 @@ func (ks keycloakService) CreateGroup(conf entity.GroupConf) error {
 	return nil
 }
 
-func (ks keycloakService) QueryUserByName(conf entity.UserConf) error {
+func (ks keycloakService) QueryUserByName(conf entity.UserConf) ([]byte, error) {
 	baseConfig := keycloak.BaseConfig{
 		BaseUrl:      conf.BaseUrl,
 		Reamls:       conf.Reamls,
@@ -85,19 +84,18 @@ func (ks keycloakService) QueryUserByName(conf entity.UserConf) error {
 	client := keycloak.NewKeycloakClient(conf.GrantType, kconfig, 10*time.Second)
 	token, err := client.GetToken()
 	if err != nil {
-		return err
+		return nil, err
 	}
 	objToken := make(map[string]interface{})
 	err = json.Unmarshal([]byte(token), &objToken)
 	if err != nil {
 		logger.GetLogger().Errorf("Error getting token: %v", err)
-		return err
+		return nil, err
 	}
 	acessToken := objToken["access_token"].(string)
 	data, err := client.QueryUserByName(acessToken, conf.Name)
 	if err != nil {
-		return err
+		return nil, err
 	}
-	fmt.Printf("%v", data.Body)
-	return nil
+	return data, nil
 }
