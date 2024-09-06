@@ -129,10 +129,10 @@ func (client *K8sClient) DeployYAMLs(contents []string) (*entity.ApplyResults, e
 
 	for _, content := range contents {
 		wg.Add(1)
-		go func(file string) {
+		go func(content string) {
 			defer wg.Done()
 			var result entity.SingleApplyResult
-			result.FileName = file
+			result.FileName = ""
 			if err := client.DeployYAML(content); err != nil {
 				result.Success = false
 				result.Error = err.Error()
