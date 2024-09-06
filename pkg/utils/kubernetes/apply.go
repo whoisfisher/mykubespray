@@ -88,6 +88,73 @@ func (client *K8sClient) ApplyYAMLs(files []string) (*entity.ApplyResults, error
 	}, nil
 }
 
+func (client *K8sClient) DeployYAML(content string) error {
+	var unstructuredData *unstructured.Unstructured
+	if err := yaml.Unmarshal([]byte(content), &unstructuredData); err != nil {
+		logger.GetLogger().Printf("Error unmarshalling YAML: %s", err)
+		return err
+	}
+	obj := unstructuredData.Object
+
+	apiVersion, kind := obj["apiVersion"].(string), obj["kind"].(string)
+	if apiVersion == "" || kind == "" {
+		err := fmt.Errorf("apiVersion or kind not found in YAML")
+		logger.GetLogger().Println(err)
+		return err
+	}
+
+	gvr, namespaced := getGVR(kind, apiVersion)
+	if gvr == (schema.GroupVersionResource{}) {
+		err := fmt.Errorf("unsupported kind: %s", kind)
+		logger.GetLogger().Println(err)
+		return err
+	}
+
+	resourceClient := client.DynamicClient.Resource(gvr)
+	namespace := getNamespace(obj)
+
+	if namespaced && namespace != "" {
+		return applyInNamespace(resourceClient, namespace, unstructuredData)
+	}
+
+	return applyNonNamespaced(resourceClient, unstructuredData)
+}
+
+func (client *K8sClient) DeployYAMLs(contents []string) (*entity.ApplyResults, error) {
+	var wg sync.WaitGroup
+	var mu sync.Mutex
+
+	var results []entity.SingleApplyResult
+	var overallSuccess = true
+
+	for _, content := range contents {
+		wg.Add(1)
+		go func(file string) {
+			defer wg.Done()
+			var result entity.SingleApplyResult
+			result.FileName = file
+			if err := client.DeployYAML(content); err != nil {
+				result.Success = false
+				result.Error = err.Error()
+				mu.Lock()
+				overallSuccess = false
+				mu.Unlock()
+			} else {
+				result.Success = true
+			}
+			mu.Lock()
+			results = append(results, result)
+			mu.Unlock()
+		}(content)
+	}
+
+	wg.Wait()
+	return &entity.ApplyResults{
+		OverallSuccess: overallSuccess,
+		Results:        results,
+	}, nil
+}
+
 func (client *K8sClient) AddOrUpdateChartRepo(helmRepo entity.HelmRepository) error {
 	var repoEntry repo.Entry
 	repoEntry.Name = helmRepo.Name
