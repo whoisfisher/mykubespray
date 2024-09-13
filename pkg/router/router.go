@@ -23,6 +23,7 @@ func New(version string) *gin.Engine {
 		r.Use(loggerMid)
 	}
 	r.Use(aop.LogRequest())
+	r.Use(aop.LoggerMiddleware())
 	configRoute(r, version)
 	return r
 }

@@ -74,13 +74,36 @@ func Logrus() gin.HandlerFunc {
 		clientIP := c.ClientIP()
 
 		// 日志格式
-		logger.GetLogger().WithFields(logrus.Fields{
+		fields := logrus.Fields{
 			"status_code":  statusCode,
 			"latency_time": latencyTime,
 			"client_ip":    clientIP,
 			"req_method":   reqMethod,
 			"req_uri":      reqUrl,
-		}).Info()
+		}
+		logrus.WithFields(fields).Info()
+	}
+}
 
+func LoggerMiddleware() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		// 记录请求开始时间
+		start := time.Now()
+
+		// 处理请求
+		c.Next()
+
+		// 记录请求结束时间
+		duration := time.Since(start)
+
+		// 获取请求信息
+		method := c.Request.Method
+		path := c.Request.URL.Path
+		statusCode := c.Writer.Status()
+		clientIP := c.ClientIP()
+
+		// 打印日志
+		logger.GetLogger().Infof("Method: %s | Path: %s | Status: %d | Duration: %v | IP: %s\n",
+			method, path, statusCode, duration, clientIP)
 	}
 }
