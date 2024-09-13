@@ -122,7 +122,7 @@ func isTemporaryError(err error) bool {
 }
 
 func GetHelmCharts(repoURL string) (map[string][]entity.Chart, error) {
-	httpClient := &http.Client{Timeout: 10, Transport: &httpx.CustomTransport{}}
+	httpClient := &http.Client{Timeout: 10 * time.Second, Transport: &httpx.CustomTransport{}}
 	resp, err := httpClient.Get(repoURL)
 	if err != nil {
 		return nil, fmt.Errorf("failed to get index.yaml: %w", err)

@@ -16,6 +16,7 @@ import (
 	"k8s.io/client-go/tools/clientcmd"
 	"net/http"
 	"os"
+	"time"
 )
 
 type K8sClient struct {
@@ -49,7 +50,7 @@ func NewK8sClient(config entity.K8sConfig) (*K8sClient, error) {
 	if err != nil {
 		return nil, fmt.Errorf("failed to create crd client: %v", err)
 	}
-	httpClient := &http.Client{Timeout: 10, Transport: &httpx.CustomTransport{}}
+	httpClient := &http.Client{Timeout: 10 * time.Second, Transport: &httpx.CustomTransport{}}
 	//helmClient, err := NewHelmClient(&config)
 	helmClient, err := NewHelmClientFromRestConfig(kubeconf)
 	if err != nil {
