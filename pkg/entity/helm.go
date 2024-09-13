@@ -21,3 +21,29 @@ type HelmChartInfo struct {
 	ValuesYaml      string `json:"values_yaml"`
 	CreateNamespace bool   `json:"create_namespace"`
 }
+
+type Chart struct {
+	Name         string       `yaml:"name"`
+	Version      string       `yaml:"version"`
+	Description  string       `yaml:"description"`
+	URLs         []string     `yaml:"urls"`
+	Digest       string       `yaml:"digest"`
+	Dependencies []Dependency `yaml:"dependencies"`
+}
+
+// Dependency represents a dependency for a Helm chart
+type Dependency struct {
+	Name    string `yaml:"name"`
+	Version string `yaml:"version"`
+}
+
+// RepoIndex represents the index.yaml file structure
+type RepoIndex struct {
+	Entries map[string][]Chart `yaml:"entries"`
+}
+
+// ChartInfo represents the structure of the JSON response
+type ChartInfo struct {
+	Repository string  `json:"repository"`
+	Charts     []Chart `json:"charts"`
+}

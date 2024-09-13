@@ -10,6 +10,7 @@ import (
 	"github.com/whoisfisher/mykubespray/pkg/logger"
 	"helm.sh/helm/v3/pkg/release"
 	"helm.sh/helm/v3/pkg/repo"
+	"io"
 	appsv1 "k8s.io/api/apps/v1"
 	autoscalingv1 "k8s.io/api/autoscaling/v1"
 	batchv1 "k8s.io/api/batch/v1"
@@ -953,4 +954,24 @@ func (client *K8sClient) UninstallRelease(info entity.HelmChartInfo) error {
 		return err
 	}
 	return nil
+}
+
+func (client *K8sClient) GetHelmCharts(repoURL string) (map[string][]entity.Chart, error) {
+	resp, err := client.HttpClient.Get(repoURL)
+	if err != nil {
+		return nil, fmt.Errorf("failed to get index.yaml: %w", err)
+	}
+	defer resp.Body.Close()
+
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return nil, fmt.Errorf("failed to read response body: %w", err)
+	}
+
+	var index entity.RepoIndex
+	if err := yaml.Unmarshal(body, &index); err != nil {
+		return nil, fmt.Errorf("failed to unmarshal index.yaml: %w", err)
+	}
+
+	return index.Entries, nil
 }
