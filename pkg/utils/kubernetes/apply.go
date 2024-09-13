@@ -14,8 +14,10 @@ import (
 	autoscalingv1 "k8s.io/api/autoscaling/v1"
 	batchv1 "k8s.io/api/batch/v1"
 	corev1 "k8s.io/api/core/v1"
+	networkingv1 "k8s.io/api/networking/v1"
 	policyv1 "k8s.io/api/policy/v1"
 	rbacv1 "k8s.io/api/rbac/v1"
+	apiextensionsv1 "k8s.io/apiextensions-apiserver/pkg/apis/apiextensions/v1"
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
 	"k8s.io/apimachinery/pkg/runtime/schema"
@@ -854,6 +856,62 @@ func (client *K8sClient) GetPDBInfo(namespace, pdbName string) (*policyv1.PodDis
 	}
 
 	return pdb, nil
+}
+
+func (client *K8sClient) GetEvents(namespace string) ([]corev1.Event, error) {
+	events, err := client.Clientset.CoreV1().Events(namespace).List(context.TODO(), v1.ListOptions{})
+	if err != nil {
+		return nil, fmt.Errorf("failed to get events: %w", err)
+	}
+	return events.Items, nil
+}
+
+func (client *K8sClient) GetConfigMap(namespace, configMapName string) (*corev1.ConfigMap, error) {
+	configMap, err := client.Clientset.CoreV1().ConfigMaps(namespace).Get(context.TODO(), configMapName, v1.GetOptions{})
+	if err != nil {
+		return nil, fmt.Errorf("failed to get ConfigMap: %w", err)
+	}
+	return configMap, nil
+}
+
+func (client *K8sClient) GetSecret(namespace, secretName string) (*corev1.Secret, error) {
+	secret, err := client.Clientset.CoreV1().Secrets(namespace).Get(context.TODO(), secretName, v1.GetOptions{})
+	if err != nil {
+		return nil, fmt.Errorf("failed to get Secret: %w", err)
+	}
+	return secret, nil
+}
+
+func (client *K8sClient) GetPodResources(namespace, podName string) (*corev1.Pod, error) {
+	pod, err := client.Clientset.CoreV1().Pods(namespace).Get(context.TODO(), podName, v1.GetOptions{})
+	if err != nil {
+		return nil, fmt.Errorf("failed to get Pod: %w", err)
+	}
+	return pod, nil
+}
+
+func (client *K8sClient) GetNodeInfo(nodeName string) (*corev1.Node, error) {
+	node, err := client.Clientset.CoreV1().Nodes().Get(context.TODO(), nodeName, v1.GetOptions{})
+	if err != nil {
+		return nil, fmt.Errorf("failed to get Node: %w", err)
+	}
+	return node, nil
+}
+
+func (client *K8sClient) GetNetworkPolicy(namespace, networkPolicyName string) (*networkingv1.NetworkPolicy, error) {
+	networkPolicy, err := client.Clientset.NetworkingV1().NetworkPolicies(namespace).Get(context.TODO(), networkPolicyName, v1.GetOptions{})
+	if err != nil {
+		return nil, fmt.Errorf("failed to get NetworkPolicy: %w", err)
+	}
+	return networkPolicy, nil
+}
+
+func (client *K8sClient) GetCRDInfo(crdName string) (*apiextensionsv1.CustomResourceDefinition, error) {
+	crd, err := client.CRDClient.ApiextensionsV1().CustomResourceDefinitions().Get(context.TODO(), crdName, v1.GetOptions{})
+	if err != nil {
+		return nil, fmt.Errorf("failed to get CRD: %w", err)
+	}
+	return crd, nil
 }
 
 func (client *K8sClient) InstallOrUpgradeChart(info entity.HelmChartInfo) (*release.Release, error) {

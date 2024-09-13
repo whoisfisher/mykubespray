@@ -6,6 +6,8 @@ import (
 	"github.com/pkg/errors"
 	"github.com/whoisfisher/mykubespray/pkg/entity"
 	"github.com/whoisfisher/mykubespray/pkg/logger"
+	"k8s.io/apiextensions-apiserver/pkg/client/clientset/clientset"
+	apiextensionsclientset "k8s.io/apiextensions-apiserver/pkg/client/clientset/clientset"
 	"k8s.io/client-go/discovery"
 	"k8s.io/client-go/dynamic"
 	"k8s.io/client-go/informers"
@@ -19,6 +21,7 @@ type K8sClient struct {
 	Clientset       *kubernetes.Clientset
 	DynamicClient   dynamic.Interface
 	DiscoveryClient *discovery.DiscoveryClient
+	CRDClient       *clientset.Clientset
 	HelmClient      helm.Client
 	InformerFactory informers.SharedInformerFactory
 }
@@ -40,6 +43,10 @@ func NewK8sClient(config entity.K8sConfig) (*K8sClient, error) {
 	if err != nil {
 		return nil, fmt.Errorf("failed to create discovery client: %v", err)
 	}
+	crdclient, err := apiextensionsclientset.NewForConfig(kubeconf)
+	if err != nil {
+		return nil, fmt.Errorf("failed to create crd client: %v", err)
+	}
 	//helmClient, err := NewHelmClient(&config)
 	helmClient, err := NewHelmClientFromRestConfig(kubeconf)
 	if err != nil {
@@ -51,6 +58,7 @@ func NewK8sClient(config entity.K8sConfig) (*K8sClient, error) {
 		Clientset:       clientset,
 		DynamicClient:   dynamicClient,
 		DiscoveryClient: discoveryClient,
+		CRDClient:       crdclient,
 		HelmClient:      helmClient,
 		InformerFactory: informerFactory,
 	}, nil
