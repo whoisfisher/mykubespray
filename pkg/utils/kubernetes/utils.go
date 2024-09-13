@@ -3,11 +3,16 @@ package kubernetes
 import (
 	"context"
 	"fmt"
+	"github.com/whoisfisher/mykubespray/pkg/entity"
+	"github.com/whoisfisher/mykubespray/pkg/httpx"
+	"io"
 	"k8s.io/apimachinery/pkg/api/errors"
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
 	"k8s.io/apimachinery/pkg/util/wait"
 	"k8s.io/client-go/dynamic"
+	"net/http"
+	"sigs.k8s.io/kustomize/kyaml/yaml"
 	"time"
 )
 
@@ -114,4 +119,25 @@ func applyResourceWithRetry(resourceClient dynamic.ResourceInterface, name strin
 
 func isTemporaryError(err error) bool {
 	return errors.IsServerTimeout(err) || errors.IsTimeout(err)
+}
+
+func GetHelmCharts(repoURL string) (map[string][]entity.Chart, error) {
+	httpClient := &http.Client{Timeout: 10, Transport: &httpx.CustomTransport{}}
+	resp, err := httpClient.Get(repoURL)
+	if err != nil {
+		return nil, fmt.Errorf("failed to get index.yaml: %w", err)
+	}
+	defer resp.Body.Close()
+
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return nil, fmt.Errorf("failed to read response body: %w", err)
+	}
+
+	var index entity.RepoIndex
+	if err := yaml.Unmarshal(body, &index); err != nil {
+		return nil, fmt.Errorf("failed to unmarshal index.yaml: %w", err)
+	}
+
+	return index.Entries, nil
 }
