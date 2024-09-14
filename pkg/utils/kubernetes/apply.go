@@ -632,23 +632,6 @@ func (client *K8sClient) GetSecretDecodeData(namespace, secretName string) (map[
 	return secretData, nil
 }
 
-func (client *K8sClient) AddOrUpdateChartRepo(helmRepo entity.HelmRepository) error {
-	var repoEntry repo.Entry
-	repoEntry.Name = helmRepo.Name
-	repoEntry.URL = helmRepo.Url
-	repoEntry.Username = helmRepo.Username
-	repoEntry.Password = helmRepo.Password
-	repoEntry.CertFile = helmRepo.CertFile
-	repoEntry.CAFile = helmRepo.CAFile
-	repoEntry.KeyFile = helmRepo.KeyFile
-	repoEntry.InsecureSkipTLSverify = helmRepo.InsecureSkipTlsVerify
-	if err := client.HelmClient.AddOrUpdateChartRepo(repoEntry); err != nil {
-		logger.GetLogger().Errorf("Faile to add or update helm repository to cluster: %s", err.Error())
-		return err
-	}
-	return nil
-}
-
 func (client *K8sClient) GetConfigMapData(namespace, configMapName string) (map[string]string, error) {
 	configMap, err := client.Clientset.CoreV1().ConfigMaps(namespace).Get(context.TODO(), configMapName, v1.GetOptions{})
 	if err != nil {
@@ -913,6 +896,23 @@ func (client *K8sClient) GetCRDInfo(crdName string) (*apiextensionsv1.CustomReso
 		return nil, fmt.Errorf("failed to get CRD: %w", err)
 	}
 	return crd, nil
+}
+
+func (client *K8sClient) AddOrUpdateChartRepo(helmRepo entity.HelmRepository) error {
+	var repoEntry repo.Entry
+	repoEntry.Name = helmRepo.Name
+	repoEntry.URL = helmRepo.Url
+	repoEntry.Username = helmRepo.Username
+	repoEntry.Password = helmRepo.Password
+	repoEntry.CertFile = helmRepo.CertFile
+	repoEntry.CAFile = helmRepo.CAFile
+	repoEntry.KeyFile = helmRepo.KeyFile
+	repoEntry.InsecureSkipTLSverify = helmRepo.InsecureSkipTlsVerify
+	if err := client.HelmClient.AddOrUpdateChartRepo(repoEntry); err != nil {
+		logger.GetLogger().Errorf("Faile to add or update helm repository to cluster: %s", err.Error())
+		return err
+	}
+	return nil
 }
 
 func (client *K8sClient) InstallOrUpgradeChart(info entity.HelmChartInfo) (*release.Release, error) {

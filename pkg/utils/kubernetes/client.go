@@ -107,11 +107,11 @@ func GetKubernetesRestConfig(c *entity.K8sConfig) (*rest.Config, error) {
 func NewHelmClient(c *entity.K8sConfig) (helm.Client, error) {
 	options := &helm.KubeConfClientOptions{
 		Options: &helm.Options{
-			Namespace:        "", // Change this to the namespace you wish to install the chart in.
+			Namespace:        "",
 			RepositoryCache:  "/tmp/.helmcache",
 			RepositoryConfig: "/tmp/.helmrepo",
 			Debug:            true,
-			Linting:          true, // Change this to false if you don't want linting.
+			Linting:          true,
 			DebugLog: func(format string, v ...interface{}) {
 				logger.GetLogger().Printf(format, v...)
 			},
@@ -147,13 +147,13 @@ func NewHelmClientFromRestConfig(kubeConf *rest.Config) (helm.Client, error) {
 	return client, nil
 }
 
-//func GetKubernetesRestConfigFromKubeConfig(c *K8sConfig) (*rest.Config, error) {
-//	kubeConf, err := clientcmd.RESTConfigFromKubeConfig([]byte(c.Kubeconfig))
-//	if err != nil {
-//		return nil, errors.Wrap(err, fmt.Sprintf("new kubernetes client with config failed: %v", err))
-//	}
-//	return kubeConf, nil
-//}
+func GetKubernetesRestConfigFromKubeConfig(c *entity.K8sConfig) (*rest.Config, error) {
+	kubeConf, err := clientcmd.RESTConfigFromKubeConfig([]byte(c.Kubeconfig))
+	if err != nil {
+		return nil, errors.Wrap(err, fmt.Sprintf("new kubernetes client with config failed: %v", err))
+	}
+	return kubeConf, nil
+}
 
 func NewKubernetesClient(c *entity.K8sConfig) (*kubernetes.Clientset, error) {
 	kubeConf, err := GetKubernetesRestConfig(c)
