@@ -141,7 +141,7 @@ spec:
         skipTLSVerify: {{ .RegistrySkipTLS }}
         plainHTTP: {{ .RegistryPlainHttp }}
     privateRegistry: "{{ .RegistryUrI }}"
-    namespaceOverride: "kubesphereio"
+    namespaceOverride: "carsio"
     registryMirrors: []
     insecureRegistries: ["{{ .InsecureRegistry }}"]
   addons: []
@@ -233,7 +233,7 @@ spec:
         skipTLSVerify: {{ .RegistrySkipTLS }}
         plainHTTP: {{ .RegistryPlainHttp }}
     privateRegistry: "{{ .RegistryUrI }}"
-    namespaceOverride: "kubesphereio"
+    namespaceOverride: "carsio"
     registryMirrors: []
     insecureRegistries: ["{{ .InsecureRegistry }}"]
   addons: []
