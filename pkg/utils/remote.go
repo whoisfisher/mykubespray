@@ -294,8 +294,8 @@ func (executor *SSHExecutor) CopyMultiFile(files []entity.FileSrcDest, outputHan
 		return nil
 	}
 	defer sftpClient.Close()
-	for index, file := range files {
-		wg.Add(index)
+	for _, file := range files {
+		wg.Add(1)
 		go func(file entity.FileSrcDest) {
 			defer wg.Done()
 			src, err := os.Open(file.SrcFile)
@@ -390,7 +390,7 @@ func (executor *SSHExecutor) MkDirALL(path string, outputHandler func(string)) e
 	}
 	defer session.Close()
 	path = filepath.ToSlash(path)
-	cmd := fmt.Sprintf("mkdir -p %s", path)
+	cmd := fmt.Sprintf("sudo mkdir -p %s", path)
 	err = session.Run(cmd)
 	if err != nil {
 		errMsg := fmt.Sprintf("Failed to create directory '%s' on remote host: %s", path, err)
@@ -487,7 +487,9 @@ func (executor *SSHExecutor) AddMultiHosts(records []entity.Record, outputHandle
 	tmpFile := "/tmp/hosts"
 	err = os.WriteFile(tmpFile, []byte(updateContent.String()), 0644)
 	if err != nil {
-		logger.GetLogger().Error("Failed to write to temporary file: %s", err)
+		logger.GetLogger().Error("Failed to write "+
+			""+
+			" temporary file: %s", err)
 		return fmt.Errorf("Failed to write to temporary file: %s", err)
 	}
 	cmd := fmt.Sprintf("sudo cp %s /etc/hosts", tmpFile)
