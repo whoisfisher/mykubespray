@@ -614,3 +614,57 @@ func (pool *SSHExecutorPool) AddMultiHosts(records []entity.Record, host entity.
 	outputHandler := func(string) { logger.GetLogger().Infof("Add hosts") }
 	return executor.AddMultiHosts(records, outputHandler)
 }
+
+func (pool *SSHExecutorPool) AddDNSParallel(dns string, hosts []entity.Host) *CopyResult {
+	var wg sync.WaitGroup
+	results := make(chan MachineResult, len(hosts))
+	for _, host := range hosts {
+		wg.Add(1)
+		go func(host entity.Host) {
+			defer wg.Done()
+			pool.mutex.Lock()
+			executor, err := pool.GetSSHExecutor(host)
+			pool.mutex.Unlock()
+			if err != nil {
+				logger.GetLogger().Errorf("Failed to get SSH executor: %s", err.Error())
+				results <- MachineResult{Machine: host.Address, Success: false, Error: fmt.Sprintf("Failed to connect to %s: %s", host.Address, err.Error())}
+				return
+			}
+			err = executor.UpdateResolvFile(dns)
+			if err != nil {
+				results <- MachineResult{Machine: host.Address, Success: false, Error: fmt.Sprintf("Failed to add dns to %s: %s", host.Address, err.Error())}
+			}
+		}(host)
+	}
+
+	go func() {
+		wg.Wait()
+		close(results)
+	}()
+	var successCount, failureCount int
+	var copyResult CopyResult
+	var machineResults []MachineResult
+	for result := range results {
+		if result.Success {
+			logger.GetLogger().Infof("Successfully add dns to %s\n", result.Machine)
+			successCount++
+		} else {
+			logger.GetLogger().Errorf("Failed to add dns %s: %s\n", result.Machine, result.Error)
+			failureCount++
+		}
+		machineResults = append(machineResults, result)
+	}
+	copyResult.Results = machineResults
+	if failureCount > 0 {
+		copyResult.OverallSuccess = false
+	} else {
+		copyResult.OverallSuccess = true
+	}
+	return &copyResult
+}
+
+func (pool *SSHExecutorPool) Close() {
+	pool.mutex.Lock()
+	defer pool.mutex.Unlock()
+	pool.Close()
+}

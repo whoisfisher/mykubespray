@@ -2,7 +2,6 @@ package utils
 
 import (
 	"bufio"
-	"bytes"
 	"fmt"
 	"github.com/pkg/sftp"
 	"github.com/whoisfisher/mykubespray/pkg/entity"
@@ -63,6 +62,47 @@ func (executor *SSHExecutor) ExecuteShortCMD(command string) ([]byte, error) {
 		return nil, err
 	}
 	return res, nil
+}
+
+func (executor *SSHExecutor) ExecuteCommandWithoutReturn(command string) error {
+	session, err := executor.Connection.Client.NewSession()
+	if err != nil {
+		logger.GetLogger().Errorf("Failed to create SSH session: %s", err.Error())
+		return err
+	}
+	defer session.Close()
+	err = session.Run(command)
+	if err != nil {
+		log.Printf("Failed to execute command: %s", err.Error())
+		return err
+	}
+	return nil
+}
+
+func (executor *SSHExecutor) ExecuteCMDWithoutReturn(command string, outputHandler func(string)) error {
+	session, err := executor.Connection.Client.NewSession()
+	if err != nil {
+		logger.GetLogger().Errorf("Failed to create SSH session: %s", err.Error())
+		return err
+	}
+	defer session.Close()
+	err = session.Run(command)
+	if err != nil {
+		log.Printf("Failed to execute command: %s", err.Error())
+		return err
+	}
+	outputHandler(fmt.Sprintf("Successfully to execute command:%s", command))
+	return nil
+}
+
+func (executor *SSHExecutor) WhoAmI() string {
+	command := fmt.Sprintf("whoami")
+	user, err := executor.ExecuteShortCommand(command)
+	if err != nil {
+		logger.GetLogger().Warnf("Read username failed: %v", err.Error())
+		return ""
+	}
+	return strings.TrimSpace(user)
 }
 
 func (executor *SSHExecutor) ExecuteCommand(command string, logChan chan LogEntry) error {
@@ -253,37 +293,6 @@ func (executor *SSHExecutor) ExecuteCommandNew(command string, logChan chan LogE
 	return nil
 }
 
-func (executor *SSHExecutor) ExecuteCommandWithoutReturn(command string) error {
-	session, err := executor.Connection.Client.NewSession()
-	if err != nil {
-		logger.GetLogger().Errorf("Failed to create SSH session: %s", err.Error())
-		return err
-	}
-	defer session.Close()
-	err = session.Run(command)
-	if err != nil {
-		log.Printf("Failed to execute command: %s", err.Error())
-		return err
-	}
-	return nil
-}
-
-func (executor *SSHExecutor) ExecuteCMDWithoutReturn(command string, outputHandler func(string)) error {
-	session, err := executor.Connection.Client.NewSession()
-	if err != nil {
-		logger.GetLogger().Errorf("Failed to create SSH session: %s", err.Error())
-		return err
-	}
-	defer session.Close()
-	err = session.Run(command)
-	if err != nil {
-		log.Printf("Failed to execute command: %s", err.Error())
-		return err
-	}
-	outputHandler(fmt.Sprintf("Successfully to execute command:%s", command))
-	return nil
-}
-
 func (executor *SSHExecutor) CopyMultiFile(files []entity.FileSrcDest, outputHandler func(string)) *CopyResult {
 	var wg sync.WaitGroup
 	results := make(chan MachineResult, len(files))
@@ -306,19 +315,34 @@ func (executor *SSHExecutor) CopyMultiFile(files []entity.FileSrcDest, outputHan
 			}
 			defer src.Close()
 
-			dest, err := sftpClient.Create(file.DestFile)
+			fileName := filepath.Base(file.DestFile)
+			tempFile := fmt.Sprintf("/tmp/%s", fileName)
+
+			dest, err := sftpClient.Create(tempFile)
 			if err != nil {
-				logger.GetLogger().Errorf("Failed to create destination file: %s", err.Error())
-				results <- MachineResult{Machine: "", Success: false, Error: fmt.Sprintf("Failed to create destination file: %s", err.Error())}
+				logger.GetLogger().Errorf("Failed to create temp destination file: %s", err.Error())
+				results <- MachineResult{Machine: "", Success: false, Error: fmt.Sprintf("Failed to create temp destination file: %s", err.Error())}
 				return
 			}
 			defer dest.Close()
 
 			if _, err := io.Copy(dest, src); err != nil {
-				logger.GetLogger().Errorf("Failed to copy file: %s", err.Error())
-				results <- MachineResult{Machine: "", Success: false, Error: fmt.Sprintf("Failed to copy file: %s", err.Error())}
+				logger.GetLogger().Errorf("Failed to copy to temp file: %s", err.Error())
+				results <- MachineResult{Machine: "", Success: false, Error: fmt.Sprintf("Failed to copy to temp file: %s", err.Error())}
 				return
 			}
+
+			command := fmt.Sprintf("cp -f %s %s", tempFile, file.DestFile)
+			if executor.WhoAmI() == "root" {
+				command = SudoPrefix(command)
+			}
+			err = executor.ExecuteCommandWithoutReturn(command)
+			if err != nil {
+				logger.GetLogger().Errorf("Failed to copy file to destination: %s", err.Error())
+				results <- MachineResult{Machine: "", Success: false, Error: fmt.Sprintf("Failed to copy file to destination: %s", err.Error())}
+				return
+			}
+
 			results <- MachineResult{Machine: "", Success: true, Error: ""}
 			outputHandler(fmt.Sprintf("Copied file %s to %s", file.SrcFile, file.DestFile))
 			return
@@ -366,15 +390,28 @@ func (executor *SSHExecutor) CopyFile(srcFile, destFile string, outputHandler fu
 	}
 	defer sftpClient.Close()
 
-	dest, err := sftpClient.Create(destFile)
+	fileName := filepath.Base(destFile)
+	tempFile := fmt.Sprintf("/tmp/%s", fileName)
+
+	dest, err := sftpClient.Create(tempFile)
 	if err != nil {
-		logger.GetLogger().Errorf("Failed to create destination file: %s", err.Error())
+		logger.GetLogger().Errorf("Failed to create temp destination file: %s", err.Error())
 		return err
 	}
 	defer dest.Close()
 
 	if _, err := io.Copy(dest, src); err != nil {
-		logger.GetLogger().Errorf("Failed to copy file: %s", err.Error())
+		logger.GetLogger().Errorf("Failed to copy to temp file: %s", err.Error())
+		return err
+	}
+
+	command := fmt.Sprintf("cp -f %s %s", tempFile, destFile)
+	if executor.WhoAmI() == "root" {
+		command = SudoPrefix(command)
+	}
+	err = executor.ExecuteCommandWithoutReturn(command)
+	if err != nil {
+		logger.GetLogger().Errorf("Failed to copy file to destination: %s", err.Error())
 		return err
 	}
 
@@ -383,15 +420,12 @@ func (executor *SSHExecutor) CopyFile(srcFile, destFile string, outputHandler fu
 }
 
 func (executor *SSHExecutor) MkDirALL(path string, outputHandler func(string)) error {
-	session, err := executor.Connection.Client.NewSession()
-	if err != nil {
-		logger.GetLogger().Errorf("Failed to create SSH session: %s", err.Error())
-		return err
-	}
-	defer session.Close()
 	path = filepath.ToSlash(path)
-	cmd := fmt.Sprintf("sudo mkdir -p %s", path)
-	err = session.Run(cmd)
+	command := fmt.Sprintf("sudo mkdir -p %s", path)
+	if executor.WhoAmI() == "root" {
+		command = SudoPrefix(command)
+	}
+	err := executor.ExecuteCommandWithoutReturn(command)
 	if err != nil {
 		errMsg := fmt.Sprintf("Failed to create directory '%s' on remote host: %s", path, err)
 		log.Println("%s: %s", errMsg, err.Error())
@@ -403,22 +437,17 @@ func (executor *SSHExecutor) MkDirALL(path string, outputHandler func(string)) e
 }
 
 func (executor *SSHExecutor) AddHosts(record entity.Record, outputHandler func(string)) error {
-	session, err := executor.Connection.Client.NewSession()
-	if err != nil {
-		logger.GetLogger().Errorf("Failed to create SSH session: %s", err.Error())
-		return err
+	getHostContentCMD := "cat /etc/hosts"
+	if executor.WhoAmI() == "root" {
+		getHostContentCMD = SudoPrefix(getHostContentCMD)
 	}
-	defer session.Close()
-	var stdout, stderr bytes.Buffer
-	session.Stdout = &stdout
-	session.Stderr = &stderr
-	err = session.Run("sudo cat /etc/hosts")
+	hostContent, err := executor.ExecuteShortCommand(getHostContentCMD)
 	if err != nil {
-		errMsg := fmt.Errorf("failed to read /etc/hosts: %s: %w", stderr.String(), err)
+		errMsg := fmt.Errorf("failed to read /etc/hosts: %w", err)
 		log.Println("%s: %s", errMsg, err.Error())
 		return err
 	}
-	if strings.TrimSpace(stdout.String()) != "" {
+	if strings.TrimSpace(hostContent) != "" {
 		cmdUpdate := fmt.Sprintf(`
 		#!/bin/bash
         # Remove all lines containing the hostname
@@ -434,7 +463,7 @@ func (executor *SSHExecutor) AddHosts(record entity.Record, outputHandler func(s
 		logger.GetLogger().Infof("Updated %s to IP %s\n", record.Domain, record.IP)
 		fmt.Printf("Updated %s to IP %s\n", record.Domain, record.IP)
 	} else {
-		cmdAdd := fmt.Sprintf(`echo "%s %s" >> /etc/hosts`, record.IP, record.Domain)
+		cmdAdd := fmt.Sprintf(`sudo echo "%s %s" >> /etc/hosts`, record.IP, record.Domain)
 		_, err = executor.ExecuteShortCommand(cmdAdd)
 		if err != nil {
 			logger.GetLogger().Errorf("failed to add to /etc/hosts: %v", err)
@@ -448,23 +477,17 @@ func (executor *SSHExecutor) AddHosts(record entity.Record, outputHandler func(s
 }
 
 func (executor *SSHExecutor) AddMultiHosts(records []entity.Record, outputHandler func(string)) error {
-	session, err := executor.Connection.Client.NewSession()
-	if err != nil {
-		logger.GetLogger().Errorf("Failed to create SSH session: %s", err.Error())
-		return err
+	getHostContentCMD := "cat /etc/hosts"
+	if executor.WhoAmI() == "root" {
+		getHostContentCMD = SudoPrefix(getHostContentCMD)
 	}
-	defer session.Close()
-	var stdout, stderr bytes.Buffer
-	session.Stdout = &stdout
-	session.Stderr = &stderr
-	err = session.Run("sudo cat /etc/hosts")
+	hostContent, err := executor.ExecuteShortCommand(getHostContentCMD)
 	if err != nil {
-		errMsg := fmt.Errorf("failed to read /etc/hosts: %s: %w", stderr.String(), err)
+		errMsg := fmt.Errorf("failed to read /etc/hosts: %w", err)
 		log.Println("%s: %s", errMsg, err.Error())
 		return err
 	}
-	hostsContent := stdout.String()
-	lines := strings.Split(hostsContent, "\n")
+	lines := strings.Split(hostContent, "\n")
 	var updateContent strings.Builder
 	domainMap := make(map[string]string)
 
@@ -499,5 +522,80 @@ func (executor *SSHExecutor) AddMultiHosts(records []entity.Record, outputHandle
 		return fmt.Errorf("failed to add to /etc/hosts: %v", err)
 	}
 	outputHandler(fmt.Sprintf("Add Hosts"))
+	return nil
+}
+
+func (executor *SSHExecutor) UpdateHostsFile(ip string, domain string) error {
+	getHostContentCMD := "cat /etc/hosts"
+	if executor.WhoAmI() == "root" {
+		getHostContentCMD = SudoPrefix(getHostContentCMD)
+	}
+	hostContent, err := executor.ExecuteShortCommand(getHostContentCMD)
+	if err != nil {
+		logger.GetLogger().Errorf("读取 /etc/hosts 出错: %v\", err")
+		return fmt.Errorf("读取 /etc/hosts 出错: %v", err)
+	}
+	lines := strings.Split(hostContent, "\n")
+	domainExists := false
+	var updatedLines []string
+
+	for _, line := range lines {
+		if strings.Contains(line, domain) {
+			domainExists = true
+			parts := strings.Fields(line)
+			if len(parts) > 0 {
+				updatedLines = append(updatedLines, fmt.Sprintf("%s %s", ip, domain))
+			}
+		} else {
+			updatedLines = append(updatedLines, line)
+		}
+	}
+
+	if !domainExists {
+		updatedLines = append(updatedLines, fmt.Sprintf("%s %s", ip, domain))
+	}
+
+	// 写入更新后的内容
+	command := fmt.Sprintf("echo -n \"%s\" | sudo tee /etc/hosts", strings.Join(updatedLines, "\n"))
+	_, err = executor.ExecuteShortCommand(command)
+	if err != nil {
+		logger.GetLogger().Errorf("写入 /etc/hosts 出错: %v", err)
+		return fmt.Errorf("写入 /etc/hosts 出错: %v", err)
+	}
+	return nil
+}
+
+func (executor *SSHExecutor) UpdateResolvFile(ip string) error {
+	getDNSContentCMD := "cat /etc/resolv.conf"
+	if executor.WhoAmI() == "root" {
+		getDNSContentCMD = SudoPrefix(getDNSContentCMD)
+	}
+	dnsContent, err := executor.ExecuteShortCommand(getDNSContentCMD)
+	if err != nil {
+		logger.GetLogger().Errorf("读取 /etc/resolv.conf 出错: %v", err)
+		return fmt.Errorf("读取 /etc/resolv.conf 出错: %v", err)
+	}
+
+	lines := strings.Split(dnsContent, "\n")
+	ipExists := false
+
+	for _, line := range lines {
+		if strings.Contains(line, ip) {
+			ipExists = true
+			break
+		}
+	}
+
+	if !ipExists {
+		command := fmt.Sprintf("echo -n \"nameserver %s\" | sudo tee -a /etc/resolv.conf", ip)
+		_, err = executor.ExecuteShortCommand(command)
+		if err != nil {
+			logger.GetLogger().Errorf("追加到 /etc/resolv.conf 出错: %v", err)
+			return fmt.Errorf("追加到 /etc/resolv.conf 出错: %v", err)
+		}
+	} else {
+		logger.GetLogger().Infof("IP 已存在，跳过追加")
+		fmt.Println("IP 已存在，跳过追加")
+	}
 	return nil
 }
