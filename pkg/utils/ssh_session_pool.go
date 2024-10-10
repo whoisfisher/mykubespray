@@ -662,9 +662,3 @@ func (pool *SSHExecutorPool) AddDNSParallel(dns string, hosts []entity.Host) *Co
 	}
 	return &copyResult
 }
-
-func (pool *SSHExecutorPool) Close() {
-	pool.mutex.Lock()
-	defer pool.mutex.Unlock()
-	pool.Close()
-}

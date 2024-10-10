@@ -65,6 +65,7 @@ func configHttpRouter(rg *gin.RouterGroup, version string) {
 	rg.POST("/server/cert/copy", controller.CopyFile)
 	rg.POST("/server/cert/copyparallel", controller.CopyFileParallel)
 	rg.POST("/server/hostsparallel", controller.AddHostsParallel)
+	rg.POST("/server/dnsparallel", controller.AddDNSParallel)
 	rg.POST("/server/execmdparallel", controller.ExecuteCommandParallel)
 	rg.POST("/keycloak/group", controller.CreateGroup)
 	rg.POST("/keycloak/user", controller.QueryUserByName)

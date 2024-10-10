@@ -5,6 +5,11 @@ type AddHostsParallel struct {
 	Record Record
 }
 
+type AddDNSParallel struct {
+	Hosts []Host
+	DNS   string
+}
+
 type CopyFileParallel struct {
 	Hosts    []Host
 	SrcFile  string

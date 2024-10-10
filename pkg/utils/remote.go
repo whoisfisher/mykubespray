@@ -587,7 +587,7 @@ func (executor *SSHExecutor) UpdateResolvFile(ip string) error {
 	}
 
 	if !ipExists {
-		command := fmt.Sprintf("echo -n \"nameserver %s\" | sudo tee -a /etc/resolv.conf", ip)
+		command := fmt.Sprintf("echo -n \"nameserver %s\n\" | sudo tee -a /etc/resolv.conf", ip)
 		_, err = executor.ExecuteShortCommand(command)
 		if err != nil {
 			logger.GetLogger().Errorf("追加到 /etc/resolv.conf 出错: %v", err)

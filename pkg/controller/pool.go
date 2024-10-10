@@ -26,6 +26,20 @@ func init() {
 	poolController = *NewPoolController()
 }
 
+func AddDNSParallel(ctx *gin.Context) {
+	var addDNSParallel entity.AddDNSParallel
+	if err := ctx.ShouldBind(&addDNSParallel); err != nil {
+		logger.GetLogger().Errorf("AddDNSParallel bind failed: %s", err.Error())
+		ginx.Dangerous(err)
+	}
+	err := poolController.poolService.AddDNS(addDNSParallel.DNS, addDNSParallel.Hosts)
+	if err != nil {
+		logger.GetLogger().Errorf("Add /etc/resolv.conf failed: %s", err.Error())
+		ginx.Dangerous(err)
+	}
+	ginx.NewRender(ctx).Data("Add /etc/resolv.conf success", nil)
+}
+
 func AddHostsParallel(ctx *gin.Context) {
 	var addHostsParallel entity.AddHostsParallel
 	if err := ctx.ShouldBind(&addHostsParallel); err != nil {

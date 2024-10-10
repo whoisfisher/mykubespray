@@ -10,6 +10,7 @@ type PoolService interface {
 	CopyFile(srcFile, destFile string, hosts []entity.Host) error
 	AddHosts(record entity.Record, hosts []entity.Host) error
 	ExecuteCommand(command string, hosts []entity.Host) error
+	AddDNS(dns string, hosts []entity.Host) error
 }
 
 type poolService struct {
@@ -35,6 +36,15 @@ func (pool poolService) AddHosts(record entity.Record, hosts []entity.Host) erro
 		return nil
 	}
 	return errors.New("add /etc/hosts failed")
+}
+
+func (pool poolService) AddDNS(dns string, hosts []entity.Host) error {
+	execPool := utils.NewSSHExecutorPool()
+	result := execPool.AddDNSParallel(dns, hosts)
+	if result.OverallSuccess {
+		return nil
+	}
+	return errors.New("add /etc/resolv.conf failed")
 }
 
 func (pool poolService) ExecuteCommand(command string, hosts []entity.Host) error {
