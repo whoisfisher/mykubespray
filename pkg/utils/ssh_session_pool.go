@@ -87,6 +87,7 @@ func (pool *SSHExecutorPool) GetSSHExecutor(host entity.Host) (*SSHExecutor, err
 	}
 	executor := &SSHExecutor{
 		Connection: *conn,
+		Host:       host,
 	}
 	pool.Executors.Store(host.Name, executor)
 	return executor, nil

@@ -2,7 +2,6 @@ package service
 
 import (
 	"github.com/whoisfisher/mykubespray/pkg/entity"
-	"github.com/whoisfisher/mykubespray/pkg/logger"
 	"github.com/whoisfisher/mykubespray/pkg/utils"
 )
 
@@ -23,6 +22,7 @@ func NewKubekeyService() kubekeyService {
 
 func (ks kubekeyService) CreateCluster(conf entity.KubekeyConf, logChan chan utils.LogEntry) error {
 	sshConfig := utils.SSHConfig{}
+	registryHost := entity.Host{}
 	for _, host := range conf.Hosts {
 		if host.Registry != nil {
 			sshConfig.Host = host.Address
@@ -32,16 +32,18 @@ func (ks kubekeyService) CreateCluster(conf entity.KubekeyConf, logChan chan uti
 			sshConfig.PrivateKey = host.PrivateKey
 			sshConfig.AuthMethods = host.AuthMethods
 			conf.Registry = *host.Registry
+			registryHost = host
 		}
 	}
-	connection, err := utils.NewSSHConnection(sshConfig)
-	if err != nil {
-		logger.GetLogger().Errorf("Failed to create SSH connection: %s", err)
-		return err
-	}
+	//connection, err := utils.NewSSHConnection(sshConfig)
+	//if err != nil {
+	//	logger.GetLogger().Errorf("Failed to create SSH connection: %s", err)
+	//	return err
+	//}
 	osCOnf := utils.OSConf{}
 	localExecutor := utils.NewLocalExecutor()
-	sshExecutor := utils.NewSSHExecutor(*connection)
+	//sshExecutor := utils.NewSSHExecutor(*connection)
+	sshExecutor := utils.NewExecutor(registryHost)
 	osclient := utils.NewOSClient(osCOnf, *sshExecutor, *localExecutor)
 	client := utils.NewKubekeyClient(conf, *osclient)
 	if len(conf.VIPServer) > 0 {
@@ -55,6 +57,7 @@ func (ks kubekeyService) CreateCluster(conf entity.KubekeyConf, logChan chan uti
 
 func (ks kubekeyService) DeleteCluster(conf entity.KubekeyConf, logChan chan utils.LogEntry) error {
 	sshConfig := utils.SSHConfig{}
+	registryHost := entity.Host{}
 	for _, host := range conf.Hosts {
 		if host.Registry != nil {
 			sshConfig.Host = host.Address
@@ -64,16 +67,18 @@ func (ks kubekeyService) DeleteCluster(conf entity.KubekeyConf, logChan chan uti
 			sshConfig.PrivateKey = host.PrivateKey
 			sshConfig.AuthMethods = host.AuthMethods
 			conf.Registry = *host.Registry
+			registryHost = host
 		}
 	}
-	connection, err := utils.NewSSHConnection(sshConfig)
-	if err != nil {
-		logger.GetLogger().Errorf("Failed to create SSH connection: %s", err)
-		return err
-	}
+	//connection, err := utils.NewSSHConnection(sshConfig)
+	//if err != nil {
+	//	logger.GetLogger().Errorf("Failed to create SSH connection: %s", err)
+	//	return err
+	//}
 	osCOnf := utils.OSConf{}
 	localExecutor := utils.NewLocalExecutor()
-	sshExecutor := utils.NewSSHExecutor(*connection)
+	//sshExecutor := utils.NewSSHExecutor(*connection)
+	sshExecutor := utils.NewExecutor(registryHost)
 	osclient := utils.NewOSClient(osCOnf, *sshExecutor, *localExecutor)
 	client := utils.NewKubekeyClient(conf, *osclient)
 	if len(conf.VIPServer) > 0 {
@@ -87,6 +92,7 @@ func (ks kubekeyService) DeleteCluster(conf entity.KubekeyConf, logChan chan uti
 
 func (ks kubekeyService) AddNodeToCluster(conf entity.KubekeyConf, logChan chan utils.LogEntry) error {
 	sshConfig := utils.SSHConfig{}
+	registryHost := entity.Host{}
 	for _, host := range conf.Hosts {
 		if host.Registry != nil {
 			sshConfig.Host = host.Address
@@ -96,16 +102,18 @@ func (ks kubekeyService) AddNodeToCluster(conf entity.KubekeyConf, logChan chan 
 			sshConfig.PrivateKey = host.PrivateKey
 			sshConfig.AuthMethods = host.AuthMethods
 			conf.Registry = *host.Registry
+			registryHost = host
 		}
 	}
-	connection, err := utils.NewSSHConnection(sshConfig)
-	if err != nil {
-		logger.GetLogger().Errorf("Failed to create SSH connection: %s", err)
-		return err
-	}
+	//connection, err := utils.NewSSHConnection(sshConfig)
+	//if err != nil {
+	//	logger.GetLogger().Errorf("Failed to create SSH connection: %s", err)
+	//	return err
+	//}
 	osCOnf := utils.OSConf{}
 	localExecutor := utils.NewLocalExecutor()
-	sshExecutor := utils.NewSSHExecutor(*connection)
+	//sshExecutor := utils.NewSSHExecutor(*connection)
+	sshExecutor := utils.NewExecutor(registryHost)
 	osclient := utils.NewOSClient(osCOnf, *sshExecutor, *localExecutor)
 	client := utils.NewKubekeyClient(conf, *osclient)
 	if len(conf.VIPServer) > 0 {
@@ -120,6 +128,7 @@ func (ks kubekeyService) AddNodeToCluster(conf entity.KubekeyConf, logChan chan 
 func (ks kubekeyService) DeleteNodeFromCluster(conf entity.KubekeyConf, logChan chan utils.LogEntry) error {
 	deleteNode := ""
 	sshConfig := utils.SSHConfig{}
+	registryHost := entity.Host{}
 	for _, host := range conf.Hosts {
 		if host.Registry != nil {
 			sshConfig.Host = host.Address
@@ -129,19 +138,21 @@ func (ks kubekeyService) DeleteNodeFromCluster(conf entity.KubekeyConf, logChan 
 			sshConfig.PrivateKey = host.PrivateKey
 			sshConfig.AuthMethods = host.AuthMethods
 			conf.Registry = *host.Registry
+			registryHost = host
 		}
 		if host.IsDeleted {
 			deleteNode = host.Name
 		}
 	}
-	connection, err := utils.NewSSHConnection(sshConfig)
-	if err != nil {
-		logger.GetLogger().Errorf("Failed to create SSH connection: %s", err)
-		return err
-	}
+	//connection, err := utils.NewSSHConnection(sshConfig)
+	//if err != nil {
+	//	logger.GetLogger().Errorf("Failed to create SSH connection: %s", err)
+	//	return err
+	//}
 	osCOnf := utils.OSConf{}
 	localExecutor := utils.NewLocalExecutor()
-	sshExecutor := utils.NewSSHExecutor(*connection)
+	//sshExecutor := utils.NewSSHExecutor(*connection)
+	sshExecutor := utils.NewExecutor(registryHost)
 	osclient := utils.NewOSClient(osCOnf, *sshExecutor, *localExecutor)
 	client := utils.NewKubekeyClient(conf, *osclient)
 	if len(conf.VIPServer) > 0 {

@@ -27,14 +27,15 @@ func (os osService) Mount(conf entity.DiskConf) error {
 	sshConfig.Password = conf.Host.Password
 	sshConfig.PrivateKey = conf.Host.PrivateKey
 	sshConfig.AuthMethods = conf.Host.AuthMethods
-	connection, err := utils.NewSSHConnection(sshConfig)
-	if err != nil {
-		logger.GetLogger().Errorf("Failed to create SSH connection: %s", err)
-		return err
-	}
+	//connection, err := utils.NewSSHConnection(sshConfig)
+	//if err != nil {
+	//	logger.GetLogger().Errorf("Failed to create SSH connection: %s", err)
+	//	return err
+	//}
 	osCOnf := utils.OSConf{}
 	localExecutor := utils.NewLocalExecutor()
-	sshExecutor := utils.NewSSHExecutor(*connection)
+	//sshExecutor := utils.NewSSHExecutor(*connection)
+	sshExecutor := utils.NewExecutor(conf.Host)
 	client := utils.NewOSClient(osCOnf, *sshExecutor, *localExecutor)
 	data, err := client.QueryVGName()
 	if err != nil {
@@ -73,14 +74,15 @@ func (os osService) AddHost(conf entity.RecordConf) error {
 	sshConfig.Password = conf.Host.Password
 	sshConfig.PrivateKey = conf.Host.PrivateKey
 	sshConfig.AuthMethods = conf.Host.AuthMethods
-	connection, err := utils.NewSSHConnection(sshConfig)
-	if err != nil {
-		logger.GetLogger().Errorf("Failed to create SSH connection: %s", err)
-		return err
-	}
+	//connection, err := utils.NewSSHConnection(sshConfig)
+	//if err != nil {
+	//	logger.GetLogger().Errorf("Failed to create SSH connection: %s", err)
+	//	return err
+	//}
 	osCOnf := utils.OSConf{}
 	localExecutor := utils.NewLocalExecutor()
-	sshExecutor := utils.NewSSHExecutor(*connection)
+	//sshExecutor := utils.NewSSHExecutor(*connection)
+	sshExecutor := utils.NewExecutor(conf.Host)
 	client := utils.NewOSClient(osCOnf, *sshExecutor, *localExecutor)
 	return client.AddHost(conf.Record)
 }
@@ -93,14 +95,15 @@ func (os osService) CopyFile(conf entity.CertConf) error {
 	sshConfig.Password = conf.Host.Password
 	sshConfig.PrivateKey = conf.Host.PrivateKey
 	sshConfig.AuthMethods = conf.Host.AuthMethods
-	connection, err := utils.NewSSHConnection(sshConfig)
-	if err != nil {
-		logger.GetLogger().Errorf("Failed to create SSH connection: %s", err)
-		return err
-	}
+	//connection, err := utils.NewSSHConnection(sshConfig)
+	//if err != nil {
+	//	logger.GetLogger().Errorf("Failed to create SSH connection: %s", err)
+	//	return err
+	//}
 	osCOnf := utils.OSConf{}
 	localExecutor := utils.NewLocalExecutor()
-	sshExecutor := utils.NewSSHExecutor(*connection)
+	//sshExecutor := utils.NewSSHExecutor(*connection)
+	sshExecutor := utils.NewExecutor(conf.Host)
 	client := utils.NewOSClient(osCOnf, *sshExecutor, *localExecutor)
 	return client.CopyFile(conf.CertPath, conf.DestPath)
 }

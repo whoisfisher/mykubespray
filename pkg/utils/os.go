@@ -59,7 +59,11 @@ func NewOSClient(osConf OSConf, sshExecutor SSHExecutor, localExecutor LocalExec
 }
 
 func (client *OSClient) GetOSConf() bool {
-	output, err := client.SSExecutor.ExecuteShortCommand("cat /etc/os-release")
+	command := fmt.Sprintf("cat /etc/os-release")
+	if client.WhoAmI() != "root" {
+		command = SudoPrefixWithPassword(command, client.SSExecutor.Host.Password)
+	}
+	output, err := client.SSExecutor.ExecuteShortCommand(command)
 	if err != nil {
 		return false
 	}
@@ -85,7 +89,11 @@ func (client *OSClient) GetOSConf() bool {
 }
 
 func (client *OSClient) GetDistribution() (string, error) {
-	output, err := client.SSExecutor.ExecuteShortCommand("cat /etc/os-release")
+	command := fmt.Sprintf("cat /etc/os-release")
+	if client.WhoAmI() != "root" {
+		command = SudoPrefixWithPassword(command, client.SSExecutor.Host.Password)
+	}
+	output, err := client.SSExecutor.ExecuteShortCommand(command)
 	if err != nil {
 		logger.GetLogger().Errorf("Failed to get distribution: %s", err.Error())
 		return "", err
@@ -95,7 +103,11 @@ func (client *OSClient) GetDistribution() (string, error) {
 }
 
 func (client *OSClient) DaemonReload() error {
-	_, err := client.SSExecutor.ExecuteShortCommand("systemctl daemon-reload")
+	command := fmt.Sprintf("systemctl daemon-reload")
+	if client.WhoAmI() != "root" {
+		command = SudoPrefixWithPassword(command, client.SSExecutor.Host.Password)
+	}
+	_, err := client.SSExecutor.ExecuteShortCommand(command)
 	if err != nil {
 		logger.GetLogger().Errorf("Failed to reload daemon: %s", err.Error())
 		return err
@@ -105,6 +117,9 @@ func (client *OSClient) DaemonReload() error {
 
 func (client *OSClient) RestartService(service string) error {
 	command := fmt.Sprintf("systemctl restart %s", service)
+	if client.WhoAmI() != "root" {
+		command = SudoPrefixWithPassword(command, client.SSExecutor.Host.Password)
+	}
 	_, err := client.SSExecutor.ExecuteShortCommand(command)
 	if err != nil {
 		logger.GetLogger().Errorf("Failed to restart %s: %s", service, err.Error())
@@ -115,6 +130,9 @@ func (client *OSClient) RestartService(service string) error {
 
 func (client *OSClient) StartService(service string) error {
 	command := fmt.Sprintf("systemctl start %s", service)
+	if client.WhoAmI() != "root" {
+		command = SudoPrefixWithPassword(command, client.SSExecutor.Host.Password)
+	}
 	_, err := client.SSExecutor.ExecuteShortCommand(command)
 	if err != nil {
 		logger.GetLogger().Errorf("Failed to start %s: %s", service, err.Error())
@@ -125,6 +143,9 @@ func (client *OSClient) StartService(service string) error {
 
 func (client *OSClient) StopService(service string) error {
 	command := fmt.Sprintf("systemctl stop %s", service)
+	if client.WhoAmI() != "root" {
+		command = SudoPrefixWithPassword(command, client.SSExecutor.Host.Password)
+	}
 	_, err := client.SSExecutor.ExecuteShortCommand(command)
 	if err != nil {
 		logger.GetLogger().Errorf("Failed to stop %s: %s", service, err.Error())
@@ -135,6 +156,9 @@ func (client *OSClient) StopService(service string) error {
 
 func (client *OSClient) DisableService(service string) error {
 	command := fmt.Sprintf("systemctl disable %s", service)
+	if client.WhoAmI() != "root" {
+		command = SudoPrefixWithPassword(command, client.SSExecutor.Host.Password)
+	}
 	_, err := client.SSExecutor.ExecuteShortCommand(command)
 	if err != nil {
 		logger.GetLogger().Errorf("Failed to disable %s: %s", service, err.Error())
@@ -145,6 +169,9 @@ func (client *OSClient) DisableService(service string) error {
 
 func (client *OSClient) EnableService(service string) error {
 	command := fmt.Sprintf("systemctl enable %s", service)
+	if client.WhoAmI() != "root" {
+		command = SudoPrefixWithPassword(command, client.SSExecutor.Host.Password)
+	}
 	_, err := client.SSExecutor.ExecuteShortCommand(command)
 	if err != nil {
 		logger.GetLogger().Errorf("Failed to enable %s: %s", service, err.Error())
@@ -155,6 +182,9 @@ func (client *OSClient) EnableService(service string) error {
 
 func (client *OSClient) MaskService(service string) error {
 	command := fmt.Sprintf("systemctl mask %s", service)
+	if client.WhoAmI() != "root" {
+		command = SudoPrefixWithPassword(command, client.SSExecutor.Host.Password)
+	}
 	_, err := client.SSExecutor.ExecuteShortCommand(command)
 	if err != nil {
 		logger.GetLogger().Errorf("Failed to mask %s: %s", service, err.Error())
@@ -165,6 +195,9 @@ func (client *OSClient) MaskService(service string) error {
 
 func (client *OSClient) UNMaskService(service string) error {
 	command := fmt.Sprintf("systemctl unmask %s", service)
+	if client.WhoAmI() != "root" {
+		command = SudoPrefixWithPassword(command, client.SSExecutor.Host.Password)
+	}
 	_, err := client.SSExecutor.ExecuteShortCommand(command)
 	if err != nil {
 		logger.GetLogger().Errorf("Failed to unmask %s: %s", service, err.Error())
@@ -175,6 +208,9 @@ func (client *OSClient) UNMaskService(service string) error {
 
 func (client *OSClient) StatusService(service string) bool {
 	command := fmt.Sprintf("systemctl status %s | grep -iE active", service)
+	if client.WhoAmI() != "root" {
+		command = SudoPrefixWithPassword(command, client.SSExecutor.Host.Password)
+	}
 	res, err := client.SSExecutor.ExecuteShortCommand(command)
 	if err != nil {
 		logger.GetLogger().Errorf("Failed to view %s status: %s", service, err.Error())
@@ -188,6 +224,9 @@ func (client *OSClient) StatusService(service string) bool {
 
 func (client *OSClient) GetCPUCores() bool {
 	command := "grep -c ^processor /proc/cpuinfo"
+	if client.WhoAmI() != "root" {
+		command = SudoPrefixWithPassword(command, client.SSExecutor.Host.Password)
+	}
 	res, err := client.SSExecutor.ExecuteShortCommand(command)
 	if err != nil {
 		logger.GetLogger().Errorf("Failed to get cpu cores: %s", err.Error())
@@ -201,6 +240,9 @@ func (client *OSClient) GetCPUCores() bool {
 
 func (client *OSClient) GetCPU() bool {
 	command := "grep -iE \"^model\\s+name\\s+:\" /proc/cpuinfo | awk -F':' '{print $NF}' | sort -u"
+	if client.WhoAmI() != "root" {
+		command = SudoPrefixWithPassword(command, client.SSExecutor.Host.Password)
+	}
 	res, err := client.SSExecutor.ExecuteShortCommand(command)
 	if err != nil {
 		logger.GetLogger().Errorf("Failed to get cpu info: %s", err.Error())
@@ -214,6 +256,9 @@ func (client *OSClient) GetCPU() bool {
 
 func (client *OSClient) GetAvailableCPU() string {
 	command := "top -bn1 | grep 'Cpu(s)' | awk '{print $8\"%\"}'"
+	if client.WhoAmI() != "root" {
+		command = SudoPrefixWithPassword(command, client.SSExecutor.Host.Password)
+	}
 	res, err := client.SSExecutor.ExecuteShortCommand(command)
 	if err != nil {
 		logger.GetLogger().Errorf("Failed to get cpu info: %s", err.Error())
@@ -225,6 +270,9 @@ func (client *OSClient) GetAvailableCPU() string {
 
 func (client *OSClient) GetMemorySize() bool {
 	command := "free -m | grep Mem | awk '{print $2}'"
+	if client.WhoAmI() != "root" {
+		command = SudoPrefixWithPassword(command, client.SSExecutor.Host.Password)
+	}
 	res, err := client.SSExecutor.ExecuteShortCommand(command)
 	if err != nil {
 		logger.GetLogger().Errorf("Failed to get memory info: %s", err.Error())
@@ -238,6 +286,9 @@ func (client *OSClient) GetMemorySize() bool {
 
 func (client *OSClient) GetAvailableMemory() string {
 	command := "free -m | grep Mem | awk '{print $4}'"
+	if client.WhoAmI() != "root" {
+		command = SudoPrefixWithPassword(command, client.SSExecutor.Host.Password)
+	}
 	res, err := client.SSExecutor.ExecuteShortCommand(command)
 	if err != nil {
 		logger.GetLogger().Errorf("Failed to get memory info: %s", err.Error())
@@ -249,6 +300,9 @@ func (client *OSClient) GetAvailableMemory() string {
 
 func (client *OSClient) GetDiskSize() bool {
 	command := "df -h / | tail -n 1 | awk '{print $2}'"
+	if client.WhoAmI() != "root" {
+		command = SudoPrefixWithPassword(command, client.SSExecutor.Host.Password)
+	}
 	res, err := client.SSExecutor.ExecuteShortCommand(command)
 	if err != nil {
 		logger.GetLogger().Errorf("Failed to get disk size: %s", err.Error())
@@ -262,6 +316,9 @@ func (client *OSClient) GetDiskSize() bool {
 
 func (client *OSClient) GetNetCardList() bool {
 	command := "ip addr show | grep -o '^[0-9]\\+: [a-zA-Z0-9]*' | awk '{print $2}'"
+	if client.WhoAmI() != "root" {
+		command = SudoPrefixWithPassword(command, client.SSExecutor.Host.Password)
+	}
 	res, err := client.SSExecutor.ExecuteShortCommand(command)
 	if err != nil {
 		logger.GetLogger().Errorf("Failed to get netcard list: %s", err.Error())
@@ -274,6 +331,9 @@ func (client *OSClient) GetNetCardList() bool {
 
 func (client *OSClient) GetSpecifyNetCard(ipaddr string) string {
 	command := fmt.Sprintf("ip addr | grep -B 2 '%s' | head -n 1 | awk -F':' '{print $2}'", ipaddr)
+	if client.WhoAmI() != "root" {
+		command = SudoPrefixWithPassword(command, client.SSExecutor.Host.Password)
+	}
 	res, err := client.SSExecutor.ExecuteShortCommand(command)
 	if err != nil {
 		logger.GetLogger().Errorf("Failed to get netcard info for %s: %s", ipaddr, err.Error())
@@ -285,6 +345,9 @@ func (client *OSClient) GetSpecifyNetCard(ipaddr string) string {
 
 func (client *OSClient) IsProcessExist(processName string) bool {
 	command := fmt.Sprintf("pgrep %s", processName)
+	if client.WhoAmI() != "root" {
+		command = SudoPrefixWithPassword(command, client.SSExecutor.Host.Password)
+	}
 	_, err := client.SSExecutor.ExecuteShortCommand(command)
 	if err != nil {
 		logger.GetLogger().Warnf("The process %s is non-exist: %s", processName, err.Error())
@@ -306,7 +369,7 @@ func (client *OSClient) WhoAmI() string {
 func (client *OSClient) Chmod(file string, mode string) error {
 	cmd := fmt.Sprintf("chmod %s %s", mode, file)
 	if client.WhoAmI() != "root" {
-		cmd = SudoPrefix(cmd)
+		cmd = SudoPrefixWithPassword(cmd, client.SSExecutor.Host.Password)
 	}
 	_, err := client.SSExecutor.ExecuteShortCommand(cmd)
 	if err != nil {
@@ -320,6 +383,7 @@ func (client *OSClient) ReadFile(file string) (string, error) {
 	cmd := fmt.Sprintf("cat %s", file)
 	if client.WhoAmI() != "root" {
 		cmd = SudoPrefix(cmd)
+		cmd = SudoPrefixWithPassword(cmd, client.SSExecutor.Host.Password)
 	}
 	data, err := client.SSExecutor.ExecuteShortCommand(cmd)
 	if err != nil {
@@ -332,7 +396,7 @@ func (client *OSClient) ReadFile(file string) (string, error) {
 func (client *OSClient) ReadBytes(file string) ([]byte, error) {
 	cmd := fmt.Sprintf("cat %s", file)
 	if client.WhoAmI() != "root" {
-		cmd = SudoPrefix(cmd)
+		cmd = SudoPrefixWithPassword(cmd, client.SSExecutor.Host.Password)
 	}
 	data, err := client.SSExecutor.ExecuteShortCMD(cmd)
 	if err != nil {
@@ -343,9 +407,9 @@ func (client *OSClient) ReadBytes(file string) ([]byte, error) {
 }
 
 func (client *OSClient) WriteFile(content, file string) error {
-	cmd := fmt.Sprintf("echo '%s' > %s", content, file)
+	cmd := fmt.Sprintf("bash -c \"echo '%s' > %s\"", content, file)
 	if client.WhoAmI() != "root" {
-		cmd = SudoPrefix(cmd)
+		cmd = SudoPrefixWithPassword(cmd, client.SSExecutor.Host.Password)
 	}
 	err := client.SSExecutor.ExecuteCommandWithoutReturn(cmd)
 	if err != nil {
@@ -359,7 +423,7 @@ func (client *OSClient) QueryVGName() (*entity.LVS, error) {
 	lvs := &entity.LVS{}
 	cmd := "lvs"
 	if client.WhoAmI() != "root" {
-		cmd = SudoPrefix(cmd)
+		cmd = SudoPrefixWithPassword(cmd, client.SSExecutor.Host.Password)
 	}
 	data, err := client.SSExecutor.ExecuteShortCommand(cmd)
 	if err != nil {
@@ -381,7 +445,7 @@ func (client *OSClient) QueryVGName() (*entity.LVS, error) {
 func (client *OSClient) CreatePV(diskConf entity.DiskConf) error {
 	cmd := fmt.Sprintf("pvcreate %s", diskConf.Device)
 	if client.WhoAmI() != "root" {
-		cmd = SudoPrefix(cmd)
+		cmd = SudoPrefixWithPassword(cmd, client.SSExecutor.Host.Password)
 	}
 	data, err := client.SSExecutor.ExecuteShortCommand(cmd)
 	if err != nil {
@@ -395,7 +459,7 @@ func (client *OSClient) CreatePV(diskConf entity.DiskConf) error {
 func (client *OSClient) ExtendVG(diskConf entity.DiskConf) error {
 	cmd := fmt.Sprintf("vgextend %s %s", diskConf.VGName, diskConf.Device)
 	if client.WhoAmI() != "root" {
-		cmd = SudoPrefix(cmd)
+		cmd = SudoPrefixWithPassword(cmd, client.SSExecutor.Host.Password)
 	}
 	data, err := client.SSExecutor.ExecuteShortCommand(cmd)
 	if err != nil {
@@ -408,7 +472,7 @@ func (client *OSClient) ExtendVG(diskConf entity.DiskConf) error {
 func (client *OSClient) ExtendLVPercent100(diskConf entity.DiskConf) error {
 	cmd := fmt.Sprintf("lvextend -l +100%%FREE /dev/mapper/%s-%s", diskConf.VGName, diskConf.LVName)
 	if client.WhoAmI() != "root" {
-		cmd = SudoPrefix(cmd)
+		cmd = SudoPrefixWithPassword(cmd, client.SSExecutor.Host.Password)
 	}
 	data, err := client.SSExecutor.ExecuteShortCommand(cmd)
 	if err != nil {
@@ -421,7 +485,7 @@ func (client *OSClient) ExtendLVPercent100(diskConf entity.DiskConf) error {
 func (client *OSClient) ExtendLV(diskConf entity.DiskConf) error {
 	cmd := fmt.Sprintf("lvextend -L +%s /dev/mapper/%s-%s", diskConf.Size, diskConf.VGName, diskConf.LVName)
 	if client.WhoAmI() != "root" {
-		cmd = SudoPrefix(cmd)
+		cmd = SudoPrefixWithPassword(cmd, client.SSExecutor.Host.Password)
 	}
 	data, err := client.SSExecutor.ExecuteShortCommand(cmd)
 	if err != nil {
@@ -434,7 +498,7 @@ func (client *OSClient) ExtendLV(diskConf entity.DiskConf) error {
 func (client *OSClient) XGrowFS(diskConf entity.DiskConf) error {
 	cmd := fmt.Sprintf("xfs_growfs /dev/mapper/%s-%s", diskConf.VGName, diskConf.LVName)
 	if client.WhoAmI() != "root" {
-		cmd = SudoPrefix(cmd)
+		cmd = SudoPrefixWithPassword(cmd, client.SSExecutor.Host.Password)
 	}
 	data, err := client.SSExecutor.ExecuteShortCommand(cmd)
 	if err != nil {
@@ -447,7 +511,7 @@ func (client *OSClient) XGrowFS(diskConf entity.DiskConf) error {
 func (client *OSClient) Resize2FS(diskConf entity.DiskConf) error {
 	cmd := fmt.Sprintf("resize2fs /dev/mapper/%s-%s", diskConf.VGName, diskConf.LVName)
 	if client.WhoAmI() != "root" {
-		cmd = SudoPrefix(cmd)
+		cmd = SudoPrefixWithPassword(cmd, client.SSExecutor.Host.Password)
 	}
 	data, err := client.SSExecutor.ExecuteShortCommand(cmd)
 	if err != nil {
@@ -477,6 +541,14 @@ func (client *OSClient) AddMultiHost(records []entity.Record) error {
 	return client.SSExecutor.AddMultiHosts(records, outputHandler)
 }
 
+func SudoPrefixWithEOF(cmd string) string {
+	return fmt.Sprintf("sudo -S -E /bin/bash <<EOF\n%s\nEOF", cmd)
+}
+
 func SudoPrefix(cmd string) string {
-	return fmt.Sprintf("sudo -E /bin/bash <<EOF\n%s\nEOF", cmd)
+	return fmt.Sprintf("sudo %s", cmd)
+}
+
+func SudoPrefixWithPassword(cmd, sudoPassword string) string {
+	return fmt.Sprintf("echo %s | sudo -S %s", sudoPassword, SudoPrefix(cmd))
 }

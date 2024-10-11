@@ -17,6 +17,7 @@ import (
 // SSHExecutor implements Executor for SSH connections.
 type SSHExecutor struct {
 	Connection SSHConnection
+	Host       entity.Host
 }
 
 func NewExecutor(host entity.Host) *SSHExecutor {
@@ -24,7 +25,7 @@ func NewExecutor(host entity.Host) *SSHExecutor {
 	if err != nil {
 		return nil
 	}
-	return &SSHExecutor{Connection: *connection}
+	return &SSHExecutor{Connection: *connection, Host: host}
 }
 
 // NewSSHExecutor creates a new instance of SSHExecutor.
@@ -49,49 +50,6 @@ func (executor *SSHExecutor) ExecuteShortCommand(command string) (string, error)
 	return string(res), nil
 }
 
-func (executor *SSHExecutor) ExecuteShortCommandUseSudo(command, sudoPassword string) (string, error) {
-	session, err := executor.Connection.Client.NewSession()
-	if err != nil {
-		logger.GetLogger().Errorf("Failed to create SSH session: %s", err.Error())
-		return "", err
-	}
-	defer session.Close()
-	stdout, err := session.StdoutPipe()
-	if err != nil {
-		logger.GetLogger().Errorf("Failed to get stdout pipe: %s", err.Error())
-		return "", err
-	}
-
-	stderr, err := session.StderrPipe()
-	if err != nil {
-		logger.GetLogger().Errorf("Failed to get stderr pipe: %s", err.Error())
-		return "", err
-	}
-
-	stdin, err := session.StdinPipe()
-	if err != nil {
-		logger.GetLogger().Errorf("Failed to get stdin pipe: %s", err.Error())
-		return "", err
-	}
-
-	go func() {
-		scanner := bufio.NewScanner(io.MultiReader(stdout, stderr))
-		for scanner.Scan() {
-			output := scanner.Text()
-			logger.GetLogger().Errorf("Remote output: %s", output)
-			if strings.Contains(output, "[sudo] password for") {
-				fmt.Fprintln(stdin, sudoPassword)
-			}
-		}
-	}()
-	res, err := session.CombinedOutput(command)
-	if err != nil {
-		logger.GetLogger().Errorf("Failed to execute command: %s, %s", err.Error(), res)
-		return "", err
-	}
-	return string(res), nil
-}
-
 func (executor *SSHExecutor) ExecuteShortCMD(command string) ([]byte, error) {
 	session, err := executor.Connection.Client.NewSession()
 	if err != nil {
@@ -99,49 +57,6 @@ func (executor *SSHExecutor) ExecuteShortCMD(command string) ([]byte, error) {
 		return nil, err
 	}
 	defer session.Close()
-	res, err := session.CombinedOutput(command)
-	if err != nil {
-		logger.GetLogger().Errorf("Failed to execute command: %s", err.Error())
-		return nil, err
-	}
-	return res, nil
-}
-
-func (executor *SSHExecutor) ExecuteShortCMDUseSudo(command, sudoPassword string) ([]byte, error) {
-	session, err := executor.Connection.Client.NewSession()
-	if err != nil {
-		logger.GetLogger().Errorf("Failed to create SSH session: %s", err.Error())
-		return nil, err
-	}
-	defer session.Close()
-	stdout, err := session.StdoutPipe()
-	if err != nil {
-		logger.GetLogger().Errorf("Failed to get stdout pipe: %s", err.Error())
-		return nil, err
-	}
-
-	stderr, err := session.StderrPipe()
-	if err != nil {
-		logger.GetLogger().Errorf("Failed to get stderr pipe: %s", err.Error())
-		return nil, err
-	}
-
-	stdin, err := session.StdinPipe()
-	if err != nil {
-		logger.GetLogger().Errorf("Failed to get stdin pipe: %s", err.Error())
-		return nil, err
-	}
-
-	go func() {
-		scanner := bufio.NewScanner(io.MultiReader(stdout, stderr))
-		for scanner.Scan() {
-			output := scanner.Text()
-			logger.GetLogger().Errorf("Remote output: %s", output)
-			if strings.Contains(output, "[sudo] password for") {
-				fmt.Fprintln(stdin, sudoPassword)
-			}
-		}
-	}()
 	res, err := session.CombinedOutput(command)
 	if err != nil {
 		logger.GetLogger().Errorf("Failed to execute command: %s", err.Error())
@@ -165,49 +80,6 @@ func (executor *SSHExecutor) ExecuteCommandWithoutReturn(command string) error {
 	return nil
 }
 
-func (executor *SSHExecutor) ExecuteCommandWithoutReturnUseSudo(command, sudoPassword string) error {
-	session, err := executor.Connection.Client.NewSession()
-	if err != nil {
-		logger.GetLogger().Errorf("Failed to create SSH session: %s", err.Error())
-		return err
-	}
-	defer session.Close()
-	stdout, err := session.StdoutPipe()
-	if err != nil {
-		logger.GetLogger().Errorf("Failed to get stdout pipe: %s", err.Error())
-		return err
-	}
-
-	stderr, err := session.StderrPipe()
-	if err != nil {
-		logger.GetLogger().Errorf("Failed to get stderr pipe: %s", err.Error())
-		return err
-	}
-
-	stdin, err := session.StdinPipe()
-	if err != nil {
-		logger.GetLogger().Errorf("Failed to get stdin pipe: %s", err.Error())
-		return err
-	}
-
-	go func() {
-		scanner := bufio.NewScanner(io.MultiReader(stdout, stderr))
-		for scanner.Scan() {
-			output := scanner.Text()
-			logger.GetLogger().Errorf("Remote output: %s", output)
-			if strings.Contains(output, "[sudo] password for") {
-				fmt.Fprintln(stdin, sudoPassword)
-			}
-		}
-	}()
-	err = session.Run(command)
-	if err != nil {
-		logger.GetLogger().Errorf("Failed to execute command: %s", err.Error())
-		return err
-	}
-	return nil
-}
-
 func (executor *SSHExecutor) ExecuteCMDWithoutReturn(command string, outputHandler func(string)) error {
 	session, err := executor.Connection.Client.NewSession()
 	if err != nil {
@@ -218,50 +90,6 @@ func (executor *SSHExecutor) ExecuteCMDWithoutReturn(command string, outputHandl
 	err = session.Run(command)
 	if err != nil {
 		logger.GetLogger().Errorf("Failed to execute command: %s", err.Error())
-		return err
-	}
-	outputHandler(fmt.Sprintf("Successfully to execute command:%s", command))
-	return nil
-}
-
-func (executor *SSHExecutor) ExecuteCMDWithoutReturnUseSudo(command, sudoPassword string, outputHandler func(string)) error {
-	session, err := executor.Connection.Client.NewSession()
-	if err != nil {
-		logger.GetLogger().Errorf("Failed to create SSH session: %s", err.Error())
-		return err
-	}
-	defer session.Close()
-	stdout, err := session.StdoutPipe()
-	if err != nil {
-		logger.GetLogger().Errorf("Failed to get stdout pipe: %s", err.Error())
-		return err
-	}
-
-	stderr, err := session.StderrPipe()
-	if err != nil {
-		logger.GetLogger().Errorf("Failed to get stderr pipe: %s", err.Error())
-		return err
-	}
-
-	stdin, err := session.StdinPipe()
-	if err != nil {
-		logger.GetLogger().Errorf("Failed to get stdin pipe: %s", err.Error())
-		return err
-	}
-
-	go func() {
-		scanner := bufio.NewScanner(io.MultiReader(stdout, stderr))
-		for scanner.Scan() {
-			output := scanner.Text()
-			logger.GetLogger().Errorf("Remote output: %s", output)
-			if strings.Contains(output, "[sudo] password for") {
-				fmt.Fprintln(stdin, sudoPassword)
-			}
-		}
-	}()
-	err = session.Run(command)
-	if err != nil {
-		log.Printf("Failed to execute command: %s", err.Error())
 		return err
 	}
 	outputHandler(fmt.Sprintf("Successfully to execute command:%s", command))
@@ -507,7 +335,7 @@ func (executor *SSHExecutor) CopyMultiFile(files []entity.FileSrcDest, outputHan
 
 			command := fmt.Sprintf("cp -f %s %s", tempFile, file.DestFile)
 			if executor.WhoAmI() != "root" {
-				command = SudoPrefix(command)
+				command = SudoPrefixWithPassword(command, executor.Host.Password)
 			}
 			err = executor.ExecuteCommandWithoutReturn(command)
 			if err != nil {
@@ -580,7 +408,7 @@ func (executor *SSHExecutor) CopyFile(srcFile, destFile string, outputHandler fu
 
 	command := fmt.Sprintf("cp -f %s %s", tempFile, destFile)
 	if executor.WhoAmI() != "root" {
-		command = SudoPrefix(command)
+		command = SudoPrefixWithPassword(command, executor.Host.Password)
 	}
 	err = executor.ExecuteCommandWithoutReturn(command)
 	if err != nil {
@@ -596,7 +424,7 @@ func (executor *SSHExecutor) MkDirALL(path string, outputHandler func(string)) e
 	path = filepath.ToSlash(path)
 	command := fmt.Sprintf("mkdir -p %s", path)
 	if executor.WhoAmI() != "root" {
-		command = SudoPrefix(command)
+		command = SudoPrefixWithPassword(command, executor.Host.Password)
 	}
 	err := executor.ExecuteCommandWithoutReturn(command)
 	if err != nil {
@@ -612,7 +440,7 @@ func (executor *SSHExecutor) MkDirALL(path string, outputHandler func(string)) e
 func (executor *SSHExecutor) AddHosts(record entity.Record, outputHandler func(string)) error {
 	getHostContentCMD := "cat /etc/hosts"
 	if executor.WhoAmI() != "root" {
-		getHostContentCMD = SudoPrefix(getHostContentCMD)
+		getHostContentCMD = SudoPrefixWithPassword(getHostContentCMD, executor.Host.Password)
 	}
 	hostContent, err := executor.ExecuteShortCommand(getHostContentCMD)
 	if err != nil {
@@ -628,6 +456,10 @@ func (executor *SSHExecutor) AddHosts(record entity.Record, outputHandler func(s
         # Add new entry
         echo "%s %s" | sudo tee -a /etc/hosts > /dev/null
     `, record.Domain, record.IP, record.Domain)
+		cmdUpdate = fmt.Sprintf("bash -c '%s'", cmdUpdate)
+		if executor.WhoAmI() != "root" {
+			cmdUpdate = SudoPrefixWithPassword(cmdUpdate, executor.Host.Password)
+		}
 		_, err = executor.ExecuteShortCommand(cmdUpdate)
 		if err != nil {
 			logger.GetLogger().Errorf("failed to update /etc/hosts: %v", err)
@@ -636,7 +468,10 @@ func (executor *SSHExecutor) AddHosts(record entity.Record, outputHandler func(s
 		logger.GetLogger().Infof("Updated %s to IP %s\n", record.Domain, record.IP)
 		fmt.Printf("Updated %s to IP %s\n", record.Domain, record.IP)
 	} else {
-		cmdAdd := fmt.Sprintf(`sudo echo "%s %s" >> /etc/hosts`, record.IP, record.Domain)
+		cmdAdd := fmt.Sprintf(`bash -c 'echo "%s %s" >> /etc/hosts'`, record.IP, record.Domain)
+		if executor.WhoAmI() != "root" {
+			cmdAdd = SudoPrefixWithPassword(cmdAdd, executor.Host.Password)
+		}
 		_, err = executor.ExecuteShortCommand(cmdAdd)
 		if err != nil {
 			logger.GetLogger().Errorf("failed to add to /etc/hosts: %v", err)
@@ -652,7 +487,7 @@ func (executor *SSHExecutor) AddHosts(record entity.Record, outputHandler func(s
 func (executor *SSHExecutor) AddMultiHosts(records []entity.Record, outputHandler func(string)) error {
 	getHostContentCMD := "cat /etc/hosts"
 	if executor.WhoAmI() != "root" {
-		getHostContentCMD = SudoPrefix(getHostContentCMD)
+		getHostContentCMD = SudoPrefixWithPassword(getHostContentCMD, executor.Host.Password)
 	}
 	hostContent, err := executor.ExecuteShortCommand(getHostContentCMD)
 	if err != nil {
@@ -688,7 +523,10 @@ func (executor *SSHExecutor) AddMultiHosts(records []entity.Record, outputHandle
 			" temporary file: %s", err)
 		return fmt.Errorf("Failed to write to temporary file: %s", err)
 	}
-	cmd := fmt.Sprintf("sudo cp %s /etc/hosts", tmpFile)
+	cmd := fmt.Sprintf("cp %s /etc/hosts", tmpFile)
+	if executor.WhoAmI() != "root" {
+		cmd = SudoPrefixWithPassword(cmd, executor.Host.Password)
+	}
 	_, err = executor.ExecuteShortCommand(cmd)
 	if err != nil {
 		logger.GetLogger().Errorf("failed to add to /etc/hosts: %v", err)
@@ -701,7 +539,7 @@ func (executor *SSHExecutor) AddMultiHosts(records []entity.Record, outputHandle
 func (executor *SSHExecutor) UpdateHostsFile(ip string, domain string) error {
 	getHostContentCMD := "cat /etc/hosts"
 	if executor.WhoAmI() != "root" {
-		getHostContentCMD = SudoPrefix(getHostContentCMD)
+		getHostContentCMD = SudoPrefixWithPassword(getHostContentCMD, executor.Host.Password)
 	}
 	hostContent, err := executor.ExecuteShortCommand(getHostContentCMD)
 	if err != nil {
@@ -729,7 +567,10 @@ func (executor *SSHExecutor) UpdateHostsFile(ip string, domain string) error {
 	}
 
 	// 写入更新后的内容
-	command := fmt.Sprintf("echo -n \"%s\" | sudo tee /etc/hosts", strings.Join(updatedLines, "\n"))
+	command := fmt.Sprintf("bash -c \"echo -n '%s' | sudo tee /etc/hosts\"", strings.Join(updatedLines, "\n"))
+	if executor.WhoAmI() != "root" {
+		command = SudoPrefixWithPassword(command, executor.Host.Password)
+	}
 	_, err = executor.ExecuteShortCommand(command)
 	if err != nil {
 		logger.GetLogger().Errorf("写入 /etc/hosts 出错: %v", err)
@@ -741,7 +582,7 @@ func (executor *SSHExecutor) UpdateHostsFile(ip string, domain string) error {
 func (executor *SSHExecutor) UpdateResolvFile(ip string) error {
 	getDNSContentCMD := "cat /etc/resolv.conf"
 	if executor.WhoAmI() != "root" {
-		getDNSContentCMD = SudoPrefix(getDNSContentCMD)
+		getDNSContentCMD = SudoPrefixWithPassword(getDNSContentCMD, executor.Host.Password)
 	}
 	dnsContent, err := executor.ExecuteShortCommand(getDNSContentCMD)
 	if err != nil {
@@ -760,7 +601,10 @@ func (executor *SSHExecutor) UpdateResolvFile(ip string) error {
 	}
 
 	if !ipExists {
-		command := fmt.Sprintf("echo -n \"nameserver %s\n\" | sudo tee -a /etc/resolv.conf", ip)
+		command := fmt.Sprintf("bash -c \" echo -n 'nameserver %s\n' | sudo tee -a /etc/resolv.conf\"", ip)
+		if executor.WhoAmI() != "root" {
+			command = SudoPrefixWithPassword(command, executor.Host.Password)
+		}
 		_, err = executor.ExecuteShortCommand(command)
 		if err != nil {
 			logger.GetLogger().Errorf("追加到 /etc/resolv.conf 出错: %v", err)

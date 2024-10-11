@@ -167,7 +167,10 @@ spec:
 		logger.GetLogger().Errorf("Failed to generate dir %s: %s", configPath, err.Error())
 		return err
 	}
-	command := fmt.Sprintf("echo '%s' > %s", rendered.String(), path)
+	command := fmt.Sprintf("bash -c \"echo '%s' > %s\"", rendered.String(), path)
+	if client.OSClient.WhoAmI() != "root" {
+		command = SudoPrefixWithPassword(command, client.OSClient.SSExecutor.Host.Password)
+	}
 	err = client.OSClient.SSExecutor.ExecuteCommandWithoutReturn(command)
 	if err != nil {
 		logger.GetLogger().Errorf("Failed to generate kubekey config: %s", err.Error())
@@ -261,7 +264,11 @@ spec:
 		logger.GetLogger().Errorf("Failed to generate dir %s: %s", configPath, err.Error())
 		return err
 	}
-	command := fmt.Sprintf("echo '%s' > %s", rendered.String(), path)
+	//command := fmt.Sprintf("echo '%s' > %s", rendered.String(), path)
+	command := fmt.Sprintf("bash -c \"echo '%s' > %s\"", rendered.String(), path)
+	if client.OSClient.WhoAmI() != "root" {
+		command = SudoPrefixWithPassword(command, client.OSClient.SSExecutor.Host.Password)
+	}
 	err = client.OSClient.SSExecutor.ExecuteCommandWithoutReturn(command)
 	if err != nil {
 		logger.GetLogger().Errorf("Failed to generate kubekey config: %s", err.Error())

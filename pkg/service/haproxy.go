@@ -25,17 +25,18 @@ func (hs haproxyService) Configure(conf entity.HaproxyConf) error {
 	sshConfig.Password = conf.Host.Password
 	sshConfig.PrivateKey = conf.Host.PrivateKey
 	sshConfig.AuthMethods = conf.Host.AuthMethods
-	connection, err := utils.NewSSHConnection(sshConfig)
-	if err != nil {
-		logger.GetLogger().Errorf("Failed to create SSH connection: %s", err)
-		return err
-	}
+	//connection, err := utils.NewSSHConnection(sshConfig)
+	//if err != nil {
+	//	logger.GetLogger().Errorf("Failed to create SSH connection: %s", err)
+	//	return err
+	//}
 	osCOnf := utils.OSConf{}
 	localExecutor := utils.NewLocalExecutor()
-	sshExecutor := utils.NewSSHExecutor(*connection)
+	//sshExecutor := utils.NewSSHExecutor(*connection)
+	sshExecutor := utils.NewExecutor(conf.Host)
 	osclient := utils.NewOSClient(osCOnf, *sshExecutor, *localExecutor)
 	client := utils.NewHaproxyClient(conf, *osclient)
-	err = client.ConfigureHaproxy()
+	err := client.ConfigureHaproxy()
 	if err != nil {
 		logger.GetLogger().Errorf("Failed to configure Haproxy: %s", err)
 		return err
