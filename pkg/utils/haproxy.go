@@ -89,7 +89,7 @@ backend kube-apiserver
 		return err
 	}
 	command := fmt.Sprintf("echo '%s' > %s", rendered.String(), configFile)
-	if client.OSClient.WhoAmI() == "root" {
+	if client.OSClient.WhoAmI() != "root" {
 		command = SudoPrefix(command)
 	}
 	err = client.OSClient.SSExecutor.ExecuteCommandWithoutReturn(command)

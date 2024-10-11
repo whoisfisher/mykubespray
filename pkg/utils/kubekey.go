@@ -84,7 +84,9 @@ func (client *KubekeyClient) ParseToTemplate() *entity.KubekeyTemplate {
 func (client *KubekeyClient) GenerateConfig() error {
 	dirPath := filepath.Dir(client.KubekeyConf.KKPath)
 	configPath := filepath.Join(dirPath, client.KubekeyConf.ClusterName)
+	configPath = filepath.ToSlash(configPath)
 	path := filepath.Join(configPath, "config-sample.yaml")
+	path = filepath.ToSlash(path)
 	templateText := `
 apiVersion: kubekey.kubesphere.io/v1alpha2
 kind: Cluster
@@ -177,7 +179,9 @@ spec:
 func (client *KubekeyClient) GenerateConfigWithVIP() error {
 	dirPath := filepath.Dir(client.KubekeyConf.KKPath)
 	configPath := filepath.Join(dirPath, client.KubekeyConf.ClusterName)
+	configPath = filepath.ToSlash(configPath)
 	path := filepath.Join(configPath, "config-sample.yaml")
+	path = filepath.ToSlash(path)
 	templateText := `
 apiVersion: kubekey.kubesphere.io/v1alpha2
 kind: Cluster
@@ -313,6 +317,45 @@ func (client *KubekeyClient) DeleteNode(nodeName string, logChan chan LogEntry) 
 	err := client.OSClient.SSExecutor.ExecuteCommand(command, logChan)
 	if err != nil {
 		logger.GetLogger().Errorf("Failed to delete node %s from cluster %s: %s", nodeName, client.KubekeyConf.ClusterName, err.Error())
+		return err
+	}
+	return nil
+}
+
+func (client *KubekeyClient) CheckCertExpirtation(logChan chan LogEntry) error {
+	dirPath := filepath.Dir(client.KubekeyConf.KKPath)
+	configPath := filepath.Join(dirPath, client.KubekeyConf.ClusterName)
+	path := filepath.Join(configPath, "config-sample.yaml")
+	command := fmt.Sprintf("kk certs check-expirtation -f %s", path)
+	err := client.OSClient.SSExecutor.ExecuteCommand(command, logChan)
+	if err != nil {
+		logger.GetLogger().Errorf("Failed to check cert expiration %s: %s", client.KubekeyConf.ClusterName, err.Error())
+		return err
+	}
+	return nil
+}
+
+func (client *KubekeyClient) RenewCert(logChan chan LogEntry) error {
+	dirPath := filepath.Dir(client.KubekeyConf.KKPath)
+	configPath := filepath.Join(dirPath, client.KubekeyConf.ClusterName)
+	path := filepath.Join(configPath, "config-sample.yaml")
+	command := fmt.Sprintf("kk certs renew -f %s", path)
+	err := client.OSClient.SSExecutor.ExecuteCommand(command, logChan)
+	if err != nil {
+		logger.GetLogger().Errorf("Failed to renew cert %s: %s", client.KubekeyConf.ClusterName, err.Error())
+		return err
+	}
+	return nil
+}
+
+func (client *KubekeyClient) UpgradeCluster(logChan chan LogEntry) error {
+	dirPath := filepath.Dir(client.KubekeyConf.KKPath)
+	configPath := filepath.Join(dirPath, client.KubekeyConf.ClusterName)
+	path := filepath.Join(configPath, "config-sample.yaml")
+	command := fmt.Sprintf("kk upgrade -f %s", path)
+	err := client.OSClient.SSExecutor.ExecuteCommand(command, logChan)
+	if err != nil {
+		logger.GetLogger().Errorf("Failed to upgrade %s: %s", client.KubekeyConf.ClusterName, err.Error())
 		return err
 	}
 	return nil
