@@ -161,7 +161,7 @@ spec:
 		return err
 	}
 	err = client.OSClient.SSExecutor.MkDirALL(configPath, func(s string) {
-		log.Println(s)
+		logger.GetLogger().Infof(s)
 	})
 	if err != nil {
 		logger.GetLogger().Errorf("Failed to generate dir %s: %s", configPath, err.Error())
@@ -280,7 +280,9 @@ spec:
 func (client *KubekeyClient) CreateCluster(logChan chan LogEntry) error {
 	dirPath := filepath.Dir(client.KubekeyConf.KKPath)
 	configPath := filepath.Join(dirPath, client.KubekeyConf.ClusterName)
+	configPath = filepath.ToSlash(configPath)
 	path := filepath.Join(configPath, "config-sample.yaml")
+	path = filepath.ToSlash(path)
 	command := fmt.Sprintf("kk create cluster -f %s -a %s --with-packages --yes", path, client.KubekeyConf.TaichuPackagePath)
 	err := client.OSClient.SSExecutor.ExecuteCommand(command, logChan)
 	if err != nil {
@@ -293,7 +295,9 @@ func (client *KubekeyClient) CreateCluster(logChan chan LogEntry) error {
 func (client *KubekeyClient) DeleteCluster(logChan chan LogEntry) error {
 	dirPath := filepath.Dir(client.KubekeyConf.KKPath)
 	configPath := filepath.Join(dirPath, client.KubekeyConf.ClusterName)
+	configPath = filepath.ToSlash(configPath)
 	path := filepath.Join(configPath, "config-sample.yaml")
+	path = filepath.ToSlash(path)
 	command := fmt.Sprintf("kk delete cluster -f %s --yes", path)
 	err := client.OSClient.SSExecutor.ExecuteCommand(command, logChan)
 	if err != nil {
@@ -306,7 +310,9 @@ func (client *KubekeyClient) DeleteCluster(logChan chan LogEntry) error {
 func (client *KubekeyClient) AddNode(logChan chan LogEntry) error {
 	dirPath := filepath.Dir(client.KubekeyConf.KKPath)
 	configPath := filepath.Join(dirPath, client.KubekeyConf.ClusterName)
+	configPath = filepath.ToSlash(configPath)
 	path := filepath.Join(configPath, "config-sample.yaml")
+	path = filepath.ToSlash(path)
 	command := fmt.Sprintf("kk add nodes -f %s --yes", path)
 	err := client.OSClient.SSExecutor.ExecuteCommand(command, logChan)
 	if err != nil {
@@ -319,7 +325,9 @@ func (client *KubekeyClient) AddNode(logChan chan LogEntry) error {
 func (client *KubekeyClient) DeleteNode(nodeName string, logChan chan LogEntry) error {
 	dirPath := filepath.Dir(client.KubekeyConf.KKPath)
 	configPath := filepath.Join(dirPath, client.KubekeyConf.ClusterName)
+	configPath = filepath.ToSlash(configPath)
 	path := filepath.Join(configPath, "config-sample.yaml")
+	path = filepath.ToSlash(path)
 	command := fmt.Sprintf("kk delete node %s -f %s", nodeName, path)
 	err := client.OSClient.SSExecutor.ExecuteCommand(command, logChan)
 	if err != nil {
@@ -332,7 +340,9 @@ func (client *KubekeyClient) DeleteNode(nodeName string, logChan chan LogEntry) 
 func (client *KubekeyClient) CheckCertExpirtation(logChan chan LogEntry) error {
 	dirPath := filepath.Dir(client.KubekeyConf.KKPath)
 	configPath := filepath.Join(dirPath, client.KubekeyConf.ClusterName)
+	configPath = filepath.ToSlash(configPath)
 	path := filepath.Join(configPath, "config-sample.yaml")
+	path = filepath.ToSlash(path)
 	command := fmt.Sprintf("kk certs check-expirtation -f %s", path)
 	err := client.OSClient.SSExecutor.ExecuteCommand(command, logChan)
 	if err != nil {
@@ -345,7 +355,9 @@ func (client *KubekeyClient) CheckCertExpirtation(logChan chan LogEntry) error {
 func (client *KubekeyClient) RenewCert(logChan chan LogEntry) error {
 	dirPath := filepath.Dir(client.KubekeyConf.KKPath)
 	configPath := filepath.Join(dirPath, client.KubekeyConf.ClusterName)
+	configPath = filepath.ToSlash(configPath)
 	path := filepath.Join(configPath, "config-sample.yaml")
+	path = filepath.ToSlash(path)
 	command := fmt.Sprintf("kk certs renew -f %s", path)
 	err := client.OSClient.SSExecutor.ExecuteCommand(command, logChan)
 	if err != nil {
@@ -358,7 +370,9 @@ func (client *KubekeyClient) RenewCert(logChan chan LogEntry) error {
 func (client *KubekeyClient) UpgradeCluster(logChan chan LogEntry) error {
 	dirPath := filepath.Dir(client.KubekeyConf.KKPath)
 	configPath := filepath.Join(dirPath, client.KubekeyConf.ClusterName)
+	configPath = filepath.ToSlash(configPath)
 	path := filepath.Join(configPath, "config-sample.yaml")
+	path = filepath.ToSlash(path)
 	command := fmt.Sprintf("kk upgrade -f %s", path)
 	err := client.OSClient.SSExecutor.ExecuteCommand(command, logChan)
 	if err != nil {

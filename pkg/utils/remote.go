@@ -3,10 +3,8 @@ package utils
 import (
 	"bufio"
 	"fmt"
-	"github.com/pkg/sftp"
 	"github.com/whoisfisher/mykubespray/pkg/entity"
 	"github.com/whoisfisher/mykubespray/pkg/logger"
-	"io"
 	"log"
 	"os"
 	"path/filepath"
@@ -297,39 +295,24 @@ func (executor *SSHExecutor) ExecuteCommandNew(command string, logChan chan LogE
 func (executor *SSHExecutor) CopyMultiFile(files []entity.FileSrcDest, outputHandler func(string)) *CopyResult {
 	var wg sync.WaitGroup
 	results := make(chan MachineResult, len(files))
-	sftpClient, err := sftp.NewClient(executor.Connection.Client)
-	if err != nil {
-		logger.GetLogger().Errorf("Failed to create SFTP client: %s", err.Error())
-		results <- MachineResult{Machine: "", Success: false, Error: fmt.Sprintf("Failed to create SFTP client: %s", err.Error())}
-		return nil
-	}
-	defer sftpClient.Close()
 	for _, file := range files {
 		wg.Add(1)
 		go func(file entity.FileSrcDest) {
 			defer wg.Done()
-			src, err := os.Open(file.SrcFile)
+			byteData, err := os.ReadFile(file.SrcFile)
 			if err != nil {
 				logger.GetLogger().Errorf("Failed to open source file: %s", err.Error())
 				results <- MachineResult{Machine: "", Success: false, Error: fmt.Sprintf("Failed to open source file: %s", err.Error())}
 				return
 			}
-			defer src.Close()
 
 			fileName := filepath.Base(file.DestFile)
 			tempFile := fmt.Sprintf("/tmp/%s", fileName)
 
-			dest, err := sftpClient.Create(tempFile)
+			touchCommand := fmt.Sprintf("echo '%s' > %s", string(byteData), tempFile)
+			err = executor.ExecuteCommandWithoutReturn(touchCommand)
 			if err != nil {
-				logger.GetLogger().Errorf("Failed to create temp destination file: %s", err.Error())
-				results <- MachineResult{Machine: "", Success: false, Error: fmt.Sprintf("Failed to create temp destination file: %s", err.Error())}
-				return
-			}
-			defer dest.Close()
-
-			if _, err := io.Copy(dest, src); err != nil {
-				logger.GetLogger().Errorf("Failed to copy to temp file: %s", err.Error())
-				results <- MachineResult{Machine: "", Success: false, Error: fmt.Sprintf("Failed to copy to temp file: %s", err.Error())}
+				logger.GetLogger().Errorf("Failed to copy file to destination: %s", err.Error())
 				return
 			}
 
@@ -341,6 +324,13 @@ func (executor *SSHExecutor) CopyMultiFile(files []entity.FileSrcDest, outputHan
 			if err != nil {
 				logger.GetLogger().Errorf("Failed to copy file to destination: %s", err.Error())
 				results <- MachineResult{Machine: "", Success: false, Error: fmt.Sprintf("Failed to copy file to destination: %s", err.Error())}
+				return
+			}
+
+			rmCommand := fmt.Sprintf("rm -f %s", tempFile)
+			err = executor.ExecuteCommandWithoutReturn(rmCommand)
+			if err != nil {
+				logger.GetLogger().Errorf("Failed to delete temp file: %s", err.Error())
 				return
 			}
 
@@ -377,32 +367,19 @@ func (executor *SSHExecutor) CopyMultiFile(files []entity.FileSrcDest, outputHan
 
 // CopyFile copies a file over SSH using SCP.
 func (executor *SSHExecutor) CopyFile(srcFile, destFile string, outputHandler func(string)) error {
-	src, err := os.Open(srcFile)
+	byteData, err := os.ReadFile(srcFile)
 	if err != nil {
 		logger.GetLogger().Errorf("Failed to open source file: %s", err.Error())
 		return err
 	}
-	defer src.Close()
-
-	sftpClient, err := sftp.NewClient(executor.Connection.Client)
-	if err != nil {
-		logger.GetLogger().Errorf("Failed to create SFTP client: %s", err.Error())
-		return err
-	}
-	defer sftpClient.Close()
 
 	fileName := filepath.Base(destFile)
 	tempFile := fmt.Sprintf("/tmp/%s", fileName)
 
-	dest, err := sftpClient.Create(tempFile)
+	touchCommand := fmt.Sprintf("echo '%s' > %s", string(byteData), tempFile)
+	err = executor.ExecuteCommandWithoutReturn(touchCommand)
 	if err != nil {
-		logger.GetLogger().Errorf("Failed to create temp destination file: %s", err.Error())
-		return err
-	}
-	defer dest.Close()
-
-	if _, err := io.Copy(dest, src); err != nil {
-		logger.GetLogger().Errorf("Failed to copy to temp file: %s", err.Error())
+		logger.GetLogger().Errorf("Failed to copy file to destination: %s", err.Error())
 		return err
 	}
 
@@ -413,6 +390,13 @@ func (executor *SSHExecutor) CopyFile(srcFile, destFile string, outputHandler fu
 	err = executor.ExecuteCommandWithoutReturn(command)
 	if err != nil {
 		logger.GetLogger().Errorf("Failed to copy file to destination: %s", err.Error())
+		return err
+	}
+
+	rmCommand := fmt.Sprintf("rm -f %s", tempFile)
+	err = executor.ExecuteCommandWithoutReturn(rmCommand)
+	if err != nil {
+		logger.GetLogger().Errorf("Failed to delete temp file: %s", err.Error())
 		return err
 	}
 
@@ -439,9 +423,6 @@ func (executor *SSHExecutor) MkDirALL(path string, outputHandler func(string)) e
 
 func (executor *SSHExecutor) AddHosts(record entity.Record, outputHandler func(string)) error {
 	getHostContentCMD := "cat /etc/hosts"
-	if executor.WhoAmI() != "root" {
-		getHostContentCMD = SudoPrefixWithPassword(getHostContentCMD, executor.Host.Password)
-	}
 	hostContent, err := executor.ExecuteShortCommand(getHostContentCMD)
 	if err != nil {
 		errMsg := fmt.Errorf("failed to read /etc/hosts: %w", err)
@@ -486,9 +467,6 @@ func (executor *SSHExecutor) AddHosts(record entity.Record, outputHandler func(s
 
 func (executor *SSHExecutor) AddMultiHosts(records []entity.Record, outputHandler func(string)) error {
 	getHostContentCMD := "cat /etc/hosts"
-	if executor.WhoAmI() != "root" {
-		getHostContentCMD = SudoPrefixWithPassword(getHostContentCMD, executor.Host.Password)
-	}
 	hostContent, err := executor.ExecuteShortCommand(getHostContentCMD)
 	if err != nil {
 		errMsg := fmt.Errorf("failed to read /etc/hosts: %w", err)
@@ -538,9 +516,6 @@ func (executor *SSHExecutor) AddMultiHosts(records []entity.Record, outputHandle
 
 func (executor *SSHExecutor) UpdateHostsFile(ip string, domain string) error {
 	getHostContentCMD := "cat /etc/hosts"
-	if executor.WhoAmI() != "root" {
-		getHostContentCMD = SudoPrefixWithPassword(getHostContentCMD, executor.Host.Password)
-	}
 	hostContent, err := executor.ExecuteShortCommand(getHostContentCMD)
 	if err != nil {
 		logger.GetLogger().Errorf("读取 /etc/hosts 出错: %v\", err")
@@ -581,9 +556,6 @@ func (executor *SSHExecutor) UpdateHostsFile(ip string, domain string) error {
 
 func (executor *SSHExecutor) UpdateResolvFile(ip string) error {
 	getDNSContentCMD := "cat /etc/resolv.conf"
-	if executor.WhoAmI() != "root" {
-		getDNSContentCMD = SudoPrefixWithPassword(getDNSContentCMD, executor.Host.Password)
-	}
 	dnsContent, err := executor.ExecuteShortCommand(getDNSContentCMD)
 	if err != nil {
 		logger.GetLogger().Errorf("读取 /etc/resolv.conf 出错: %v", err)

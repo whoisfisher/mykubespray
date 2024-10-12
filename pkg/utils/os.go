@@ -60,9 +60,6 @@ func NewOSClient(osConf OSConf, sshExecutor SSHExecutor, localExecutor LocalExec
 
 func (client *OSClient) GetOSConf() bool {
 	command := fmt.Sprintf("cat /etc/os-release")
-	if client.WhoAmI() != "root" {
-		command = SudoPrefixWithPassword(command, client.SSExecutor.Host.Password)
-	}
 	output, err := client.SSExecutor.ExecuteShortCommand(command)
 	if err != nil {
 		return false
@@ -90,9 +87,6 @@ func (client *OSClient) GetOSConf() bool {
 
 func (client *OSClient) GetDistribution() (string, error) {
 	command := fmt.Sprintf("cat /etc/os-release")
-	if client.WhoAmI() != "root" {
-		command = SudoPrefixWithPassword(command, client.SSExecutor.Host.Password)
-	}
 	output, err := client.SSExecutor.ExecuteShortCommand(command)
 	if err != nil {
 		logger.GetLogger().Errorf("Failed to get distribution: %s", err.Error())
@@ -381,10 +375,6 @@ func (client *OSClient) Chmod(file string, mode string) error {
 
 func (client *OSClient) ReadFile(file string) (string, error) {
 	cmd := fmt.Sprintf("cat %s", file)
-	if client.WhoAmI() != "root" {
-		cmd = SudoPrefix(cmd)
-		cmd = SudoPrefixWithPassword(cmd, client.SSExecutor.Host.Password)
-	}
 	data, err := client.SSExecutor.ExecuteShortCommand(cmd)
 	if err != nil {
 		logger.GetLogger().Errorf("Read %s failed: %v", file, err)
@@ -395,9 +385,6 @@ func (client *OSClient) ReadFile(file string) (string, error) {
 
 func (client *OSClient) ReadBytes(file string) ([]byte, error) {
 	cmd := fmt.Sprintf("cat %s", file)
-	if client.WhoAmI() != "root" {
-		cmd = SudoPrefixWithPassword(cmd, client.SSExecutor.Host.Password)
-	}
 	data, err := client.SSExecutor.ExecuteShortCMD(cmd)
 	if err != nil {
 		logger.GetLogger().Errorf("Read %s failed: %v", file, err)
