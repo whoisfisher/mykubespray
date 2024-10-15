@@ -88,9 +88,9 @@ backend kube-apiserver
 		log.Printf("Failed to generate template: %s", err.Error())
 		return err
 	}
-	command := fmt.Sprintf("echo '%s' > %s", rendered.String(), configFile)
+	command := fmt.Sprintf("bash -c \"echo '%s' > %s\"", rendered.String(), configFile)
 	if client.OSClient.WhoAmI() != "root" {
-		command = SudoPrefix(command)
+		command = SudoPrefixWithPassword(command, client.OSClient.SSExecutor.Host.Password)
 	}
 	err = client.OSClient.SSExecutor.ExecuteCommandWithoutReturn(command)
 	if err != nil {
