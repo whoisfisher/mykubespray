@@ -20,6 +20,11 @@ func NewApiServerClient(conf entity.ApiServerOidcConf, osClient OSClient) *ApiSe
 
 func (client *ApiServerClient) ModifyConfig() error {
 	configFile := "/etc/kubernetes/manifests/kube-apiserver.yaml"
+	err := client.OSClient.Chmod(configFile, "0644")
+	if err != nil {
+		logger.GetLogger().Errorf("Chmod %s failed", configFile)
+		return err
+	}
 	data, err := client.OSClient.ReadBytes(configFile)
 	if err != nil {
 		logger.GetLogger().Errorf("Read %s failed", configFile)
