@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"fmt"
 	"github.com/whoisfisher/mykubespray/pkg/entity"
-	"log"
+	"github.com/whoisfisher/mykubespray/pkg/logger"
 	"strings"
 	"text/template"
 )
@@ -25,7 +25,7 @@ func (client *HaproxyClient) InstallHaproxy(logChan chan LogEntry) error {
 	command := ""
 	os, err := GetDistribution(&client.OSClient.SSExecutor)
 	if err != nil {
-		log.Printf("Failed to create ssh connection: %s", err.Error())
+		logger.GetLogger().Printf("Failed to create ssh connection: %s", err.Error())
 		return err
 	}
 	if os == "ubuntu" {
@@ -35,7 +35,7 @@ func (client *HaproxyClient) InstallHaproxy(logChan chan LogEntry) error {
 	}
 	err = client.OSClient.SSExecutor.ExecuteCommand(command, logChan)
 	if err != nil {
-		log.Printf("Failed to install haproxy: %s", err.Error())
+		logger.GetLogger().Printf("Failed to install haproxy: %s", err.Error())
 		return err
 	}
 	return nil
@@ -79,13 +79,13 @@ backend kube-apiserver
 	client.HaproxyConf.StrServers = strings.TrimSpace(client.HaproxyConf.StrServers)
 	tmpl, err := template.New("haproxy.conf").Parse(templateText)
 	if err != nil {
-		log.Printf("Failed to generate template object: %s", err.Error())
+		logger.GetLogger().Printf("Failed to generate template object: %s", err.Error())
 		return err
 	}
 	var rendered bytes.Buffer
 	err = tmpl.Execute(&rendered, client.HaproxyConf)
 	if err != nil {
-		log.Printf("Failed to generate template: %s", err.Error())
+		logger.GetLogger().Printf("Failed to generate template: %s", err.Error())
 		return err
 	}
 	command := fmt.Sprintf("bash -c \"echo '%s' > %s\"", rendered.String(), configFile)
@@ -94,7 +94,7 @@ backend kube-apiserver
 	}
 	err = client.OSClient.SSExecutor.ExecuteCommandWithoutReturn(command)
 	if err != nil {
-		log.Printf("Failed to generate haproxy config: %s", err.Error())
+		logger.GetLogger().Printf("Failed to generate haproxy config: %s", err.Error())
 		return err
 	}
 	return nil
