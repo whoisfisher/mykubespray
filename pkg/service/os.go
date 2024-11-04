@@ -10,6 +10,7 @@ type OSService interface {
 	Mount(conf entity.DiskConf) error
 	AddHost(conf entity.RecordConf) error
 	CopyFile(conf entity.CertConf) error
+	ChangeExpiredPassword(conf entity.PasswordConf) error
 }
 
 type osService struct {
@@ -106,4 +107,19 @@ func (os osService) CopyFile(conf entity.CertConf) error {
 	sshExecutor := utils.NewExecutor(conf.Host)
 	client := utils.NewOSClient(osCOnf, *sshExecutor, *localExecutor)
 	return client.CopyFile(conf.CertPath, conf.DestPath)
+}
+
+func (os osService) ChangeExpiredPassword(conf entity.PasswordConf) error {
+	sshConfig := utils.SSHConfig{}
+	sshConfig.Host = conf.Host.Address
+	sshConfig.Port = conf.Host.Port
+	sshConfig.User = conf.Host.User
+	sshConfig.Password = conf.Host.Password
+	sshConfig.PrivateKey = conf.Host.PrivateKey
+	sshConfig.AuthMethods = conf.Host.AuthMethods
+	osCOnf := utils.OSConf{}
+	localExecutor := utils.NewLocalExecutor()
+	sshExecutor := utils.NewExecutor(conf.Host)
+	client := utils.NewOSClient(osCOnf, *sshExecutor, *localExecutor)
+	return client.ChangeExpiredPassword(conf.Host.Password, conf.NewPassword)
 }

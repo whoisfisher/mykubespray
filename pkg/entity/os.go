@@ -32,3 +32,8 @@ type FileSrcDest struct {
 	SrcFile  string
 	DestFile string
 }
+
+type PasswordConf struct {
+	Host
+	NewPassword string
+}

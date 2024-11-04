@@ -2,14 +2,18 @@ package utils
 
 import (
 	"bufio"
+	"context"
 	"fmt"
 	"github.com/whoisfisher/mykubespray/pkg/entity"
 	"github.com/whoisfisher/mykubespray/pkg/logger"
+	"golang.org/x/crypto/ssh"
+	"io"
 	"log"
 	"os"
 	"path/filepath"
 	"strings"
 	"sync"
+	"time"
 )
 
 // SSHExecutor implements Executor for SSH connections.
@@ -586,5 +590,95 @@ func (executor *SSHExecutor) UpdateResolvFile(ip string) error {
 		logger.GetLogger().Infof("IP 已存在，跳过追加")
 		fmt.Println("IP 已存在，跳过追加")
 	}
+	return nil
+}
+
+func (executor *SSHExecutor) ChangeExpiredPassword(currentPassword, newPassword string) error {
+	session, err := executor.Connection.Client.NewSession()
+	if err != nil {
+		logger.GetLogger().Errorf("Failed to create SSH session: %s", err.Error())
+		return err
+	}
+	defer session.Close()
+
+	stdin, err := session.StdinPipe()
+	if err != nil {
+		logger.GetLogger().Errorf("Unable to setup stdin for session: %v", err)
+		return err
+	}
+
+	stdoutPipe, err := session.StdoutPipe()
+	if err != nil {
+		logger.GetLogger().Errorf("Unable to create stdout pipe: %v", err)
+		return err
+	}
+	stderrPipe, err := session.StderrPipe()
+	if err != nil {
+		logger.GetLogger().Errorf("Failed to create stderr pipe: %s", err.Error())
+		return err
+	}
+
+	outputReader := io.MultiReader(stdoutPipe, stderrPipe)
+
+	if err := session.RequestPty("xterm", 80, 40, ssh.TerminalModes{}); err != nil {
+		return fmt.Errorf("Cannot request tty: %w", err)
+	}
+
+	if err := session.Shell(); err != nil {
+		return fmt.Errorf("Cannot start shell: %w", err)
+	}
+
+	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second) // 设置超时为30秒
+	defer cancel()
+
+	// 创建一个通道用于接收扫描结果
+	resultCh := make(chan error)
+
+	go func() {
+		scanner := bufio.NewScanner(outputReader)
+		for scanner.Scan() {
+			line := scanner.Text()
+			fmt.Println(line)
+
+			if strings.Contains(line, "password has expired") || strings.Contains(line, "You must change your password") {
+				fmt.Println("检测到密码已过期，正在更新密码...")
+
+				if _, err := fmt.Fprintln(stdin, currentPassword); err != nil {
+					resultCh <- fmt.Errorf("无法输入当前密码: %w", err)
+					return
+				}
+				time.Sleep(1 * time.Second)
+
+				if _, err := fmt.Fprintln(stdin, newPassword); err != nil {
+					resultCh <- fmt.Errorf("无法输入新密码: %w", err)
+					return
+				}
+				time.Sleep(1 * time.Second)
+
+				if _, err := fmt.Fprintln(stdin, newPassword); err != nil {
+					resultCh <- fmt.Errorf("无法确认新密码: %w", err)
+					return
+				}
+
+				fmt.Println("密码更新成功")
+				resultCh <- nil // 表示成功
+				return
+			}
+		}
+		resultCh <- scanner.Err() // 发送扫描错误
+	}()
+
+	// 等待扫描结果或超时
+	select {
+	case err := <-resultCh: // 从通道接收结果
+		if err != nil {
+			return fmt.Errorf("读取输出时发生错误: %w", err)
+		}
+	case <-ctx.Done():
+		if ctx.Err() == context.DeadlineExceeded {
+			return fmt.Errorf("超时: 没有检测到密码过期提示")
+		}
+	}
+
 	return nil
 }

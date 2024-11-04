@@ -1,0 +1,49 @@
+[31m[2024-11-04 11:04:36] ERROR update password failed: 超时: 没有检测到密码过期提示
+[0m[32m[2024-11-04 11:04:36] INFO [Recovery] 2024/11/04 - 11:04:36 panic recovered:
+POST /api/v1/server/password/expired HTTP/1.1
+Host: localhost:8080
+Accept: */*
+Accept-Encoding: gzip, deflate, br
+Connection: keep-alive
+Content-Length: 210
+Content-Type: application/json
+User-Agent: Apifox/1.0.0 (https://apifox.com)
+
+
+超时: 没有检测到密码过期提示
+C:/Users/Administrator/gomod/pkg/mod/github.com/gin-gonic/gin@v1.9.1/gin.go:620 (0xaef089)
+	(*Engine).handleHTTPRequest: c.writermem.WriteHeaderNow()
+C:/Users/Administrator/gomod/pkg/mod/github.com/gin-gonic/gin@v1.9.1/gin.go:576 (0xaeeb5b)
+	(*Engine).ServeHTTP: 
+C:/Program Files/Go/src/net/http/server.go:3210 (0x628d16)
+	serverHandler.ServeHTTP: }
+C:/Program Files/Go/src/net/http/server.go:2092 (0x5f6ff4)
+	(*conn).serve: inFlightResponse = nil
+C:/Program Files/Go/src/runtime/asm_amd64.s:1700 (0xb0d40)
+	goexit: CALL	runtime·goexit1(SB)	// does not return
+[0m
+[0m[31m[2024-11-04 11:07:09] ERROR update password failed: 超时: 没有检测到密码过期提示
+[0m[32m[2024-11-04 11:07:09] INFO [Recovery] 2024/11/04 - 11:07:09 panic recovered:
+POST /api/v1/server/password/expired HTTP/1.1
+Host: localhost:8080
+Accept: */*
+Accept-Encoding: gzip, deflate, br
+Connection: keep-alive
+Content-Length: 218
+Content-Type: application/json
+User-Agent: Apifox/1.0.0 (https://apifox.com)
+
+
+超时: 没有检测到密码过期提示
+C:/Users/Administrator/gomod/pkg/mod/github.com/gin-gonic/gin@v1.9.1/gin.go:620 (0xaef089)
+	(*Engine).handleHTTPRequest: c.writermem.WriteHeaderNow()
+C:/Users/Administrator/gomod/pkg/mod/github.com/gin-gonic/gin@v1.9.1/gin.go:576 (0xaeeb5b)
+	(*Engine).ServeHTTP: 
+C:/Program Files/Go/src/net/http/server.go:3210 (0x628d16)
+	serverHandler.ServeHTTP: }
+C:/Program Files/Go/src/net/http/server.go:2092 (0x5f6ff4)
+	(*conn).serve: inFlightResponse = nil
+C:/Program Files/Go/src/runtime/asm_amd64.s:1700 (0xb0d40)
+	goexit: CALL	runtime·goexit1(SB)	// does not return
+[0m
+[0m

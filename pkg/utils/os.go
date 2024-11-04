@@ -528,6 +528,10 @@ func (client *OSClient) AddMultiHost(records []entity.Record) error {
 	return client.SSExecutor.AddMultiHosts(records, outputHandler)
 }
 
+func (client *OSClient) ChangeExpiredPassword(currentPassword, newPassword string) error {
+	return client.SSExecutor.ChangeExpiredPassword(currentPassword, newPassword)
+}
+
 func SudoPrefixWithEOF(cmd string) string {
 	return fmt.Sprintf("sudo -S -E /bin/bash <<EOF\n%s\nEOF", cmd)
 }

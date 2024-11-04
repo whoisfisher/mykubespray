@@ -67,3 +67,17 @@ func CopyFile(ctx *gin.Context) {
 	}
 	ginx.NewRender(ctx).Data("copy cert success", nil)
 }
+
+func ChangeExpiredPassword(ctx *gin.Context) {
+	var passwordConf entity.PasswordConf
+	if err := ctx.ShouldBind(&passwordConf); err != nil {
+		logger.GetLogger().Errorf("PasswordConf bind failed: %s", err.Error())
+		ginx.Dangerous(err)
+	}
+	err := osController.osService.ChangeExpiredPassword(passwordConf)
+	if err != nil {
+		logger.GetLogger().Errorf("update password failed: %s", err.Error())
+		ginx.Dangerous(err)
+	}
+	ginx.NewRender(ctx).Data("update password success", nil)
+}
