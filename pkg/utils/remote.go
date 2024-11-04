@@ -682,3 +682,130 @@ func (executor *SSHExecutor) ChangeExpiredPassword(currentPassword, newPassword 
 
 	return nil
 }
+
+// PasswordInfo 结构体用于存储用户密码状态信息
+type PasswordInfo struct {
+	LastChange       string
+	PasswordExpires  string
+	PasswordInactive string
+	AccountExpires   string
+	MinDays          int
+	MaxDays          int
+	WarningDays      int
+}
+
+// CheckPasswordInfo 获取用户的密码信息
+func (executor *SSHExecutor) CheckPasswordInfo(username string) (PasswordInfo, error) {
+	session, err := executor.Connection.Client.NewSession()
+	if err != nil {
+		return PasswordInfo{}, fmt.Errorf("failed to create SSH session: %w", err)
+	}
+	defer session.Close()
+
+	// 创建标准输入、输出和错误管道
+	stdin, err := session.StdinPipe()
+	if err != nil {
+		return PasswordInfo{}, fmt.Errorf("unable to setup stdin for session: %w", err)
+	}
+	stdoutPipe, err := session.StdoutPipe()
+	if err != nil {
+		return PasswordInfo{}, fmt.Errorf("unable to create stdout pipe: %w", err)
+	}
+	stderrPipe, err := session.StderrPipe()
+	if err != nil {
+		return PasswordInfo{}, fmt.Errorf("failed to create stderr pipe: %w", err)
+	}
+
+	outputReader := io.MultiReader(stdoutPipe, stderrPipe)
+
+	if err := session.RequestPty("xterm", 80, 40, ssh.TerminalModes{}); err != nil {
+		return PasswordInfo{}, fmt.Errorf("cannot request tty: %w", err)
+	}
+
+	if err := session.Shell(); err != nil {
+		return PasswordInfo{}, fmt.Errorf("cannot start shell: %w", err)
+	}
+
+	// 执行 chage 命令
+	if _, err := fmt.Fprintln(stdin, "sudo chage -l "+username); err != nil {
+		return PasswordInfo{}, fmt.Errorf("无法执行 chage 命令: %w", err)
+	}
+
+	var info PasswordInfo
+
+	// 读取输出
+	scanner := bufio.NewScanner(outputReader)
+	for scanner.Scan() {
+		line := scanner.Text()
+		fmt.Println(line)
+
+		// 提取相关信息
+		if strings.Contains(line, "Last password change") {
+			info.LastChange = strings.TrimSpace(strings.Split(line, ":")[1])
+		} else if strings.Contains(line, "Password expires") {
+			info.PasswordExpires = strings.TrimSpace(strings.Split(line, ":")[1])
+		} else if strings.Contains(line, "Password inactive") {
+			info.PasswordInactive = strings.TrimSpace(strings.Split(line, ":")[1])
+		} else if strings.Contains(line, "Account expires") {
+			info.AccountExpires = strings.TrimSpace(strings.Split(line, ":")[1])
+		} else if strings.Contains(line, "Minimum number of days between password change") {
+			fmt.Sscanf(strings.TrimSpace(strings.Split(line, ":")[1]), "%d", &info.MinDays)
+		} else if strings.Contains(line, "Maximum number of days between password change") {
+			fmt.Sscanf(strings.TrimSpace(strings.Split(line, ":")[1]), "%d", &info.MaxDays)
+		} else if strings.Contains(line, "Number of days of warning before password expires") {
+			fmt.Sscanf(strings.TrimSpace(strings.Split(line, ":")[1]), "%d", &info.WarningDays)
+		}
+	}
+
+	if err := scanner.Err(); err != nil {
+		return PasswordInfo{}, fmt.Errorf("读取输出时发生错误: %w", err)
+	}
+
+	if err := session.Wait(); err != nil {
+		return PasswordInfo{}, fmt.Errorf("会话执行出错: %w", err)
+	}
+
+	return info, nil
+}
+
+// UpdatePassword 修改用户密码
+func (executor *SSHExecutor) UpdatePassword(currentPassword, newPassword string) error {
+	session, err := executor.Connection.Client.NewSession()
+	if err != nil {
+		logger.GetLogger().Errorf("Failed to create SSH session: %s", err.Error())
+		return err
+	}
+	defer session.Close()
+
+	stdin, err := session.StdinPipe()
+	if err != nil {
+		logger.GetLogger().Errorf("Unable to setup stdin for session: %v", err)
+		return err
+	}
+
+	if err := session.RequestPty("xterm", 80, 40, ssh.TerminalModes{}); err != nil {
+		return fmt.Errorf("cannot request tty: %w", err)
+	}
+
+	if err := session.Shell(); err != nil {
+		return fmt.Errorf("cannot start shell: %w", err)
+	}
+
+	// 输入当前密码和新密码
+	if _, err := fmt.Fprintln(stdin, currentPassword); err != nil {
+		return fmt.Errorf("无法输入当前密码: %w", err)
+	}
+	time.Sleep(1 * time.Second)
+
+	if _, err := fmt.Fprintln(stdin, newPassword); err != nil {
+		return fmt.Errorf("无法输入新密码: %w", err)
+	}
+	time.Sleep(1 * time.Second)
+
+	if _, err := fmt.Fprintln(stdin, newPassword); err != nil {
+		return fmt.Errorf("无法确认新密码: %w", err)
+	}
+
+	fmt.Println("密码更新成功")
+	return nil
+}
