@@ -1,0 +1,7 @@
+[32m[2024-11-06 10:23:14] INFO Method: POST | Path: /api/v1/server/updatepassword | Status: 200 | Duration: 1m4.7977858s | IP: ::1
+
+[0m[32m[2024-11-06 10:23:17] INFO {{0 2024-11-06 10:22:08.0425351 +0800 CST m=+34.020523001 0001-01-01 00:00:00 +0000 UTC {0001-01-01 00:00:00 +0000 UTC false}} example_user 1730859795 /api/v1/server/updatepassword /api/v1/server/updatepassword example_module POST No description available for this endpoint.}
+[0m[32m[2024-11-06 10:24:59] INFO Method: POST | Path: /api/v1/server/updatepassword | Status: 200 | Duration: 30.1173798s | IP: ::1
+
+[0m[32m[2024-11-06 10:24:59] INFO {{0 2024-11-06 10:24:29.0862399 +0800 CST m=+175.064227801 0001-01-01 00:00:00 +0000 UTC {0001-01-01 00:00:00 +0000 UTC false}} example_user 1730859899 /api/v1/server/updatepassword /api/v1/server/updatepassword example_module POST No description available for this endpoint.}
+[0m

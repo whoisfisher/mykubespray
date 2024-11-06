@@ -1,0 +1,28 @@
+[32m[2024-11-06 09:37:31] INFO Last login: Wed Nov  6 09:34:04 2024 from 192.168.227.1
+[0m[32m[2024-11-06 09:37:32] INFO  chage -l root
+[0m[32m[2024-11-06 09:37:32] INFO ]0;root@node1:~[root@node1 ~]#  chage -l root
+[0m[32m[2024-11-06 09:37:32] INFO Last password change					: never
+[0m[32m[2024-11-06 09:37:44] INFO [Recovery] 2024/11/06 - 09:37:44 panic recovered:
+POST /api/v1/server/checkpassword HTTP/1.1
+Host: localhost:8080
+Accept: */*
+Accept-Encoding: gzip, deflate, br
+Connection: keep-alive
+Content-Length: 175
+Content-Type: application/json
+User-Agent: Apifox/1.0.0 (https://apifox.com)
+
+
+runtime error: invalid memory address or nil pointer dereference
+C:/Users/Administrator/gomod/pkg/mod/github.com/gin-gonic/gin@v1.9.1/gin.go:620 (0x113f089)
+	(*Engine).handleHTTPRequest: c.writermem.WriteHeaderNow()
+C:/Users/Administrator/gomod/pkg/mod/github.com/gin-gonic/gin@v1.9.1/gin.go:576 (0x113eb5b)
+	(*Engine).ServeHTTP: 
+C:/Program Files/Go/src/net/http/server.go:3210 (0xc78d16)
+	serverHandler.ServeHTTP: }
+C:/Program Files/Go/src/net/http/server.go:2092 (0xc46ff4)
+	(*conn).serve: inFlightResponse = nil
+C:/Program Files/Go/src/runtime/asm_amd64.s:1700 (0x700d40)
+	goexit: CALL	runtime·goexit1(SB)	// does not return
+[0m
+[0m

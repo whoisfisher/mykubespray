@@ -81,3 +81,31 @@ func ChangeExpiredPassword(ctx *gin.Context) {
 	}
 	ginx.NewRender(ctx).Data("update password success", nil)
 }
+
+func CheckPasswordInfo(ctx *gin.Context) {
+	var passwordConf entity.Host
+	if err := ctx.ShouldBind(&passwordConf); err != nil {
+		logger.GetLogger().Errorf("PasswordConf bind failed: %s", err.Error())
+		ginx.Dangerous(err)
+	}
+	info, err := osController.osService.CheckPasswordInfo(passwordConf)
+	if err != nil {
+		logger.GetLogger().Errorf("check password failed: %s", err.Error())
+		ginx.Dangerous(err)
+	}
+	ginx.NewRender(ctx).Data(info, nil)
+}
+
+func UpdatePassword(ctx *gin.Context) {
+	var passwordConf entity.PasswordConf
+	if err := ctx.ShouldBind(&passwordConf); err != nil {
+		logger.GetLogger().Errorf("PasswordConf bind failed: %s", err.Error())
+		ginx.Dangerous(err)
+	}
+	err := osController.osService.UpdatePassword(passwordConf)
+	if err != nil {
+		logger.GetLogger().Errorf("update password failed: %s", err.Error())
+		ginx.Dangerous(err)
+	}
+	ginx.NewRender(ctx).Data("update password success", nil)
+}

@@ -1,0 +1,54 @@
+[32m[2024-11-06 09:27:34] INFO Last login: Wed Nov  6 09:26:18 2024 from 192.168.227.1
+[0m[32m[2024-11-06 09:27:34] INFO  chage -l root
+[0m[32m[2024-11-06 09:27:34] INFO ]0;root@node1:~[root@node1 ~]#  chage -l root
+[0m[32m[2024-11-06 09:27:34] INFO Last password change					: never
+[0m[32m[2024-11-06 09:27:34] INFO [Recovery] 2024/11/06 - 09:27:34 panic recovered:
+POST /api/v1/server/checkpassword HTTP/1.1
+Host: localhost:8080
+Accept: */*
+Accept-Encoding: gzip, deflate, br
+Connection: keep-alive
+Content-Length: 175
+Content-Type: application/json
+User-Agent: Apifox/1.0.0 (https://apifox.com)
+
+
+runtime error: invalid memory address or nil pointer dereference
+C:/Users/Administrator/gomod/pkg/mod/github.com/gin-gonic/gin@v1.9.1/gin.go:620 (0x921d04)
+	(*Engine).handleHTTPRequest: c.writermem.WriteHeaderNow()
+C:/Users/Administrator/gomod/pkg/mod/github.com/gin-gonic/gin@v1.9.1/gin.go:576 (0x921851)
+	(*Engine).ServeHTTP: 
+C:/Program Files/Go/src/net/http/server.go:3210 (0x602d8d)
+	serverHandler.ServeHTTP: }
+C:/Program Files/Go/src/net/http/server.go:2092 (0x5e22af)
+	(*conn).serve: inFlightResponse = nil
+C:/Program Files/Go/src/runtime/asm_amd64.s:1700 (0x2e8cc0)
+	goexit: CALL	runtime·goexit1(SB)	// does not return
+[0m
+[0m[32m[2024-11-06 09:28:24] INFO Last login: Wed Nov  6 09:27:27 2024 from 192.168.227.1
+[0m[32m[2024-11-06 09:28:29] INFO ]0;root@node1:~[root@node1 ~]#  chage -l root
+[0m[32m[2024-11-06 09:28:45] INFO Last password change					: never
+[0m[32m[2024-11-06 09:33:11] INFO [Recovery] 2024/11/06 - 09:33:11 panic recovered:
+POST /api/v1/server/checkpassword HTTP/1.1
+Host: localhost:8080
+Accept: */*
+Accept-Encoding: gzip, deflate, br
+Connection: keep-alive
+Content-Length: 175
+Content-Type: application/json
+User-Agent: Apifox/1.0.0 (https://apifox.com)
+
+
+runtime error: invalid memory address or nil pointer dereference
+C:/Users/Administrator/gomod/pkg/mod/github.com/gin-gonic/gin@v1.9.1/gin.go:620 (0x193f089)
+	(*Engine).handleHTTPRequest: c.writermem.WriteHeaderNow()
+C:/Users/Administrator/gomod/pkg/mod/github.com/gin-gonic/gin@v1.9.1/gin.go:576 (0x193eb5b)
+	(*Engine).ServeHTTP: 
+C:/Program Files/Go/src/net/http/server.go:3210 (0x1478d16)
+	serverHandler.ServeHTTP: }
+C:/Program Files/Go/src/net/http/server.go:2092 (0x1446ff4)
+	(*conn).serve: inFlightResponse = nil
+C:/Program Files/Go/src/runtime/asm_amd64.s:1700 (0xf00d40)
+	goexit: CALL	runtime·goexit1(SB)	// does not return
+[0m
+[0m

@@ -1,0 +1,72 @@
+[31m[2024-11-06 09:48:32] ERROR Failed to execute command: Process exited with status 1, WARNING: Your password has expired.
+Password change required but no TTY available.
+
+[0m[31m[2024-11-06 09:48:32] ERROR Failed to execute command: Process exited with status 1, WARNING: Your password has expired.
+Password change required but no TTY available.
+
+[0m[33m[2024-11-06 09:48:32] WARNING Read username failed: Process exited with status 1
+[0m[31m[2024-11-06 09:48:32] ERROR Failed to execute command: Process exited with status 1, WARNING: Your password has expired.
+Password change required but no TTY available.
+
+[0m[31m[2024-11-06 09:48:32] ERROR Failed to get cpu info: Process exited with status 1
+[0m[31m[2024-11-06 09:48:32] ERROR Failed to execute command: Process exited with status 1, WARNING: Your password has expired.
+Password change required but no TTY available.
+
+[0m[33m[2024-11-06 09:48:32] WARNING Read username failed: Process exited with status 1
+[0m[31m[2024-11-06 09:48:32] ERROR Failed to execute command: Process exited with status 1, WARNING: Your password has expired.
+Password change required but no TTY available.
+
+[0m[31m[2024-11-06 09:48:32] ERROR Failed to get cpu cores: Process exited with status 1
+[0m[31m[2024-11-06 09:48:32] ERROR Failed to execute command: Process exited with status 1, WARNING: Your password has expired.
+Password change required but no TTY available.
+
+[0m[33m[2024-11-06 09:48:32] WARNING Read username failed: Process exited with status 1
+[0m[31m[2024-11-06 09:48:32] ERROR Failed to execute command: Process exited with status 1, WARNING: Your password has expired.
+Password change required but no TTY available.
+
+[0m[31m[2024-11-06 09:48:32] ERROR Failed to get memory info: Process exited with status 1
+[0m[31m[2024-11-06 09:48:32] ERROR Failed to execute command: Process exited with status 1, WARNING: Your password has expired.
+Password change required but no TTY available.
+
+[0m[33m[2024-11-06 09:48:32] WARNING Read username failed: Process exited with status 1
+[0m[31m[2024-11-06 09:48:32] ERROR Failed to execute command: Process exited with status 1, WARNING: Your password has expired.
+Password change required but no TTY available.
+
+[0m[31m[2024-11-06 09:48:32] ERROR Failed to get disk size: Process exited with status 1
+[0m[31m[2024-11-06 09:48:32] ERROR Failed to execute command: Process exited with status 1, WARNING: Your password has expired.
+Password change required but no TTY available.
+
+[0m[33m[2024-11-06 09:48:32] WARNING Read username failed: Process exited with status 1
+[0m[31m[2024-11-06 09:48:32] ERROR Failed to execute command: Process exited with status 1, WARNING: Your password has expired.
+Password change required but no TTY available.
+
+[0m[31m[2024-11-06 09:48:32] ERROR Failed to get netcard list: Process exited with status 1
+[0m[31m[2024-11-06 09:48:38] ERROR Failed to execute command: Process exited with status 1, WARNING: Your password has expired.
+Password change required but no TTY available.
+
+[0m[33m[2024-11-06 09:48:38] WARNING Read username failed: Process exited with status 1
+[0m[31m[2024-11-06 09:51:04] ERROR check password failed: failed to execute command: Process exited with status 1
+[0m[32m[2024-11-06 09:51:04] INFO [Recovery] 2024/11/06 - 09:51:04 panic recovered:
+POST /api/v1/server/checkpassword HTTP/1.1
+Host: localhost:8080
+Accept: */*
+Accept-Encoding: gzip, deflate, br
+Connection: keep-alive
+Content-Length: 183
+Content-Type: application/json
+User-Agent: Apifox/1.0.0 (https://apifox.com)
+
+
+failed to execute command: Process exited with status 1
+C:/Users/Administrator/gomod/pkg/mod/github.com/gin-gonic/gin@v1.9.1/gin.go:620 (0x104f089)
+	(*Engine).handleHTTPRequest: c.writermem.WriteHeaderNow()
+C:/Users/Administrator/gomod/pkg/mod/github.com/gin-gonic/gin@v1.9.1/gin.go:576 (0x104eb5b)
+	(*Engine).ServeHTTP: 
+C:/Program Files/Go/src/net/http/server.go:3210 (0xb88d16)
+	serverHandler.ServeHTTP: }
+C:/Program Files/Go/src/net/http/server.go:2092 (0xb56ff4)
+	(*conn).serve: inFlightResponse = nil
+C:/Program Files/Go/src/runtime/asm_amd64.s:1700 (0x610d40)
+	goexit: CALL	runtime·goexit1(SB)	// does not return
+[0m
+[0m

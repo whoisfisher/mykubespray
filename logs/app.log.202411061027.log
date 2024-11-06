@@ -1,0 +1,60 @@
+[32m[2024-11-06 10:27:35] INFO Method: POST | Path: /api/v1/server/updatepassword | Status: 200 | Duration: 1.0258284s | IP: ::1
+
+[0m[32m[2024-11-06 10:27:35] INFO {{0 2024-11-06 10:27:34.8059571 +0800 CST m=+3.261573001 0001-01-01 00:00:00 +0000 UTC {0001-01-01 00:00:00 +0000 UTC false}} example_user 1730860055 /api/v1/server/updatepassword /api/v1/server/updatepassword example_module POST No description available for this endpoint.}
+[0m[32m[2024-11-06 10:27:52] INFO [Recovery] 2024/11/06 - 10:27:52 panic recovered:
+POST /api/v1/server/updatepassword HTTP/1.1
+Host: localhost:8080
+Accept: */*
+Accept-Encoding: gzip, deflate, br
+Connection: keep-alive
+Content-Length: 218
+Content-Type: application/json
+User-Agent: Apifox/1.0.0 (https://apifox.com)
+
+
+runtime error: invalid memory address or nil pointer dereference
+C:/Users/Administrator/gomod/pkg/mod/github.com/gin-gonic/gin@v1.9.1/gin.go:620 (0x891d04)
+	(*Engine).handleHTTPRequest: c.writermem.WriteHeaderNow()
+C:/Users/Administrator/gomod/pkg/mod/github.com/gin-gonic/gin@v1.9.1/gin.go:576 (0x891851)
+	(*Engine).ServeHTTP: 
+C:/Program Files/Go/src/net/http/server.go:3210 (0x572d8d)
+	serverHandler.ServeHTTP: }
+C:/Program Files/Go/src/net/http/server.go:2092 (0x5522af)
+	(*conn).serve: inFlightResponse = nil
+C:/Program Files/Go/src/runtime/asm_amd64.s:1700 (0x258cc0)
+	goexit: CALL	runtime·goexit1(SB)	// does not return
+[0m
+[0m[32m[2024-11-06 10:29:08] INFO Method: POST | Path: /api/v1/server/updatepassword | Status: 200 | Duration: 1.2153183s | IP: ::1
+
+[0m[32m[2024-11-06 10:29:08] INFO {{0 2024-11-06 10:29:07.0131813 +0800 CST m=+95.468797201 0001-01-01 00:00:00 +0000 UTC {0001-01-01 00:00:00 +0000 UTC false}} example_user 1730860148 /api/v1/server/updatepassword /api/v1/server/updatepassword example_module POST No description available for this endpoint.}
+[0m[32m[2024-11-06 10:29:14] INFO [sudo] password for wangzhendong: Last password change					: Nov 06, 2024
+[0m[32m[2024-11-06 10:29:14] INFO Password expires					: never
+[0m[32m[2024-11-06 10:29:14] INFO Password inactive					: never
+[0m[32m[2024-11-06 10:29:14] INFO Account expires						: never
+[0m[32m[2024-11-06 10:29:14] INFO Minimum number of days between password change		: 0
+[0m[32m[2024-11-06 10:29:14] INFO Maximum number of days between password change		: 99999
+[0m[32m[2024-11-06 10:29:14] INFO Number of days of warning before password expires	: 7
+[0m[32m[2024-11-06 10:29:14] INFO Method: POST | Path: /api/v1/server/checkpassword | Status: 200 | Duration: 1.0791745s | IP: ::1
+
+[0m[32m[2024-11-06 10:29:14] INFO {{0 2024-11-06 10:29:13.9042853 +0800 CST m=+102.359901201 0001-01-01 00:00:00 +0000 UTC {0001-01-01 00:00:00 +0000 UTC false}} example_user 1730860154 /api/v1/server/checkpassword /api/v1/server/checkpassword example_module POST No description available for this endpoint.}
+[0m[32m[2024-11-06 10:29:29] INFO [sudo] password for wangzhendong: Last password change					: Nov 06, 2024
+[0m[32m[2024-11-06 10:29:29] INFO Password expires					: never
+[0m[32m[2024-11-06 10:29:29] INFO Password inactive					: never
+[0m[32m[2024-11-06 10:29:29] INFO Account expires						: never
+[0m[32m[2024-11-06 10:29:29] INFO Minimum number of days between password change		: 0
+[0m[32m[2024-11-06 10:29:29] INFO Maximum number of days between password change		: 99999
+[0m[32m[2024-11-06 10:29:29] INFO Number of days of warning before password expires	: 7
+[0m[32m[2024-11-06 10:29:29] INFO Method: POST | Path: /api/v1/server/checkpassword | Status: 200 | Duration: 1.0820721s | IP: ::1
+
+[0m[32m[2024-11-06 10:29:29] INFO {{0 2024-11-06 10:29:28.029424 +0800 CST m=+116.485039901 0001-01-01 00:00:00 +0000 UTC {0001-01-01 00:00:00 +0000 UTC false}} example_user 1730860169 /api/v1/server/checkpassword /api/v1/server/checkpassword example_module POST No description available for this endpoint.}
+[0m[32m[2024-11-06 10:29:32] INFO Last password change					: Nov 06, 2024
+[0m[32m[2024-11-06 10:29:32] INFO Password expires					: never
+[0m[32m[2024-11-06 10:29:32] INFO Password inactive					: never
+[0m[32m[2024-11-06 10:29:32] INFO Account expires						: never
+[0m[32m[2024-11-06 10:29:32] INFO Minimum number of days between password change		: 0
+[0m[32m[2024-11-06 10:29:32] INFO Maximum number of days between password change		: 99999
+[0m[32m[2024-11-06 10:29:32] INFO Number of days of warning before password expires	: 7
+[0m[32m[2024-11-06 10:29:32] INFO Method: POST | Path: /api/v1/server/checkpassword | Status: 200 | Duration: 768.8585ms | IP: ::1
+
+[0m[32m[2024-11-06 10:29:32] INFO {{0 2024-11-06 10:29:31.6909408 +0800 CST m=+120.146556701 0001-01-01 00:00:00 +0000 UTC {0001-01-01 00:00:00 +0000 UTC false}} example_user 1730860172 /api/v1/server/checkpassword /api/v1/server/checkpassword example_module POST No description available for this endpoint.}
+[0m

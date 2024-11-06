@@ -68,6 +68,8 @@ func configHttpRouter(rg *gin.RouterGroup, version string) {
 	rg.POST("/server/dnsparallel", controller.AddDNSParallel)
 	rg.POST("/server/execmdparallel", controller.ExecuteCommandParallel)
 	rg.POST("/server/password/expired", controller.ChangeExpiredPassword)
+	rg.POST("/server/checkpassword", controller.CheckPasswordInfo)
+	rg.POST("/server/updatepassword", controller.UpdatePassword)
 	rg.POST("/keycloak/group", controller.CreateGroup)
 	rg.POST("/keycloak/user", controller.QueryUserByName)
 	rg.POST("/kubernetes/apply", controller.ApplyYAMLs)

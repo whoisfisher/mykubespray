@@ -11,6 +11,8 @@ type OSService interface {
 	AddHost(conf entity.RecordConf) error
 	CopyFile(conf entity.CertConf) error
 	ChangeExpiredPassword(conf entity.PasswordConf) error
+	CheckPasswordInfo(conf entity.Host) (*entity.PasswordInfo, error)
+	UpdatePassword(conf entity.PasswordConf) error
 }
 
 type osService struct {
@@ -122,4 +124,34 @@ func (os osService) ChangeExpiredPassword(conf entity.PasswordConf) error {
 	sshExecutor := utils.NewExecutor(conf.Host)
 	client := utils.NewOSClient(osCOnf, *sshExecutor, *localExecutor)
 	return client.ChangeExpiredPassword(conf.Host.Password, conf.NewPassword)
+}
+
+func (os osService) CheckPasswordInfo(conf entity.Host) (*entity.PasswordInfo, error) {
+	sshConfig := utils.SSHConfig{}
+	sshConfig.Host = conf.Address
+	sshConfig.Port = conf.Port
+	sshConfig.User = conf.User
+	sshConfig.Password = conf.Password
+	sshConfig.PrivateKey = conf.PrivateKey
+	sshConfig.AuthMethods = conf.AuthMethods
+	osCOnf := utils.OSConf{}
+	localExecutor := utils.NewLocalExecutor()
+	sshExecutor := utils.NewExecutor(conf)
+	client := utils.NewOSClient(osCOnf, *sshExecutor, *localExecutor)
+	return client.CheckPasswordInfo()
+}
+
+func (os osService) UpdatePassword(conf entity.PasswordConf) error {
+	sshConfig := utils.SSHConfig{}
+	sshConfig.Host = conf.Address
+	sshConfig.Port = conf.Port
+	sshConfig.User = conf.User
+	sshConfig.Password = conf.Password
+	sshConfig.PrivateKey = conf.PrivateKey
+	sshConfig.AuthMethods = conf.AuthMethods
+	osCOnf := utils.OSConf{}
+	localExecutor := utils.NewLocalExecutor()
+	sshExecutor := utils.NewExecutor(conf.Host)
+	client := utils.NewOSClient(osCOnf, *sshExecutor, *localExecutor)
+	return client.UpdatePasswordInfo(conf.Host.Password, conf.NewPassword)
 }

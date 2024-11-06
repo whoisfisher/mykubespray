@@ -532,6 +532,14 @@ func (client *OSClient) ChangeExpiredPassword(currentPassword, newPassword strin
 	return client.SSExecutor.ChangeExpiredPassword(currentPassword, newPassword)
 }
 
+func (client *OSClient) CheckPasswordInfo() (*entity.PasswordInfo, error) {
+	return client.SSExecutor.CheckPasswordInfo()
+}
+
+func (client *OSClient) UpdatePasswordInfo(currentPassword, newPassword string) error {
+	return client.SSExecutor.UpdatePassword(currentPassword, newPassword)
+}
+
 func SudoPrefixWithEOF(cmd string) string {
 	return fmt.Sprintf("sudo -S -E /bin/bash <<EOF\n%s\nEOF", cmd)
 }

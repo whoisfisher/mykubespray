@@ -1,0 +1,11 @@
+[32m[2024-11-06 09:53:34] INFO [sudo] password for wangzhendong: Last password change					: never
+[0m[32m[2024-11-06 09:53:36] INFO Password expires					: never
+[0m[32m[2024-11-06 09:53:38] INFO Password inactive					: never
+[0m[32m[2024-11-06 09:53:41] INFO Account expires						: never
+[0m[32m[2024-11-06 09:53:44] INFO Minimum number of days between password change		: 0
+[0m[32m[2024-11-06 09:53:47] INFO Maximum number of days between password change		: 99999
+[0m[32m[2024-11-06 09:53:50] INFO Number of days of warning before password expires	: 7
+[0m[32m[2024-11-06 09:54:12] INFO Method: POST | Path: /api/v1/server/checkpassword | Status: 200 | Duration: 1m1.6834128s | IP: ::1
+
+[0m[32m[2024-11-06 09:54:12] INFO {{0 2024-11-06 09:53:10.4992394 +0800 CST m=+120.335654501 0001-01-01 00:00:00 +0000 UTC {0001-01-01 00:00:00 +0000 UTC false}} example_user 1730858052 /api/v1/server/checkpassword /api/v1/server/checkpassword example_module POST No description available for this endpoint.}
+[0m

@@ -1,0 +1,4 @@
+[32m[2024-11-06 09:25:29] INFO Last login: Wed Nov  6 09:24:00 2024 from 192.168.227.1
+[0m[32m[2024-11-06 09:25:29] INFO ]0;root@node1:~[root@node1 ~]#  chage -l registry
+[0m[32m[2024-11-06 09:25:29] INFO chage: user 'registry' does not exist in /etc/passwd
+[0m

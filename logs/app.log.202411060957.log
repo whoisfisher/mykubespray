@@ -1,0 +1,34 @@
+[32m[2024-11-06 09:57:17] INFO [sudo] password for wangzhendong: Last password change					: never
+[0m[32m[2024-11-06 09:57:17] INFO Password expires					: never
+[0m[32m[2024-11-06 09:57:17] INFO Password inactive					: never
+[0m[32m[2024-11-06 09:57:17] INFO Account expires						: never
+[0m[32m[2024-11-06 09:57:17] INFO Minimum number of days between password change		: 0
+[0m[32m[2024-11-06 09:57:17] INFO Maximum number of days between password change		: 99999
+[0m[32m[2024-11-06 09:57:17] INFO Number of days of warning before password expires	: 7
+[0m[32m[2024-11-06 09:57:17] INFO Method: POST | Path: /api/v1/server/checkpassword | Status: 200 | Duration: 1.3100232s | IP: ::1
+
+[0m[32m[2024-11-06 09:57:17] INFO {{0 2024-11-06 09:57:15.9055065 +0800 CST m=+4.486882301 0001-01-01 00:00:00 +0000 UTC {0001-01-01 00:00:00 +0000 UTC false}} example_user 1730858237 /api/v1/server/checkpassword /api/v1/server/checkpassword example_module POST No description available for this endpoint.}
+[0m[32m[2024-11-06 10:09:42] INFO [Recovery] 2024/11/06 - 10:09:42 panic recovered:
+POST /api/v1/server/updatepassword HTTP/1.1
+Host: localhost:8080
+Accept: */*
+Accept-Encoding: gzip, deflate, br
+Connection: keep-alive
+Content-Length: 243
+Content-Type: application/json
+User-Agent: Apifox/1.0.0 (https://apifox.com)
+
+
+runtime error: invalid memory address or nil pointer dereference
+C:/Users/Administrator/gomod/pkg/mod/github.com/gin-gonic/gin@v1.9.1/gin.go:620 (0x8a1d04)
+	(*Engine).handleHTTPRequest: c.writermem.WriteHeaderNow()
+C:/Users/Administrator/gomod/pkg/mod/github.com/gin-gonic/gin@v1.9.1/gin.go:576 (0x8a1851)
+	(*Engine).ServeHTTP: 
+C:/Program Files/Go/src/net/http/server.go:3210 (0x582d8d)
+	serverHandler.ServeHTTP: }
+C:/Program Files/Go/src/net/http/server.go:2092 (0x5622af)
+	(*conn).serve: inFlightResponse = nil
+C:/Program Files/Go/src/runtime/asm_amd64.s:1700 (0x268cc0)
+	goexit: CALL	runtime·goexit1(SB)	// does not return
+[0m
+[0m

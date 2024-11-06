@@ -1,0 +1,10 @@
+[32m[2024-11-06 09:42:10] INFO Last login: Wed Nov  6 09:37:25 2024 from 192.168.227.1
+[0m[32m[2024-11-06 09:42:18] INFO ]0;root@node1:~[root@node1 ~]# chage -l root
+[0m[32m[2024-11-06 09:42:22] INFO Last password change					: never
+[0m[32m[2024-11-06 09:42:31] INFO Password expires					: never
+[0m[32m[2024-11-06 09:42:34] INFO Password inactive					: never
+[0m[32m[2024-11-06 09:42:38] INFO Account expires						: never
+[0m[32m[2024-11-06 09:42:41] INFO Minimum number of days between password change		: 0
+[0m[32m[2024-11-06 09:42:44] INFO Maximum number of days between password change		: 99999
+[0m[32m[2024-11-06 09:42:47] INFO Number of days of warning before password expires	: 7
+[0m
