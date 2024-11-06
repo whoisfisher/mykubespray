@@ -699,7 +699,7 @@ func (executor *SSHExecutor) CheckPasswordInfo() (*entity.PasswordInfo, error) {
 
 	output, err := session.CombinedOutput(command)
 	if err != nil {
-		return &entity.PasswordInfo{}, fmt.Errorf("failed to execute command: %w", err)
+		return &entity.PasswordInfo{}, fmt.Errorf("failed to execute command: %w, %s", err, string(output))
 	}
 
 	info := &entity.PasswordInfo{}

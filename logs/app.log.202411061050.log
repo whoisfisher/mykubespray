@@ -1,0 +1,320 @@
+[31m[2024-11-06 10:50:16] ERROR Failed to execute command: Process exited with status 1, WARNING: Your password has expired.
+Password change required but no TTY available.
+
+[0m[31m[2024-11-06 10:50:16] ERROR Failed to execute command: Process exited with status 1, WARNING: Your password has expired.
+Password change required but no TTY available.
+
+[0m[33m[2024-11-06 10:50:16] WARNING Read username failed: Process exited with status 1
+[0m[31m[2024-11-06 10:50:16] ERROR Failed to execute command: Process exited with status 1, WARNING: Your password has expired.
+Password change required but no TTY available.
+
+[0m[31m[2024-11-06 10:50:16] ERROR Failed to get cpu info: Process exited with status 1
+[0m[31m[2024-11-06 10:50:16] ERROR Failed to execute command: Process exited with status 1, WARNING: Your password has expired.
+Password change required but no TTY available.
+
+[0m[33m[2024-11-06 10:50:16] WARNING Read username failed: Process exited with status 1
+[0m[31m[2024-11-06 10:50:16] ERROR Failed to execute command: Process exited with status 1, WARNING: Your password has expired.
+Password change required but no TTY available.
+
+[0m[31m[2024-11-06 10:50:16] ERROR Failed to get cpu cores: Process exited with status 1
+[0m[31m[2024-11-06 10:50:16] ERROR Failed to execute command: Process exited with status 1, WARNING: Your password has expired.
+Password change required but no TTY available.
+
+[0m[33m[2024-11-06 10:50:16] WARNING Read username failed: Process exited with status 1
+[0m[31m[2024-11-06 10:50:16] ERROR Failed to execute command: Process exited with status 1, WARNING: Your password has expired.
+Password change required but no TTY available.
+
+[0m[31m[2024-11-06 10:50:16] ERROR Failed to get memory info: Process exited with status 1
+[0m[31m[2024-11-06 10:50:16] ERROR Failed to execute command: Process exited with status 1, WARNING: Your password has expired.
+Password change required but no TTY available.
+
+[0m[33m[2024-11-06 10:50:16] WARNING Read username failed: Process exited with status 1
+[0m[31m[2024-11-06 10:50:16] ERROR Failed to execute command: Process exited with status 1, WARNING: Your password has expired.
+Password change required but no TTY available.
+
+[0m[31m[2024-11-06 10:50:16] ERROR Failed to get disk size: Process exited with status 1
+[0m[31m[2024-11-06 10:50:16] ERROR Failed to execute command: Process exited with status 1, WARNING: Your password has expired.
+Password change required but no TTY available.
+
+[0m[33m[2024-11-06 10:50:16] WARNING Read username failed: Process exited with status 1
+[0m[31m[2024-11-06 10:50:16] ERROR Failed to execute command: Process exited with status 1, WARNING: Your password has expired.
+Password change required but no TTY available.
+
+[0m[31m[2024-11-06 10:50:16] ERROR Failed to get netcard list: Process exited with status 1
+[0m[31m[2024-11-06 10:50:16] ERROR Failed to execute command: Process exited with status 1, WARNING: Your password has expired.
+Password change required but no TTY available.
+
+[0m[33m[2024-11-06 10:50:16] WARNING Read username failed: Process exited with status 1
+[0m[31m[2024-11-06 10:50:16] ERROR check password failed: failed to execute command: Process exited with status 1, [%!w(uint8=87) %!w(uint8=65) %!w(uint8=82) %!w(uint8=78) %!w(uint8=73) %!w(uint8=78) %!w(uint8=71) %!w(uint8=58) %!w(uint8=32) %!w(uint8=89) %!w(uint8=111) %!w(uint8=117) %!w(uint8=114) %!w(uint8=32) %!w(uint8=112) %!w(uint8=97) %!w(uint8=115) %!w(uint8=115) %!w(uint8=119) %!w(uint8=111) %!w(uint8=114) %!w(uint8=100) %!w(uint8=32) %!w(uint8=104) %!w(uint8=97) %!w(uint8=115) %!w(uint8=32) %!w(uint8=101) %!w(uint8=120) %!w(uint8=112) %!w(uint8=105) %!w(uint8=114) %!w(uint8=101) %!w(uint8=100) %!w(uint8=46) %!w(uint8=10) %!w(uint8=80) %!w(uint8=97) %!w(uint8=115) %!w(uint8=115) %!w(uint8=119) %!w(uint8=111) %!w(uint8=114) %!w(uint8=100) %!w(uint8=32) %!w(uint8=99) %!w(uint8=104) %!w(uint8=97) %!w(uint8=110) %!w(uint8=103) %!w(uint8=101) %!w(uint8=32) %!w(uint8=114) %!w(uint8=101) %!w(uint8=113) %!w(uint8=117) %!w(uint8=105) %!w(uint8=114) %!w(uint8=101) %!w(uint8=100) %!w(uint8=32) %!w(uint8=98) %!w(uint8=117) %!w(uint8=116) %!w(uint8=32) %!w(uint8=110) %!w(uint8=111) %!w(uint8=32) %!w(uint8=84) %!w(uint8=84) %!w(uint8=89) %!w(uint8=32) %!w(uint8=97) %!w(uint8=118) %!w(uint8=97) %!w(uint8=105) %!w(uint8=108) %!w(uint8=97) %!w(uint8=98) %!w(uint8=108) %!w(uint8=101) %!w(uint8=46) %!w(uint8=10)]
+[0m[32m[2024-11-06 10:50:16] INFO [Recovery] 2024/11/06 - 10:50:16 panic recovered:
+POST /api/v1/server/checkpassword HTTP/1.1
+Host: localhost:8080
+Accept: */*
+Accept-Encoding: gzip, deflate, br
+Connection: keep-alive
+Content-Length: 183
+Content-Type: application/json
+User-Agent: Apifox/1.0.0 (https://apifox.com)
+
+
+failed to execute command: Process exited with status 1, [%!w(uint8=87) %!w(uint8=65) %!w(uint8=82) %!w(uint8=78) %!w(uint8=73) %!w(uint8=78) %!w(uint8=71) %!w(uint8=58) %!w(uint8=32) %!w(uint8=89) %!w(uint8=111) %!w(uint8=117) %!w(uint8=114) %!w(uint8=32) %!w(uint8=112) %!w(uint8=97) %!w(uint8=115) %!w(uint8=115) %!w(uint8=119) %!w(uint8=111) %!w(uint8=114) %!w(uint8=100) %!w(uint8=32) %!w(uint8=104) %!w(uint8=97) %!w(uint8=115) %!w(uint8=32) %!w(uint8=101) %!w(uint8=120) %!w(uint8=112) %!w(uint8=105) %!w(uint8=114) %!w(uint8=101) %!w(uint8=100) %!w(uint8=46) %!w(uint8=10) %!w(uint8=80) %!w(uint8=97) %!w(uint8=115) %!w(uint8=115) %!w(uint8=119) %!w(uint8=111) %!w(uint8=114) %!w(uint8=100) %!w(uint8=32) %!w(uint8=99) %!w(uint8=104) %!w(uint8=97) %!w(uint8=110) %!w(uint8=103) %!w(uint8=101) %!w(uint8=32) %!w(uint8=114) %!w(uint8=101) %!w(uint8=113) %!w(uint8=117) %!w(uint8=105) %!w(uint8=114) %!w(uint8=101) %!w(uint8=100) %!w(uint8=32) %!w(uint8=98) %!w(uint8=117) %!w(uint8=116) %!w(uint8=32) %!w(uint8=110) %!w(uint8=111) %!w(uint8=32) %!w(uint8=84) %!w(uint8=84) %!w(uint8=89) %!w(uint8=32) %!w(uint8=97) %!w(uint8=118) %!w(uint8=97) %!w(uint8=105) %!w(uint8=108) %!w(uint8=97) %!w(uint8=98) %!w(uint8=108) %!w(uint8=101) %!w(uint8=46) %!w(uint8=10)]
+C:/Users/Administrator/gomod/pkg/mod/github.com/gin-gonic/gin@v1.9.1/gin.go:620 (0x8f1d04)
+	(*Engine).handleHTTPRequest: c.writermem.WriteHeaderNow()
+C:/Users/Administrator/gomod/pkg/mod/github.com/gin-gonic/gin@v1.9.1/gin.go:576 (0x8f1851)
+	(*Engine).ServeHTTP: 
+C:/Program Files/Go/src/net/http/server.go:3210 (0x5d2d8d)
+	serverHandler.ServeHTTP: }
+C:/Program Files/Go/src/net/http/server.go:2092 (0x5b22af)
+	(*conn).serve: inFlightResponse = nil
+C:/Program Files/Go/src/runtime/asm_amd64.s:1700 (0x2b8cc0)
+	goexit: CALL	runtime·goexit1(SB)	// does not return
+[0m
+[0m[31m[2024-11-06 10:50:39] ERROR Failed to execute command: Process exited with status 1, WARNING: Your password has expired.
+Password change required but no TTY available.
+
+[0m[31m[2024-11-06 10:50:39] ERROR Failed to execute command: Process exited with status 1, WARNING: Your password has expired.
+Password change required but no TTY available.
+
+[0m[33m[2024-11-06 10:50:39] WARNING Read username failed: Process exited with status 1
+[0m[31m[2024-11-06 10:50:39] ERROR Failed to execute command: Process exited with status 1, WARNING: Your password has expired.
+Password change required but no TTY available.
+
+[0m[31m[2024-11-06 10:50:39] ERROR Failed to get cpu info: Process exited with status 1
+[0m[31m[2024-11-06 10:50:39] ERROR Failed to execute command: Process exited with status 1, WARNING: Your password has expired.
+Password change required but no TTY available.
+
+[0m[33m[2024-11-06 10:50:39] WARNING Read username failed: Process exited with status 1
+[0m[31m[2024-11-06 10:50:39] ERROR Failed to execute command: Process exited with status 1, WARNING: Your password has expired.
+Password change required but no TTY available.
+
+[0m[31m[2024-11-06 10:50:39] ERROR Failed to get cpu cores: Process exited with status 1
+[0m[31m[2024-11-06 10:50:39] ERROR Failed to execute command: Process exited with status 1, WARNING: Your password has expired.
+Password change required but no TTY available.
+
+[0m[33m[2024-11-06 10:50:39] WARNING Read username failed: Process exited with status 1
+[0m[31m[2024-11-06 10:50:39] ERROR Failed to execute command: Process exited with status 1, WARNING: Your password has expired.
+Password change required but no TTY available.
+
+[0m[31m[2024-11-06 10:50:39] ERROR Failed to get memory info: Process exited with status 1
+[0m[31m[2024-11-06 10:50:39] ERROR Failed to execute command: Process exited with status 1, WARNING: Your password has expired.
+Password change required but no TTY available.
+
+[0m[33m[2024-11-06 10:50:39] WARNING Read username failed: Process exited with status 1
+[0m[31m[2024-11-06 10:50:39] ERROR Failed to execute command: Process exited with status 1, WARNING: Your password has expired.
+Password change required but no TTY available.
+
+[0m[31m[2024-11-06 10:50:39] ERROR Failed to get disk size: Process exited with status 1
+[0m[31m[2024-11-06 10:50:39] ERROR Failed to execute command: Process exited with status 1, WARNING: Your password has expired.
+Password change required but no TTY available.
+
+[0m[33m[2024-11-06 10:50:39] WARNING Read username failed: Process exited with status 1
+[0m[31m[2024-11-06 10:50:39] ERROR Failed to execute command: Process exited with status 1, WARNING: Your password has expired.
+Password change required but no TTY available.
+
+[0m[31m[2024-11-06 10:50:39] ERROR Failed to get netcard list: Process exited with status 1
+[0m[31m[2024-11-06 10:50:39] ERROR Failed to execute command: Process exited with status 1, WARNING: Your password has expired.
+Password change required but no TTY available.
+
+[0m[33m[2024-11-06 10:50:39] WARNING Read username failed: Process exited with status 1
+[0m[31m[2024-11-06 10:50:39] ERROR check password failed: failed to execute command: Process exited with status 1, %!w(string=WARNING: Your password has expired.
+Password change required but no TTY available.
+)
+[0m[32m[2024-11-06 10:50:39] INFO [Recovery] 2024/11/06 - 10:50:39 panic recovered:
+POST /api/v1/server/checkpassword HTTP/1.1
+Host: localhost:8080
+Accept: */*
+Accept-Encoding: gzip, deflate, br
+Connection: keep-alive
+Content-Length: 183
+Content-Type: application/json
+User-Agent: Apifox/1.0.0 (https://apifox.com)
+
+
+failed to execute command: Process exited with status 1, %!w(string=WARNING: Your password has expired.
+Password change required but no TTY available.
+)
+C:/Users/Administrator/gomod/pkg/mod/github.com/gin-gonic/gin@v1.9.1/gin.go:620 (0xb41d04)
+	(*Engine).handleHTTPRequest: c.writermem.WriteHeaderNow()
+C:/Users/Administrator/gomod/pkg/mod/github.com/gin-gonic/gin@v1.9.1/gin.go:576 (0xb41851)
+	(*Engine).ServeHTTP: 
+C:/Program Files/Go/src/net/http/server.go:3210 (0x822d8d)
+	serverHandler.ServeHTTP: }
+C:/Program Files/Go/src/net/http/server.go:2092 (0x8022af)
+	(*conn).serve: inFlightResponse = nil
+C:/Program Files/Go/src/runtime/asm_amd64.s:1700 (0x508cc0)
+	goexit: CALL	runtime·goexit1(SB)	// does not return
+[0m
+[0m[31m[2024-11-06 10:50:58] ERROR Failed to execute command: Process exited with status 1, WARNING: Your password has expired.
+Password change required but no TTY available.
+
+[0m[31m[2024-11-06 10:50:58] ERROR Failed to execute command: Process exited with status 1, WARNING: Your password has expired.
+Password change required but no TTY available.
+
+[0m[33m[2024-11-06 10:50:58] WARNING Read username failed: Process exited with status 1
+[0m[31m[2024-11-06 10:50:58] ERROR Failed to execute command: Process exited with status 1, WARNING: Your password has expired.
+Password change required but no TTY available.
+
+[0m[31m[2024-11-06 10:50:58] ERROR Failed to get cpu info: Process exited with status 1
+[0m[31m[2024-11-06 10:50:58] ERROR Failed to execute command: Process exited with status 1, WARNING: Your password has expired.
+Password change required but no TTY available.
+
+[0m[33m[2024-11-06 10:50:58] WARNING Read username failed: Process exited with status 1
+[0m[31m[2024-11-06 10:50:58] ERROR Failed to execute command: Process exited with status 1, WARNING: Your password has expired.
+Password change required but no TTY available.
+
+[0m[31m[2024-11-06 10:50:58] ERROR Failed to get cpu cores: Process exited with status 1
+[0m[31m[2024-11-06 10:50:58] ERROR Failed to execute command: Process exited with status 1, WARNING: Your password has expired.
+Password change required but no TTY available.
+
+[0m[33m[2024-11-06 10:50:58] WARNING Read username failed: Process exited with status 1
+[0m[31m[2024-11-06 10:50:58] ERROR Failed to execute command: Process exited with status 1, WARNING: Your password has expired.
+Password change required but no TTY available.
+
+[0m[31m[2024-11-06 10:50:58] ERROR Failed to get memory info: Process exited with status 1
+[0m[31m[2024-11-06 10:50:58] ERROR Failed to execute command: Process exited with status 1, WARNING: Your password has expired.
+Password change required but no TTY available.
+
+[0m[33m[2024-11-06 10:50:58] WARNING Read username failed: Process exited with status 1
+[0m[31m[2024-11-06 10:50:58] ERROR Failed to execute command: Process exited with status 1, WARNING: Your password has expired.
+Password change required but no TTY available.
+
+[0m[31m[2024-11-06 10:50:58] ERROR Failed to get disk size: Process exited with status 1
+[0m[31m[2024-11-06 10:50:58] ERROR Failed to execute command: Process exited with status 1, WARNING: Your password has expired.
+Password change required but no TTY available.
+
+[0m[33m[2024-11-06 10:50:58] WARNING Read username failed: Process exited with status 1
+[0m[31m[2024-11-06 10:50:58] ERROR Failed to execute command: Process exited with status 1, WARNING: Your password has expired.
+Password change required but no TTY available.
+
+[0m[31m[2024-11-06 10:50:58] ERROR Failed to get netcard list: Process exited with status 1
+[0m[31m[2024-11-06 10:50:58] ERROR Failed to execute command: Process exited with status 1, WARNING: Your password has expired.
+Password change required but no TTY available.
+
+[0m[33m[2024-11-06 10:50:58] WARNING Read username failed: Process exited with status 1
+[0m[31m[2024-11-06 10:50:58] ERROR check password failed: failed to execute command: Process exited with status 1, WARNING: Your password has expired.
+Password change required but no TTY available.
+
+[0m[32m[2024-11-06 10:50:58] INFO [Recovery] 2024/11/06 - 10:50:58 panic recovered:
+POST /api/v1/server/checkpassword HTTP/1.1
+Host: localhost:8080
+Accept: */*
+Accept-Encoding: gzip, deflate, br
+Connection: keep-alive
+Content-Length: 183
+Content-Type: application/json
+User-Agent: Apifox/1.0.0 (https://apifox.com)
+
+
+failed to execute command: Process exited with status 1, WARNING: Your password has expired.
+Password change required but no TTY available.
+
+C:/Users/Administrator/gomod/pkg/mod/github.com/gin-gonic/gin@v1.9.1/gin.go:620 (0xd51d04)
+	(*Engine).handleHTTPRequest: c.writermem.WriteHeaderNow()
+C:/Users/Administrator/gomod/pkg/mod/github.com/gin-gonic/gin@v1.9.1/gin.go:576 (0xd51851)
+	(*Engine).ServeHTTP: 
+C:/Program Files/Go/src/net/http/server.go:3210 (0xa32d8d)
+	serverHandler.ServeHTTP: }
+C:/Program Files/Go/src/net/http/server.go:2092 (0xa122af)
+	(*conn).serve: inFlightResponse = nil
+C:/Program Files/Go/src/runtime/asm_amd64.s:1700 (0x718cc0)
+	goexit: CALL	runtime·goexit1(SB)	// does not return
+[0m
+[0m[31m[2024-11-06 10:51:36] ERROR Failed to execute command: Process exited with status 1, WARNING: Your password has expired.
+Password change required but no TTY available.
+
+[0m[31m[2024-11-06 10:51:36] ERROR Failed to execute command: Process exited with status 1, WARNING: Your password has expired.
+Password change required but no TTY available.
+
+[0m[33m[2024-11-06 10:51:36] WARNING Read username failed: Process exited with status 1
+[0m[31m[2024-11-06 10:51:36] ERROR Failed to execute command: Process exited with status 1, WARNING: Your password has expired.
+Password change required but no TTY available.
+
+[0m[31m[2024-11-06 10:51:36] ERROR Failed to get cpu info: Process exited with status 1
+[0m[31m[2024-11-06 10:51:36] ERROR Failed to execute command: Process exited with status 1, WARNING: Your password has expired.
+Password change required but no TTY available.
+
+[0m[33m[2024-11-06 10:51:36] WARNING Read username failed: Process exited with status 1
+[0m[31m[2024-11-06 10:51:36] ERROR Failed to execute command: Process exited with status 1, WARNING: Your password has expired.
+Password change required but no TTY available.
+
+[0m[31m[2024-11-06 10:51:36] ERROR Failed to get cpu cores: Process exited with status 1
+[0m[31m[2024-11-06 10:51:36] ERROR Failed to execute command: Process exited with status 1, WARNING: Your password has expired.
+Password change required but no TTY available.
+
+[0m[33m[2024-11-06 10:51:36] WARNING Read username failed: Process exited with status 1
+[0m[31m[2024-11-06 10:51:36] ERROR Failed to execute command: Process exited with status 1, WARNING: Your password has expired.
+Password change required but no TTY available.
+
+[0m[31m[2024-11-06 10:51:36] ERROR Failed to get memory info: Process exited with status 1
+[0m[31m[2024-11-06 10:51:36] ERROR Failed to execute command: Process exited with status 1, WARNING: Your password has expired.
+Password change required but no TTY available.
+
+[0m[33m[2024-11-06 10:51:36] WARNING Read username failed: Process exited with status 1
+[0m[31m[2024-11-06 10:51:36] ERROR Failed to execute command: Process exited with status 1, WARNING: Your password has expired.
+Password change required but no TTY available.
+
+[0m[31m[2024-11-06 10:51:36] ERROR Failed to get disk size: Process exited with status 1
+[0m[31m[2024-11-06 10:51:36] ERROR Failed to execute command: Process exited with status 1, WARNING: Your password has expired.
+Password change required but no TTY available.
+
+[0m[33m[2024-11-06 10:51:36] WARNING Read username failed: Process exited with status 1
+[0m[31m[2024-11-06 10:51:36] ERROR Failed to execute command: Process exited with status 1, WARNING: Your password has expired.
+Password change required but no TTY available.
+
+[0m[31m[2024-11-06 10:51:36] ERROR Failed to get netcard list: Process exited with status 1
+[0m[31m[2024-11-06 10:51:36] ERROR Failed to execute command: Process exited with status 1, WARNING: Your password has expired.
+Password change required but no TTY available.
+
+[0m[33m[2024-11-06 10:51:36] WARNING Read username failed: Process exited with status 1
+[0m[31m[2024-11-06 10:51:36] ERROR update password failed: failed to change password: Process exited with status 1, output: WARNING: Your password has expired.
+Password change required but no TTY available.
+
+[0m[32m[2024-11-06 10:51:36] INFO [Recovery] 2024/11/06 - 10:51:36 panic recovered:
+POST /api/v1/server/updatepassword HTTP/1.1
+Host: localhost:8080
+Accept: */*
+Accept-Encoding: gzip, deflate, br
+Connection: keep-alive
+Content-Length: 217
+Content-Type: application/json
+User-Agent: Apifox/1.0.0 (https://apifox.com)
+
+
+failed to change password: Process exited with status 1, output: WARNING: Your password has expired.
+Password change required but no TTY available.
+
+C:/Users/Administrator/gomod/pkg/mod/github.com/gin-gonic/gin@v1.9.1/gin.go:620 (0xd51d04)
+	(*Engine).handleHTTPRequest: c.writermem.WriteHeaderNow()
+C:/Users/Administrator/gomod/pkg/mod/github.com/gin-gonic/gin@v1.9.1/gin.go:576 (0xd51851)
+	(*Engine).ServeHTTP: 
+C:/Program Files/Go/src/net/http/server.go:3210 (0xa32d8d)
+	serverHandler.ServeHTTP: }
+C:/Program Files/Go/src/net/http/server.go:2092 (0xa122af)
+	(*conn).serve: inFlightResponse = nil
+C:/Program Files/Go/src/runtime/asm_amd64.s:1700 (0x718cc0)
+	goexit: CALL	runtime·goexit1(SB)	// does not return
+[0m
+[0m[32m[2024-11-06 10:56:04] INFO [sudo] password for wangzhendong: Last password change					: Nov 06, 2024
+[0m[32m[2024-11-06 10:56:04] INFO Password expires					: Nov 07, 2024
+[0m[32m[2024-11-06 10:56:04] INFO Password inactive					: never
+[0m[32m[2024-11-06 10:56:04] INFO Account expires						: never
+[0m[32m[2024-11-06 10:56:04] INFO Minimum number of days between password change		: 0
+[0m[32m[2024-11-06 10:56:04] INFO Maximum number of days between password change		: 1
+[0m[32m[2024-11-06 10:56:04] INFO Number of days of warning before password expires	: 1
+[0m[32m[2024-11-06 10:56:04] INFO Method: POST | Path: /api/v1/server/checkpassword | Status: 200 | Duration: 1.1421979s | IP: ::1
+
+[0m[32m[2024-11-06 10:56:04] INFO {{0 2024-11-06 10:56:03.234178 +0800 CST m=+307.635806701 0001-01-01 00:00:00 +0000 UTC {0001-01-01 00:00:00 +0000 UTC false}} example_user 1730861764 /api/v1/server/checkpassword /api/v1/server/checkpassword example_module POST No description available for this endpoint.}
+[0m[32m[2024-11-06 10:56:25] INFO Method: POST | Path: /api/v1/server/updatepassword | Status: 200 | Duration: 1.203346s | IP: ::1
+
+[0m[32m[2024-11-06 10:56:25] INFO {{0 2024-11-06 10:56:24.1378829 +0800 CST m=+328.539511601 0001-01-01 00:00:00 +0000 UTC {0001-01-01 00:00:00 +0000 UTC false}} example_user 1730861785 /api/v1/server/updatepassword /api/v1/server/updatepassword example_module POST No description available for this endpoint.}
+[0m[32m[2024-11-06 10:56:32] INFO [sudo] password for wangzhendong: Last password change					: Nov 06, 2024
+[0m[32m[2024-11-06 10:56:32] INFO Password expires					: Nov 07, 2024
+[0m[32m[2024-11-06 10:56:32] INFO Password inactive					: never
+[0m[32m[2024-11-06 10:56:32] INFO Account expires						: never
+[0m[32m[2024-11-06 10:56:32] INFO Minimum number of days between password change		: 0
+[0m[32m[2024-11-06 10:56:32] INFO Maximum number of days between password change		: 1
+[0m[32m[2024-11-06 10:56:32] INFO Number of days of warning before password expires	: 1
+[0m[32m[2024-11-06 10:56:32] INFO Method: POST | Path: /api/v1/server/checkpassword | Status: 200 | Duration: 1.1303983s | IP: ::1
+
+[0m[32m[2024-11-06 10:56:32] INFO {{0 2024-11-06 10:56:31.5998538 +0800 CST m=+336.001482501 0001-01-01 00:00:00 +0000 UTC {0001-01-01 00:00:00 +0000 UTC false}} example_user 1730861792 /api/v1/server/checkpassword /api/v1/server/checkpassword example_module POST No description available for this endpoint.}
+[0m
