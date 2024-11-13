@@ -317,4 +317,27 @@ C:/Program Files/Go/src/runtime/asm_amd64.s:1700 (0x718cc0)
 [0m[32m[2024-11-06 10:56:32] INFO Method: POST | Path: /api/v1/server/checkpassword | Status: 200 | Duration: 1.1303983s | IP: ::1
 
 [0m[32m[2024-11-06 10:56:32] INFO {{0 2024-11-06 10:56:31.5998538 +0800 CST m=+336.001482501 0001-01-01 00:00:00 +0000 UTC {0001-01-01 00:00:00 +0000 UTC false}} example_user 1730861792 /api/v1/server/checkpassword /api/v1/server/checkpassword example_module POST No description available for this endpoint.}
+[0m[32m[2024-11-06 15:16:10] INFO [Recovery] 2024/11/06 - 15:16:10 panic recovered:
+POST /api/v1/server/checkpassword HTTP/1.1
+Host: localhost:8080
+Accept: */*
+Accept-Encoding: gzip, deflate, br
+Connection: keep-alive
+Content-Length: 183
+Content-Type: application/json
+User-Agent: Apifox/1.0.0 (https://apifox.com)
+
+
+runtime error: invalid memory address or nil pointer dereference
+C:/Users/Administrator/gomod/pkg/mod/github.com/gin-gonic/gin@v1.9.1/gin.go:620 (0xd51d04)
+	(*Engine).handleHTTPRequest: c.writermem.WriteHeaderNow()
+C:/Users/Administrator/gomod/pkg/mod/github.com/gin-gonic/gin@v1.9.1/gin.go:576 (0xd51851)
+	(*Engine).ServeHTTP: 
+C:/Program Files/Go/src/net/http/server.go:3210 (0xa32d8d)
+	serverHandler.ServeHTTP: }
+C:/Program Files/Go/src/net/http/server.go:2092 (0xa122af)
+	(*conn).serve: inFlightResponse = nil
+C:/Program Files/Go/src/runtime/asm_amd64.s:1700 (0x718cc0)
+	goexit: CALL	runtime·goexit1(SB)	// does not return
+[0m
 [0m

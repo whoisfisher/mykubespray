@@ -642,26 +642,26 @@ func (executor *SSHExecutor) ChangeExpiredPassword(currentPassword, newPassword 
 			fmt.Println(line)
 
 			if strings.Contains(line, "password has expired") || strings.Contains(line, "You must change your password") {
-				fmt.Println("检测到密码已过期，正在更新密码...")
+				fmt.Println("Password expired，updating password...")
 
 				if _, err := fmt.Fprintln(stdin, currentPassword); err != nil {
-					resultCh <- fmt.Errorf("无法输入当前密码: %w", err)
+					resultCh <- fmt.Errorf("Cannot input current password: %w", err)
 					return
 				}
 				time.Sleep(1 * time.Second)
 
 				if _, err := fmt.Fprintln(stdin, newPassword); err != nil {
-					resultCh <- fmt.Errorf("无法输入新密码: %w", err)
+					resultCh <- fmt.Errorf("Cannot input new password: %w", err)
 					return
 				}
 				time.Sleep(1 * time.Second)
 
 				if _, err := fmt.Fprintln(stdin, newPassword); err != nil {
-					resultCh <- fmt.Errorf("无法确认新密码: %w", err)
+					resultCh <- fmt.Errorf("Cannot confirm new password: %w", err)
 					return
 				}
 
-				fmt.Println("密码更新成功")
+				fmt.Println("Update password success")
 				resultCh <- nil // 表示成功
 				return
 			}
@@ -673,11 +673,11 @@ func (executor *SSHExecutor) ChangeExpiredPassword(currentPassword, newPassword 
 	select {
 	case err := <-resultCh: // 从通道接收结果
 		if err != nil {
-			return fmt.Errorf("读取输出时发生错误: %w", err)
+			return fmt.Errorf("Read input/output error: %w", err)
 		}
 	case <-ctx.Done():
 		if ctx.Err() == context.DeadlineExceeded {
-			return fmt.Errorf("超时: 没有检测到密码过期提示")
+			return fmt.Errorf("timeout: No password expiration warning detected.")
 		}
 	}
 

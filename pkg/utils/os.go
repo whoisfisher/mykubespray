@@ -394,7 +394,7 @@ func (client *OSClient) ReadBytes(file string) ([]byte, error) {
 }
 
 func (client *OSClient) WriteFile(content, file string) error {
-	cmd := fmt.Sprintf("bash -c \"echo '%s' > %s\"", content, file)
+	cmd := fmt.Sprintf("bash -c \"echo -e '%s' > %s\"", content, file)
 	if client.WhoAmI() != "root" {
 		cmd = SudoPrefixWithPassword(cmd, client.SSExecutor.Host.Password)
 	}
