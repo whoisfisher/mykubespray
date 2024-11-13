@@ -37,6 +37,9 @@ func (client *KubekeyClient) ParseToTemplate() *entity.KubekeyTemplate {
 				return nil
 			}
 			template.HostList += fmt.Sprintf("- {name: %s, address: %s, internalAddress: %s, port: %d, user: %s, privateKeyPath: %s}\n  ", host.Name, host.Address, host.InternalAddress, host.Port, host.User, keyPath)
+		} else {
+			logger.GetLogger().Errorf("Password or PrivateKeyPath cannot empty")
+			return nil
 		}
 
 		if host.Registry != nil && host.Registry.InsecureRegistries != nil {
