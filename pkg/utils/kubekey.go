@@ -6,7 +6,6 @@ import (
 	"github.com/whoisfisher/mykubespray/pkg/entity"
 	"github.com/whoisfisher/mykubespray/pkg/logger"
 	"log"
-	"os"
 	"path/filepath"
 	"strings"
 	"text/template"
@@ -30,13 +29,7 @@ func (client *KubekeyClient) ParseToTemplate() *entity.KubekeyTemplate {
 		if len(host.Password) > 0 {
 			template.HostList += fmt.Sprintf("- {name: %s, address: %s, internalAddress: %s, port: %d, user: %s, password: %s}\n  ", host.Name, host.Address, host.InternalAddress, host.Port, host.User, host.Password)
 		} else if len(host.PrivateKey) > 0 {
-			keyPath := fmt.Sprintf("~/.ssh/id_rsa_%s", client.KubekeyConf.ClusterName)
-			err := os.WriteFile(keyPath, []byte(host.PrivateKey), 0644)
-			if err != nil {
-				logger.GetLogger().Errorf("write ssh private key error")
-				return nil
-			}
-			template.HostList += fmt.Sprintf("- {name: %s, address: %s, internalAddress: %s, port: %d, user: %s, privateKeyPath: %s}\n  ", host.Name, host.Address, host.InternalAddress, host.Port, host.User, keyPath)
+			template.HostList += fmt.Sprintf("- {name: %s, address: %s, internalAddress: %s, port: %d, user: %s, privateKeyPath: %s}\n  ", host.Name, host.Address, host.InternalAddress, host.Port, host.User, host.PrivateKey)
 		} else {
 			logger.GetLogger().Errorf("Password or PrivateKeyPath cannot empty")
 			return nil

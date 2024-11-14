@@ -777,3 +777,35 @@ func (executor *SSHExecutor) UpdatePassword(currentPassword, newPassword string)
 
 	return nil
 }
+
+func (executor *SSHExecutor) ReadFile(path string) ([]byte, error) {
+	cmd := fmt.Sprintf("cat %s", path)
+	data, err := executor.ExecuteShortCMD(cmd)
+	if err != nil {
+		logger.GetLogger().Errorf("Read %s failed: %v", path, err)
+		return nil, err
+	}
+	return data, nil
+}
+
+func (executor *SSHExecutor) WriteFile(content []byte, path string, perm os.FileMode) error {
+	cmd := fmt.Sprintf("bash -c \"echo -e '%s' > %s\"", content, path)
+	if executor.WhoAmI() != "root" {
+		cmd = SudoPrefixWithPassword(cmd, executor.Host.Password)
+	}
+	err := executor.ExecuteCommandWithoutReturn(cmd)
+	if err != nil {
+		logger.GetLogger().Errorf("Write %s failed: %v", path, err)
+		return err
+	}
+	chmodCommand := fmt.Sprintf("bash -c \"chmod %s %s\"", perm, path)
+	if executor.WhoAmI() != "root" {
+		chmodCommand = SudoPrefixWithPassword(chmodCommand, executor.Host.Password)
+	}
+	err = executor.ExecuteCommandWithoutReturn(chmodCommand)
+	if err != nil {
+		logger.GetLogger().Errorf("Chmod %s failed: %v", path, err)
+		return err
+	}
+	return nil
+}

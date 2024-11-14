@@ -1,0 +1,3 @@
+[31m[2024-11-14 11:03:07] ERROR write ssh private key error
+[0m[31m[2024-11-14 11:03:10] ERROR Failed to generate template: template: config-sample.yaml:5:11: executing "config-sample.yaml" at <.ClusterName>: nil pointer evaluating *entity.KubekeyTemplate.ClusterName
+[0m

@@ -1,0 +1,11 @@
+[32m[2024-11-14 11:07:54] INFO Mkdir Directory: /root/taichu/wangcluster
+[0m[32m[2024-11-14 11:10:38] INFO bash: kk: command not found
+
+[0m[31m[2024-11-14 11:10:38] ERROR SSH command execution failed: Process exited with status 127
+[0m[31m[2024-11-14 11:10:40] ERROR Failed to create cluster wangcluster: Process exited with status 127
+[0m[31m[2024-11-14 11:10:40] ERROR Pipeline Done
+
+[0m[32m[2024-11-14 11:11:21] INFO Method: GET | Path: /api/ws/v1/cluster/create | Status: 200 | Duration: 5m20.0710982s | IP: 127.0.0.1
+
+[0m[32m[2024-11-14 11:11:21] INFO {{0 2024-11-14 11:06:01.8413548 +0800 CST m=+4.740101101 0001-01-01 00:00:00 +0000 UTC {0001-01-01 00:00:00 +0000 UTC false}} example_user 1731553881 /api/ws/v1/cluster/create /api/ws/v1/cluster/create example_module GET No description available for this endpoint.}
+[0m

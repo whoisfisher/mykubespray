@@ -1,0 +1,11 @@
+[32m[2024-11-14 11:12:00] INFO Mkdir Directory: /root/taichu/wangcluster
+[0m[32m[2024-11-14 11:12:56] INFO 11:12:43 CST [FATA] [registry] is in [registry] group, but not in hosts list
+
+[0m[31m[2024-11-14 11:12:56] ERROR SSH command execution failed: Process exited with status 1
+[0m[31m[2024-11-14 11:13:07] ERROR Pipeline Done
+
+[0m[31m[2024-11-14 11:13:07] ERROR Failed to create cluster wangcluster: Process exited with status 1
+[0m[32m[2024-11-14 11:13:49] INFO Method: GET | Path: /api/ws/v1/cluster/create | Status: 200 | Duration: 2m12.5809431s | IP: 127.0.0.1
+
+[0m[32m[2024-11-14 11:13:49] INFO {{0 2024-11-14 11:11:37.3986971 +0800 CST m=+9.791270501 0001-01-01 00:00:00 +0000 UTC {0001-01-01 00:00:00 +0000 UTC false}} example_user 1731554029 /api/ws/v1/cluster/create /api/ws/v1/cluster/create example_module GET No description available for this endpoint.}
+[0m

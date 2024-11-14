@@ -1,0 +1,45 @@
+[32m[2024-11-14 11:14:12] INFO Mkdir Directory: /root/taichu/wangcluster
+[0m[32m[2024-11-14 11:14:53] INFO 
+
+[0m[32m[2024-11-14 11:14:53] INFO 
+
+[0m[32m[2024-11-14 11:14:53] INFO 11:14:40 CST [GreetingsModule] Greetings
+
+[0m[32m[2024-11-14 11:14:53] INFO  _   __      _          _   __           
+
+[0m[32m[2024-11-14 11:14:53] INFO | | / /     | |        | | / /           
+
+[0m[32m[2024-11-14 11:14:53] INFO | |/ / _   _| |__   ___| |/ /  ___ _   _ 
+
+[0m[32m[2024-11-14 11:14:53] INFO |    \| | | | '_ \ / _ \    \ / _ \ | | |
+
+[0m[32m[2024-11-14 11:14:53] INFO | |\  \ |_| | |_) |  __/ |\  \  __/ |_| |
+
+[0m[32m[2024-11-14 11:14:53] INFO \_| \_/\__,_|_.__/ \___\_| \_/\___|\__, |
+
+[0m[32m[2024-11-14 11:14:53] INFO                                     __/ |
+
+[0m[32m[2024-11-14 11:14:53] INFO                                    |___/
+
+[0m[32m[2024-11-14 11:14:53] INFO 
+
+[0m[32m[2024-11-14 11:14:54] INFO 11:14:41 CST message: [node1]
+
+[0m[32m[2024-11-14 11:14:54] INFO Greetings, KubeKey!
+
+[0m[32m[2024-11-14 11:14:54] INFO 11:14:41 CST failed: [node2]
+
+[0m[32m[2024-11-14 11:14:54] INFO 11:14:41 CST success: [node1]
+
+[0m[32m[2024-11-14 11:14:54] INFO error: Pipeline[CreateClusterPipeline] execute failed: Module[GreetingsModule] exec failed: 
+
+[0m[32m[2024-11-14 11:14:54] INFO failed: [node2] failed to connect to 192.168.227.149: could not establish connection to 192.168.227.149:22: ssh: handshake failed: ssh: unable to authenticate, attempted methods [none publickey], no supported methods remain
+
+[0m[31m[2024-11-14 11:14:54] ERROR SSH command execution failed: Process exited with status 1
+[0m[31m[2024-11-14 11:14:55] ERROR Pipeline Done
+
+[0m[31m[2024-11-14 11:20:23] ERROR Failed to create cluster wangcluster: Process exited with status 1
+[0m[32m[2024-11-14 11:20:23] INFO Method: GET | Path: /api/ws/v1/cluster/create | Status: 200 | Duration: 6m25.8765628s | IP: 127.0.0.1
+
+[0m[32m[2024-11-14 11:20:23] INFO {{0 2024-11-14 11:13:57.3246598 +0800 CST m=+1.643736901 0001-01-01 00:00:00 +0000 UTC {0001-01-01 00:00:00 +0000 UTC false}} example_user 1731554423 /api/ws/v1/cluster/create /api/ws/v1/cluster/create example_module GET No description available for this endpoint.}
+[0m

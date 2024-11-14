@@ -3,10 +3,12 @@ package utils
 import (
 	"bufio"
 	"fmt"
+	"github.com/whoisfisher/mykubespray/pkg/logger"
 	"io"
 	"log"
 	"os"
 	"os/exec"
+	"strings"
 )
 
 // LocalExecutor implements Executor for local system commands.
@@ -113,4 +115,30 @@ func (executor *LocalExecutor) MkDirALL(path string, outputHandler func(string))
 
 	outputHandler(fmt.Sprintf("Mkdir Directory: %s", path))
 	return nil
+}
+
+func (executor *LocalExecutor) ReadFile(path string) ([]byte, error) {
+	content, err := os.ReadFile(path)
+	if err != nil {
+		return nil, fmt.Errorf("failed to read file %s: %v", path, err)
+	}
+	return content, nil
+}
+
+func (executor *LocalExecutor) WriteFile(content []byte, path string, perm os.FileMode) error {
+	err := os.WriteFile(path, content, perm)
+	if err != nil {
+		return fmt.Errorf("failed to write to file %s: %v", path, err)
+	}
+	return nil
+}
+
+func (executor *LocalExecutor) WhoAmI() string {
+	command := fmt.Sprintf("whoami")
+	user, err := executor.ExecuteShortCommand(command)
+	if err != nil {
+		logger.GetLogger().Warnf("Read username failed: %v", err.Error())
+		return ""
+	}
+	return strings.TrimSpace(user)
 }
