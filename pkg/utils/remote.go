@@ -809,3 +809,46 @@ func (executor *SSHExecutor) WriteFile(content []byte, path string, perm os.File
 	}
 	return nil
 }
+
+func (executor *SSHExecutor) GenerateSSHKey() (privateKey, publicKey string, err error) {
+	return "", "", nil
+}
+
+func (executor *SSHExecutor) WritePrivateKey(privateKey string) error {
+	if !executor.DirIsExist("~/.ssh") {
+		err := executor.MkDirALL("~/.ssh", func(s string) {})
+		if err != nil {
+			logger.GetLogger().Errorf("Create directory ~/.ssh failed: %v", err)
+			return err
+		}
+	}
+	err := executor.WriteFile([]byte(privateKey), "~/.ssh/id_rsa", 0600)
+	if err != nil {
+		logger.GetLogger().Errorf("Failed to save private key to file: %v", err)
+		return err
+	}
+	logger.GetLogger().Infof("Private key saved to id_rsa file")
+	return nil
+}
+
+func (executor *SSHExecutor) SetupPasswordLessLogin(pubkey string) error {
+	cmd := fmt.Sprintf("echo \"%s\" >> ~/.ssh/authorized_keys", pubkey)
+	err := executor.ExecuteCommandWithoutReturn(cmd)
+	if err != nil {
+		logger.GetLogger().Errorf("failed to add public key to authorized_keys: %v", err)
+		return err
+	}
+	logger.GetLogger().Infof("Public key added to remote host for passwordless login")
+	return nil
+}
+
+func (executor *SSHExecutor) DirIsExist(path string) bool {
+	cmd := fmt.Sprintf("test -d %s && echo 'exists' || echo 'not exists'", path)
+	output, err := executor.ExecuteShortCommand(cmd)
+	if err != nil {
+		return false
+	} else if string(output) == "exists\n" {
+		return true
+	}
+	return false
+}

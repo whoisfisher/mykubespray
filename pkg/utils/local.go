@@ -2,8 +2,11 @@ package utils
 
 import (
 	"bufio"
+	"crypto/rand"
+	"crypto/rsa"
 	"fmt"
 	"github.com/whoisfisher/mykubespray/pkg/logger"
+	"golang.org/x/crypto/ssh"
 	"io"
 	"log"
 	"os"
@@ -141,4 +144,49 @@ func (executor *LocalExecutor) WhoAmI() string {
 		return ""
 	}
 	return strings.TrimSpace(user)
+}
+
+func (executor *LocalExecutor) GenerateSSHKey() (privateKey, publicKey string, err error) {
+	priv, err := rsa.GenerateKey(rand.Reader, 2048)
+	if err != nil {
+		logger.GetLogger().Errorf("Generate private key error:%v", err)
+		return "", "", err
+	}
+	privateKey = fmt.Sprintf("%x", priv.D)
+	pubKey, err := ssh.NewPublicKey(&priv.PublicKey)
+	if err != nil {
+		logger.GetLogger().Errorf("Transform publickey to ssh-format error:%v", err)
+		return "", "", err
+	}
+	publicKey = string(ssh.MarshalAuthorizedKey(pubKey))
+	return privateKey, publicKey, nil
+}
+
+func (executor *LocalExecutor) WritePrivateKey(privateKey string) error {
+	if !executor.DirIsExist("~/.ssh") {
+		err := executor.MkDirALL("~/.ssh", func(s string) {})
+		if err != nil {
+			logger.GetLogger().Errorf("Create directory ~/.ssh failed: %v", err)
+			return err
+		}
+	}
+	err := executor.WriteFile([]byte(privateKey), "~/.ssh/id_rsa", 0600)
+	if err != nil {
+		logger.GetLogger().Errorf("Failed to save private key to file: %v", err)
+		return err
+	}
+	logger.GetLogger().Infof("Private key saved to id_rsa file")
+	return nil
+}
+
+func (executor *LocalExecutor) SetupPasswordLessLogin(pubkey string) error {
+	return nil
+}
+
+func (executor *LocalExecutor) DirIsExist(path string) bool {
+	info, err := os.Stat(path)
+	if err == nil && info.IsDir() {
+		return true
+	}
+	return false
 }
