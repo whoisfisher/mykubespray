@@ -1,0 +1,8 @@
+[32m[2024-11-19 13:49:55] INFO ETCD_NAME:etcd-node2
+[0m[32m[2024-11-19 13:49:55] INFO etcd save to: /data/wangzhendong/etcd-backup-1731995395.db
+[0m[32m[2024-11-19 13:49:55] INFO Successfully Download file /data/wangzhendong/etcd-backup-1731995395.db to c:/tmp/etcd-backup-1731995395.db
+[0m[32m[2024-11-19 13:49:55] INFO Uploaded: 100.00%
+[0m[32m[2024-11-19 13:49:55] INFO Successfully to upload file c:/tmp/etcd-backup-1731995395.db to s3://etcd//data/wangzhendong/etcd-backup-1731995395.db
+[0m[32m[2024-11-19 13:49:55] INFO Upload backup file to S3: s3://etcd//data/wangzhendong/etcd-backup-1731995395.db
+[0m[32m[2024-11-19 13:49:55] INFO Backup etcd successfully
+[0m

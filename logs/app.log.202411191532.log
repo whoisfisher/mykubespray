@@ -1,0 +1,10 @@
+[32m[2024-11-19 15:32:27] INFO Kube-apiserver stopped
+[0m[32m[2024-11-19 15:32:37] INFO Download backup file: c:/tmp/etcd-backup-1731994581.db
+[0m[32m[2024-11-19 15:32:38] INFO Successfully Upload file c:/tmp/etcd-backup-1731994581.db to /data/wangzhendong/etcd-backup-1731994581.db
+[0m[32m[2024-11-19 15:32:42] INFO ETCD_NAME:etcd-node2
+[0m[31m[2024-11-19 15:34:00] ERROR Failed to stop etcd
+[0m[31m[2024-11-19 15:34:39] ERROR Successfully to stop etcd
+[0m[32m[2024-11-19 15:34:47] INFO Create directory /data/wangzhendong/etcd-20241119153446
+[0m[31m[2024-11-19 15:35:59] ERROR Successfully to start etcd
+[0m[32m[2024-11-19 15:36:11] INFO Restore etcd successfully
+[0m

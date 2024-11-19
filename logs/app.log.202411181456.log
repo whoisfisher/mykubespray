@@ -1,0 +1,5 @@
+[32m[2024-11-18 14:56:08] INFO etcd 快照已保存到: /data/etcd-backup-1731912968.db
+[0m[32m[2024-11-18 14:56:13] INFO Successfully fetched file from /data/etcd-backup-1731912968.db to C:/tmp/etcd-backup-1731912968.db
+[0m[32m[2024-11-18 14:56:19] INFO 已经上传 100.00%
+[0m[32m[2024-11-18 14:56:19] INFO 备份文件上传到 S3: /data/etcd-backup-1731912968.db
+[0m

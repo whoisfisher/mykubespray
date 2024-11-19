@@ -1,0 +1,43 @@
+[32m[2024-11-19 11:03:04] INFO Mkdir Directory: /root/taichu/wangcluster
+[0m[32m[2024-11-19 11:03:29] INFO 11:03:30 CST [GreetingsModule] Greetings
+
+[0m[32m[2024-11-19 11:03:29] INFO 
+
+[0m[32m[2024-11-19 11:03:29] INFO 11:03:30 CST failed: [node1]
+
+[0m[32m[2024-11-19 11:03:29] INFO 
+
+[0m[32m[2024-11-19 11:03:29] INFO 11:03:30 CST failed: [node2]
+
+[0m[32m[2024-11-19 11:03:29] INFO  _   __      _          _   __           
+
+[0m[31m[2024-11-19 11:03:29] ERROR SSH command execution failed: Process exited with status 1
+[0m[32m[2024-11-19 11:03:29] INFO error: Pipeline[CreateClusterPipeline] execute failed: Module[GreetingsModule] exec failed: 
+
+[0m[32m[2024-11-19 11:03:29] INFO | | / /     | |        | | / /           
+
+[0m[32m[2024-11-19 11:03:29] INFO failed: [node1] failed to connect to 192.168.227.148: Failed to validate ssh connection parameters: Failed to read keyfile "/root/.ssh/AAA/id_rsa": open /root/.ssh/AAA/id_rsa: no such file or directory
+
+[0m[31m[2024-11-19 11:03:29] ERROR Pipeline Done
+
+[0m[31m[2024-11-19 11:03:29] ERROR Failed to create cluster wangcluster: Process exited with status 1
+[0m[32m[2024-11-19 11:03:29] INFO | |/ / _   _| |__   ___| |/ /  ___ _   _ 
+
+[0m[32m[2024-11-19 11:03:29] INFO Method: GET | Path: /api/ws/v1/cluster/create | Status: 200 | Duration: 1m47.6692084s | IP: 127.0.0.1
+
+[0m[32m[2024-11-19 11:03:29] INFO {{0 2024-11-19 11:01:42.3243024 +0800 CST m=+12.911038501 0001-01-01 00:00:00 +0000 UTC {0001-01-01 00:00:00 +0000 UTC false}} example_user 1731985409 /api/ws/v1/cluster/create /api/ws/v1/cluster/create example_module GET No description available for this endpoint.}
+[0m[32m[2024-11-19 11:03:29] INFO failed: [node2] failed to connect to 192.168.227.149: Failed to validate ssh connection parameters: Failed to read keyfile "/root/.ssh/AAA/id_rsa": open /root/.ssh/AAA/id_rsa: no such file or directory
+
+[0m[32m[2024-11-19 11:03:29] INFO |    \| | | | '_ \ / _ \    \ / _ \ | | |
+
+[0m[32m[2024-11-19 11:03:29] INFO | |\  \ |_| | |_) |  __/ |\  \  __/ |_| |
+
+[0m[32m[2024-11-19 11:03:29] INFO \_| \_/\__,_|_.__/ \___\_| \_/\___|\__, |
+
+[0m[32m[2024-11-19 11:03:29] INFO                                     __/ |
+
+[0m[32m[2024-11-19 11:03:29] INFO                                    |___/
+
+[0m[32m[2024-11-19 11:03:29] INFO 
+
+[0m

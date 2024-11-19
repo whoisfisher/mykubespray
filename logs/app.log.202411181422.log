@@ -1,0 +1,3 @@
+[32m[2024-11-18 14:22:44] INFO etcd 快照已保存到: /data/etcd-backup-1731910959.db
+[0m[32m[2024-11-18 14:23:25] INFO Successfully fetched file from /data/etcd-backup-1731910959.db to C:/tmp/etcd-backup-1731910959.db
+[0m

@@ -1,0 +1,7 @@
+[32m[2024-11-18 17:28:33] INFO Kube-apiserver stopped
+[0m[32m[2024-11-18 17:28:46] INFO Download backup file: c:/tmp/etcd-backup-1731919637.db
+[0m[31m[2024-11-18 17:28:59] ERROR Failed to execute command: EOF
+[0m[31m[2024-11-18 17:30:35] ERROR Failed to copy file to destination: EOF
+[0m[32m[2024-11-18 17:30:35] INFO Failed to upload file c:/tmp/etcd-backup-1731919637.db to /data/wangzhendong/etcd-backup-1731919637.db
+[0m[31m[2024-11-18 17:30:35] ERROR Failed to restore etcd
+[0m

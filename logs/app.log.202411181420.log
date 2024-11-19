@@ -1,0 +1,3 @@
+[32m[2024-11-18 14:20:35] INFO etcd 快照已保存到: /data/etcd-backup-1731910830.db
+[0m[31m[2024-11-18 14:20:35] ERROR Failed to create local file: open C://data/etcd-backup-1731910830.db: The system cannot find the path specified.
+[0m

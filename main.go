@@ -55,3 +55,42 @@ func main() {
 		return
 	}
 }
+
+//func main2() {
+//	host := entity.Host{
+//		Name:            "kylin2",
+//		Address:         "192.168.227.149",
+//		InternalAddress: "192.168.227.149",
+//		Port:            22,
+//		User:            "root",
+//		Password:        "Def@u1tpwd",
+//	}
+//	s3Client, err := oss.NewS3("172.30.1.12:30204", "admin", "Def@u1tpwd", "etcd", "us-east-1", false)
+//	if err != nil {
+//		panic(err)
+//	}
+//	bm := etcd.NewBackupManager(host, "/data", "c:/tmp", "wangzhendong", s3Client)
+//	bm.BackupEtcd(context.Background())
+//}
+//
+//func main3() {
+//	hosts := []entity.Host{
+//		{
+//			Name:            "kylin2",
+//			Address:         "192.168.227.149",
+//			InternalAddress: "192.168.227.149",
+//			Port:            22,
+//			User:            "root",
+//			Password:        "Def@u1tpwd",
+//		},
+//	}
+//	s3Client, err := oss.NewS3("172.30.1.12:30204", "admin", "Def@u1tpwd", "etcd", "us-east-1", false)
+//	if err != nil {
+//		panic(err)
+//	}
+//
+//	err = etcd.RestoreEtcdCluster(hosts, "/data", "c:/tmp", "wangzhendong", "etcd-backup-1731994581.db", s3Client)
+//	if err != nil {
+//		return
+//	}
+//}

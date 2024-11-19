@@ -1,0 +1,4 @@
+[32m[2024-11-19 10:51:17] INFO Method: GET | Path: /api/ws/v1/cluster/create | Status: 200 | Duration: 3m22.8013831s | IP: 127.0.0.1
+
+[0m[32m[2024-11-19 10:51:17] INFO {{0 2024-11-19 10:47:59.055622 +0800 CST m=+4.206005701 0001-01-01 00:00:00 +0000 UTC {0001-01-01 00:00:00 +0000 UTC false}} example_user 1731984677 /api/ws/v1/cluster/create /api/ws/v1/cluster/create example_module GET No description available for this endpoint.}
+[0m

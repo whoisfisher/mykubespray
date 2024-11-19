@@ -1,0 +1,6 @@
+[32m[2024-11-18 15:04:53] INFO Create directory: /data/wangzhendong
+[0m[32m[2024-11-18 15:04:53] INFO etcd 快照已保存到: /data/wangzhendong/etcd-backup-1731913493.db
+[0m[32m[2024-11-18 15:04:59] INFO Successfully fetched file from /data/wangzhendong/etcd-backup-1731913493.db to C:/tmp/etcd-backup-1731913493.db
+[0m[32m[2024-11-18 15:05:09] INFO 已经上传 100.00%
+[0m[32m[2024-11-18 15:05:09] INFO 备份文件上传到 S3: /data/wangzhendong/etcd-backup-1731913493.db
+[0m

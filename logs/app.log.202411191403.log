@@ -1,0 +1,9 @@
+[32m[2024-11-19 14:04:12] INFO Kube-apiserver stopped
+[0m[32m[2024-11-19 14:04:50] INFO Download backup file: c:/tmp/etcd-backup-1731994581.db
+[0m[32m[2024-11-19 14:05:00] INFO Successfully Upload file c:/tmp/etcd-backup-1731994581.db to /data/wangzhendong/etcd-backup-1731994581.db
+[0m[32m[2024-11-19 14:05:59] INFO ETCD_NAME:etcd-node2
+[0m[31m[2024-11-19 14:06:09] ERROR Failed to execute command: Process exited with status 1
+[0m[31m[2024-11-19 14:07:57] ERROR Failed to restore snapshot for etcd : Process exited with status 1, output: 
+[0m[31m[2024-11-19 14:07:57] ERROR Failed to restore node:https://192.168.227.149:2379: Failed to restore snapshot for etcd : Process exited with status 1, output: 
+[0m[31m[2024-11-19 14:07:57] ERROR Failed to restore etcd: Failed to restore node:https://192.168.227.149:2379: Failed to restore snapshot for etcd : Process exited with status 1, output: 
+[0m

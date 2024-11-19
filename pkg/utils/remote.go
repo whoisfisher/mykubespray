@@ -5,6 +5,7 @@ import (
 	"bytes"
 	"context"
 	"fmt"
+	"github.com/pkg/sftp"
 	"github.com/whoisfisher/mykubespray/pkg/entity"
 	"github.com/whoisfisher/mykubespray/pkg/logger"
 	"golang.org/x/crypto/ssh"
@@ -41,13 +42,13 @@ func NewSSHExecutor(connection SSHConnection) *SSHExecutor {
 func (executor *SSHExecutor) ExecuteShortCommand(command string) (string, error) {
 	session, err := executor.Connection.Client.NewSession()
 	if err != nil {
-		logger.GetLogger().Errorf("Failed to create SSH session: %s", err.Error())
+		logger.GetLogger().Errorf("Failed to create SSH session: %v", err)
 		return "", err
 	}
 	defer session.Close()
 	res, err := session.CombinedOutput(command)
 	if err != nil {
-		logger.GetLogger().Errorf("Failed to execute command: %s, %s", err.Error(), res)
+		logger.GetLogger().Errorf("Failed to execute command: %v, %s", err, res)
 		return "", err
 	}
 	return string(res), nil
@@ -56,13 +57,13 @@ func (executor *SSHExecutor) ExecuteShortCommand(command string) (string, error)
 func (executor *SSHExecutor) ExecuteShortCMD(command string) ([]byte, error) {
 	session, err := executor.Connection.Client.NewSession()
 	if err != nil {
-		logger.GetLogger().Errorf("Failed to create SSH session: %s", err.Error())
+		logger.GetLogger().Errorf("Failed to create SSH session: %v", err)
 		return nil, err
 	}
 	defer session.Close()
 	res, err := session.CombinedOutput(command)
 	if err != nil {
-		logger.GetLogger().Errorf("Failed to execute command: %s", err.Error())
+		logger.GetLogger().Errorf("Failed to execute command: %v", err)
 		return nil, err
 	}
 	return res, nil
@@ -71,13 +72,13 @@ func (executor *SSHExecutor) ExecuteShortCMD(command string) ([]byte, error) {
 func (executor *SSHExecutor) ExecuteCommandWithoutReturn(command string) error {
 	session, err := executor.Connection.Client.NewSession()
 	if err != nil {
-		logger.GetLogger().Errorf("Failed to create SSH session: %s", err.Error())
+		logger.GetLogger().Errorf("Failed to create SSH session: %v", err)
 		return err
 	}
 	defer session.Close()
 	err = session.Run(command)
 	if err != nil {
-		logger.GetLogger().Errorf("Failed to execute command: %s", err.Error())
+		logger.GetLogger().Errorf("Failed to execute command: %v", err)
 		return err
 	}
 	return nil
@@ -86,13 +87,13 @@ func (executor *SSHExecutor) ExecuteCommandWithoutReturn(command string) error {
 func (executor *SSHExecutor) ExecuteCMDWithoutReturn(command string, outputHandler func(string)) error {
 	session, err := executor.Connection.Client.NewSession()
 	if err != nil {
-		logger.GetLogger().Errorf("Failed to create SSH session: %s", err.Error())
+		logger.GetLogger().Errorf("Failed to create SSH session: %v", err)
 		return err
 	}
 	defer session.Close()
 	err = session.Run(command)
 	if err != nil {
-		logger.GetLogger().Errorf("Failed to execute command: %s", err.Error())
+		logger.GetLogger().Errorf("Failed to execute command: %v", err)
 		return err
 	}
 	outputHandler(fmt.Sprintf("Successfully to execute command:%s", command))
@@ -103,7 +104,7 @@ func (executor *SSHExecutor) WhoAmI() string {
 	command := fmt.Sprintf("whoami")
 	user, err := executor.ExecuteShortCommand(command)
 	if err != nil {
-		logger.GetLogger().Warnf("Read username failed: %v", err.Error())
+		logger.GetLogger().Warnf("Read username failed: %v", err)
 		return ""
 	}
 	return strings.TrimSpace(user)
@@ -112,7 +113,7 @@ func (executor *SSHExecutor) WhoAmI() string {
 func (executor *SSHExecutor) ExecuteCommand(command string, logChan chan LogEntry) error {
 	session, err := executor.Connection.Client.NewSession()
 	if err != nil {
-		logger.GetLogger().Errorf("Failed to create SSH session: %s", err.Error())
+		logger.GetLogger().Errorf("Failed to create SSH session: %v", err)
 		return err
 	}
 	defer session.Close()
@@ -126,12 +127,12 @@ func (executor *SSHExecutor) ExecuteCommand(command string, logChan chan LogEntr
 
 	stdoutPipe, err := session.StdoutPipe()
 	if err != nil {
-		logger.GetLogger().Errorf("Unable to create stdout pipe: %v", err.Error())
+		logger.GetLogger().Errorf("Unable to create stdout pipe: %v", err)
 		return err
 	}
 	stderrPipe, err := session.StderrPipe()
 	if err != nil {
-		logger.GetLogger().Errorf("Failed to create stderr pipe: %s", err.Error())
+		logger.GetLogger().Errorf("Failed to create stderr pipe: %v", err)
 		return err
 	}
 
@@ -174,13 +175,13 @@ func (executor *SSHExecutor) ExecuteCommand(command string, logChan chan LogEntr
 	err = session.Start(command)
 	if err != nil {
 		logChan <- LogEntry{Message: "Pipeline Done", IsError: true}
-		logger.GetLogger().Errorf("Failed to run SSH command: %s", err.Error())
+		logger.GetLogger().Errorf("Failed to run SSH command: %v", err)
 		return err
 	}
 
 	err = session.Wait()
 	if err != nil {
-		logger.GetLogger().Errorf("SSH command execution failed: %s", err.Error())
+		logger.GetLogger().Errorf("SSH command execution failed: %v", err)
 		logChan <- LogEntry{Message: "Pipeline Done", IsError: true}
 		return err
 	}
@@ -191,7 +192,7 @@ func (executor *SSHExecutor) ExecuteCommand(command string, logChan chan LogEntr
 func (executor *SSHExecutor) ExecuteCommandNew(command string, logChan chan LogEntry) error {
 	session, err := executor.Connection.Client.NewSession()
 	if err != nil {
-		logger.GetLogger().Errorf("Failed to create SSH session: %s", err.Error())
+		logger.GetLogger().Errorf("Failed to create SSH session: %v", err)
 		logChan <- LogEntry{Message: "Pipeline Failed", IsError: true}
 		return err
 	}
@@ -207,13 +208,13 @@ func (executor *SSHExecutor) ExecuteCommandNew(command string, logChan chan LogE
 
 	stdoutPipe, err := session.StdoutPipe()
 	if err != nil {
-		logger.GetLogger().Errorf("Unable to create stdout pipe: %v", err.Error())
+		logger.GetLogger().Errorf("Unable to create stdout pipe: %v", err)
 		logChan <- LogEntry{Message: "Pipeline Failed", IsError: true}
 		return err
 	}
 	stderrPipe, err := session.StderrPipe()
 	if err != nil {
-		logger.GetLogger().Errorf("Failed to create stderr pipe: %s", err.Error())
+		logger.GetLogger().Errorf("Failed to create stderr pipe: %v", err)
 		logChan <- LogEntry{Message: "Pipeline Failed", IsError: true}
 		return err
 	}
@@ -281,14 +282,14 @@ func (executor *SSHExecutor) ExecuteCommandNew(command string, logChan chan LogE
 
 	err = session.Start(command)
 	if err != nil {
-		logger.GetLogger().Errorf("Failed to run SSH command: %s", err.Error())
+		logger.GetLogger().Errorf("Failed to run SSH command: %v", err)
 		logChan <- LogEntry{Message: "Pipeline Failed", IsError: true}
 		return err
 	}
 
 	err = session.Wait()
 	if err != nil {
-		logger.GetLogger().Errorf("SSH command execution failed: %s", err.Error())
+		logger.GetLogger().Errorf("SSH command execution failed: %v", err)
 		logChan <- LogEntry{Message: "Pipeline Failed", IsError: true}
 		return err
 	}
@@ -306,8 +307,8 @@ func (executor *SSHExecutor) CopyMultiFile(files []entity.FileSrcDest, outputHan
 			defer wg.Done()
 			byteData, err := os.ReadFile(file.SrcFile)
 			if err != nil {
-				logger.GetLogger().Errorf("Failed to open source file: %s", err.Error())
-				results <- MachineResult{Machine: "", Success: false, Error: fmt.Sprintf("Failed to open source file: %s", err.Error())}
+				logger.GetLogger().Errorf("Failed to open source file: %v", err)
+				results <- MachineResult{Machine: "", Success: false, Error: fmt.Sprintf("Failed to open source file: %v", err)}
 				return
 			}
 
@@ -317,7 +318,7 @@ func (executor *SSHExecutor) CopyMultiFile(files []entity.FileSrcDest, outputHan
 			touchCommand := fmt.Sprintf("echo '%s' > %s", string(byteData), tempFile)
 			err = executor.ExecuteCommandWithoutReturn(touchCommand)
 			if err != nil {
-				logger.GetLogger().Errorf("Failed to copy file to destination: %s", err.Error())
+				logger.GetLogger().Errorf("Failed to copy file to destination: %v", err)
 				return
 			}
 
@@ -327,15 +328,15 @@ func (executor *SSHExecutor) CopyMultiFile(files []entity.FileSrcDest, outputHan
 			}
 			err = executor.ExecuteCommandWithoutReturn(command)
 			if err != nil {
-				logger.GetLogger().Errorf("Failed to copy file to destination: %s", err.Error())
-				results <- MachineResult{Machine: "", Success: false, Error: fmt.Sprintf("Failed to copy file to destination: %s", err.Error())}
+				logger.GetLogger().Errorf("Failed to copy file to destination: %v", err)
+				results <- MachineResult{Machine: "", Success: false, Error: fmt.Sprintf("Failed to copy file to destination: %v", err)}
 				return
 			}
 
 			rmCommand := fmt.Sprintf("rm -f %s", tempFile)
 			err = executor.ExecuteCommandWithoutReturn(rmCommand)
 			if err != nil {
-				logger.GetLogger().Errorf("Failed to delete temp file: %s", err.Error())
+				logger.GetLogger().Errorf("Failed to delete temp file: %v", err)
 				return
 			}
 
@@ -374,7 +375,7 @@ func (executor *SSHExecutor) CopyMultiFile(files []entity.FileSrcDest, outputHan
 func (executor *SSHExecutor) CopyFile(srcFile, destFile string, outputHandler func(string)) error {
 	byteData, err := os.ReadFile(srcFile)
 	if err != nil {
-		logger.GetLogger().Errorf("Failed to open source file: %s", err.Error())
+		logger.GetLogger().Errorf("Failed to open source file: %v", err)
 		return err
 	}
 
@@ -384,7 +385,7 @@ func (executor *SSHExecutor) CopyFile(srcFile, destFile string, outputHandler fu
 	touchCommand := fmt.Sprintf("echo '%s' > %s", string(byteData), tempFile)
 	err = executor.ExecuteCommandWithoutReturn(touchCommand)
 	if err != nil {
-		logger.GetLogger().Errorf("Failed to copy file to destination: %s", err.Error())
+		logger.GetLogger().Errorf("Failed to copy file to destination: %v", err)
 		return err
 	}
 
@@ -394,14 +395,14 @@ func (executor *SSHExecutor) CopyFile(srcFile, destFile string, outputHandler fu
 	}
 	err = executor.ExecuteCommandWithoutReturn(command)
 	if err != nil {
-		logger.GetLogger().Errorf("Failed to copy file to destination: %s", err.Error())
+		logger.GetLogger().Errorf("Failed to copy file to destination: %v", err)
 		return err
 	}
 
 	rmCommand := fmt.Sprintf("rm -f %s", tempFile)
 	err = executor.ExecuteCommandWithoutReturn(rmCommand)
 	if err != nil {
-		logger.GetLogger().Errorf("Failed to delete temp file: %s", err.Error())
+		logger.GetLogger().Errorf("Failed to delete temp file: %v", err)
 		return err
 	}
 
@@ -417,8 +418,8 @@ func (executor *SSHExecutor) MkDirALL(path string, outputHandler func(string)) e
 	}
 	err := executor.ExecuteCommandWithoutReturn(command)
 	if err != nil {
-		errMsg := fmt.Sprintf("Failed to create directory '%s' on remote host: %s", path, err)
-		log.Println("%s: %s", errMsg, err.Error())
+		errMsg := fmt.Sprintf("Failed to create directory '%s' on remote host: %v", path, err)
+		logger.GetLogger().Errorf("%s: %v", errMsg, err)
 		return err
 	}
 	_ = fmt.Sprintf("Directory '%s' created successfully on remote host\n", path)
@@ -431,7 +432,7 @@ func (executor *SSHExecutor) AddHosts(record entity.Record, outputHandler func(s
 	hostContent, err := executor.ExecuteShortCommand(getHostContentCMD)
 	if err != nil {
 		errMsg := fmt.Errorf("failed to read /etc/hosts: %w", err)
-		log.Println("%s: %s", errMsg, err.Error())
+		log.Println("%s: %v", errMsg, err)
 		return err
 	}
 	if strings.TrimSpace(hostContent) != "" {
@@ -449,7 +450,7 @@ func (executor *SSHExecutor) AddHosts(record entity.Record, outputHandler func(s
 		_, err = executor.ExecuteShortCommand(cmdUpdate)
 		if err != nil {
 			logger.GetLogger().Errorf("failed to update /etc/hosts: %v", err)
-			return fmt.Errorf("failed to update /etc/hosts: %v", err)
+			return fmt.Errorf("failed to update /etc/hosts: %w", err)
 		}
 		logger.GetLogger().Infof("Updated %s to IP %s\n", record.Domain, record.IP)
 		fmt.Printf("Updated %s to IP %s\n", record.Domain, record.IP)
@@ -461,7 +462,7 @@ func (executor *SSHExecutor) AddHosts(record entity.Record, outputHandler func(s
 		_, err = executor.ExecuteShortCommand(cmdAdd)
 		if err != nil {
 			logger.GetLogger().Errorf("failed to add to /etc/hosts: %v", err)
-			return fmt.Errorf("failed to add to /etc/hosts: %v", err)
+			return fmt.Errorf("failed to add to /etc/hosts: %w", err)
 		}
 		logger.GetLogger().Infof("Added %s with IP %s\n", record.Domain, record.IP)
 		fmt.Printf("Added %s with IP %s\n", record.Domain, record.IP)
@@ -504,7 +505,7 @@ func (executor *SSHExecutor) AddMultiHosts(records []entity.Record, outputHandle
 		logger.GetLogger().Error("Failed to write "+
 			""+
 			" temporary file: %s", err)
-		return fmt.Errorf("Failed to write to temporary file: %s", err)
+		return fmt.Errorf("Failed to write to temporary file: %w", err)
 	}
 	cmd := fmt.Sprintf("cp %s /etc/hosts", tmpFile)
 	if executor.WhoAmI() != "root" {
@@ -513,7 +514,7 @@ func (executor *SSHExecutor) AddMultiHosts(records []entity.Record, outputHandle
 	_, err = executor.ExecuteShortCommand(cmd)
 	if err != nil {
 		logger.GetLogger().Errorf("failed to add to /etc/hosts: %v", err)
-		return fmt.Errorf("failed to add to /etc/hosts: %v", err)
+		return fmt.Errorf("failed to add to /etc/hosts: %w", err)
 	}
 	outputHandler(fmt.Sprintf("Add Hosts"))
 	return nil
@@ -524,7 +525,7 @@ func (executor *SSHExecutor) UpdateHostsFile(ip string, domain string) error {
 	hostContent, err := executor.ExecuteShortCommand(getHostContentCMD)
 	if err != nil {
 		logger.GetLogger().Errorf("读取 /etc/hosts 出错: %v\", err")
-		return fmt.Errorf("读取 /etc/hosts 出错: %v", err)
+		return fmt.Errorf("读取 /etc/hosts 出错: %w", err)
 	}
 	lines := strings.Split(hostContent, "\n")
 	domainExists := false
@@ -554,7 +555,7 @@ func (executor *SSHExecutor) UpdateHostsFile(ip string, domain string) error {
 	_, err = executor.ExecuteShortCommand(command)
 	if err != nil {
 		logger.GetLogger().Errorf("写入 /etc/hosts 出错: %v", err)
-		return fmt.Errorf("写入 /etc/hosts 出错: %v", err)
+		return fmt.Errorf("写入 /etc/hosts 出错: %w", err)
 	}
 	return nil
 }
@@ -564,7 +565,7 @@ func (executor *SSHExecutor) UpdateResolvFile(ip string) error {
 	dnsContent, err := executor.ExecuteShortCommand(getDNSContentCMD)
 	if err != nil {
 		logger.GetLogger().Errorf("读取 /etc/resolv.conf 出错: %v", err)
-		return fmt.Errorf("读取 /etc/resolv.conf 出错: %v", err)
+		return fmt.Errorf("读取 /etc/resolv.conf 出错: %w", err)
 	}
 
 	lines := strings.Split(dnsContent, "\n")
@@ -585,7 +586,7 @@ func (executor *SSHExecutor) UpdateResolvFile(ip string) error {
 		_, err = executor.ExecuteShortCommand(command)
 		if err != nil {
 			logger.GetLogger().Errorf("追加到 /etc/resolv.conf 出错: %v", err)
-			return fmt.Errorf("追加到 /etc/resolv.conf 出错: %v", err)
+			return fmt.Errorf("追加到 /etc/resolv.conf 出错: %w", err)
 		}
 	} else {
 		logger.GetLogger().Infof("IP 已存在，跳过追加")
@@ -597,7 +598,7 @@ func (executor *SSHExecutor) UpdateResolvFile(ip string) error {
 func (executor *SSHExecutor) ChangeExpiredPassword(currentPassword, newPassword string) error {
 	session, err := executor.Connection.Client.NewSession()
 	if err != nil {
-		logger.GetLogger().Errorf("Failed to create SSH session: %s", err.Error())
+		logger.GetLogger().Errorf("Failed to create SSH session: %v", err)
 		return err
 	}
 	defer session.Close()
@@ -615,7 +616,7 @@ func (executor *SSHExecutor) ChangeExpiredPassword(currentPassword, newPassword 
 	}
 	stderrPipe, err := session.StderrPipe()
 	if err != nil {
-		logger.GetLogger().Errorf("Failed to create stderr pipe: %s", err.Error())
+		logger.GetLogger().Errorf("Failed to create stderr pipe: %v", err)
 		return err
 	}
 
@@ -851,4 +852,157 @@ func (executor *SSHExecutor) DirIsExist(path string) bool {
 		return true
 	}
 	return false
+}
+
+func (executor *SSHExecutor) FileIsExists(path string) bool {
+	cmd := fmt.Sprintf("test -f %s && echo 'exists' || echo 'not exists'", path)
+	output, err := executor.ExecuteShortCommand(cmd)
+	if err != nil {
+		return false
+	} else if string(output) == "exists\n" {
+		return true
+	}
+	return false
+}
+
+func (executor *SSHExecutor) FetchFile(path string, local string, perm os.FileMode) error {
+	sftpClient, err := sftp.NewClient(executor.Connection.Client)
+	if err != nil {
+		logger.GetLogger().Errorf("Failed to create SFTP client: %v", err)
+		return fmt.Errorf("Failed to create SFTP client: %w", err)
+	}
+	defer sftpClient.Close()
+
+	remoteFile, err := sftpClient.Open(path)
+	if err != nil {
+		logger.GetLogger().Errorf("Failed to open remote file: %v", err)
+		return fmt.Errorf("Failed to open remote file: %w", err)
+	}
+	defer remoteFile.Close()
+
+	localFile, err := os.Create(local)
+	if err != nil {
+		logger.GetLogger().Errorf("Failed to create local file: %v", err)
+		return fmt.Errorf("Failed to create local file: %w", err)
+	}
+	defer localFile.Close()
+
+	if err := localFile.Chmod(perm); err != nil {
+		logger.GetLogger().Errorf("Failed to set file permissions: %v", err)
+		return fmt.Errorf("Failed to set file permissions: %w", err)
+	}
+
+	// 使用缓冲区流式读取和写入
+	buffer := make([]byte, 1024*16) // 16KB 缓冲区
+	for {
+		n, err := remoteFile.Read(buffer)
+		if err != nil && err != io.EOF {
+			logger.GetLogger().Errorf("Error reading remote file: %v", err)
+			return fmt.Errorf("Error reading remote file: %w", err)
+		}
+		if n == 0 {
+			break // 文件读取完毕
+		}
+
+		// 将读取的数据写入本地文件
+		_, err = localFile.Write(buffer[:n])
+		if err != nil {
+			logger.GetLogger().Errorf("Error writing to local file: %v", err)
+			return fmt.Errorf("Error writing to local file: %w", err)
+		}
+	}
+
+	// 成功传输文件
+	logger.GetLogger().Infof("Successfully fetched file from %s to %s", path, local)
+	return nil
+}
+
+func (executor *SSHExecutor) Upload(localFile, remoteFile string) error {
+
+	sftpClient, err := sftp.NewClient(executor.Connection.Client)
+	if err != nil {
+		logger.GetLogger().Errorf("Failed to create SFTP client: %v", err)
+		return fmt.Errorf("Failed to create SFTP client: %w", err)
+	}
+	defer sftpClient.Close()
+	var tempPath string
+	if executor.WhoAmI() != "root" {
+		tempPath = filepath.Join("/tmp/", filepath.Base(localFile))
+		tempPath = filepath.ToSlash(tempPath)
+	} else {
+		tempPath = remoteFile
+	}
+
+	srcFile, err := os.Open(localFile)
+	if err != nil {
+		logger.GetLogger().Errorf("Failed to open local file %s: %v", localFile, err)
+		return fmt.Errorf("Failed to open local file %s: %w", localFile, err)
+	}
+	defer srcFile.Close()
+
+	destFile, err := sftpClient.Create(tempPath)
+	if err != nil {
+		logger.GetLogger().Errorf("Failed to create remote file %s: %v", tempPath, err)
+		return fmt.Errorf("failed to create remote file %s: %w", tempPath, err)
+	}
+	defer destFile.Close()
+
+	if _, err := io.Copy(destFile, srcFile); err != nil {
+		logger.GetLogger().Errorf("Failed to copy file %s to %s: %v", srcFile, destFile, err)
+		return fmt.Errorf("Failed to copy file %s to %s: %w", srcFile, destFile, err)
+	}
+
+	if executor.WhoAmI() != "root" {
+		command := fmt.Sprintf("cp -f %s %s", tempPath, remoteFile)
+		command = SudoPrefixWithPassword(command, executor.Host.Password)
+		err := executor.ExecuteCommandWithoutReturn(command)
+		if err != nil {
+			logger.GetLogger().Errorf("Failed to copy %s to %s: %w", tempPath, remoteFile, err)
+			return fmt.Errorf("Failed to copy %s to %s: %w", tempPath, remoteFile, err)
+		}
+	}
+	logger.GetLogger().Infof("Successfully Upload file %s to %s", localFile, remoteFile)
+	return nil
+}
+
+func (executor *SSHExecutor) Download(remoteFile, localFile string) error {
+	sftpClient, err := sftp.NewClient(executor.Connection.Client)
+	if err != nil {
+		logger.GetLogger().Errorf("Failed to create SFTP client: %v", err)
+		return fmt.Errorf("Failed to create SFTP client: %w", err)
+	}
+	var tempPath string
+	if executor.WhoAmI() != "root" {
+		tempPath = filepath.Join("/tmp/", filepath.Base(remoteFile))
+		command := fmt.Sprintf("cp -f %s %s", remoteFile, tempPath)
+		command = SudoPrefixWithPassword(command, executor.Host.Password)
+		err := executor.ExecuteCommandWithoutReturn(command)
+		if err != nil {
+			logger.GetLogger().Errorf("Failed to copy %s to %s: %v", remoteFile, tempPath, err)
+			return fmt.Errorf("Failed to copy %s to %s: %w", remoteFile, tempPath, err)
+		}
+	} else {
+		tempPath = remoteFile
+	}
+	srcFile, err := sftpClient.Open(remoteFile)
+	if err != nil {
+		logger.GetLogger().Errorf("Failed to open remote file %s: %v", tempPath, err)
+		return fmt.Errorf("Failed to open remote file %s: %w", tempPath, err)
+	}
+	defer srcFile.Close()
+
+	destFile, err := os.Create(localFile)
+	if err != nil {
+		logger.GetLogger().Errorf("Failed to create local file %s: %v", localFile, err)
+		return fmt.Errorf("Failed to create local file %s: %w", localFile, err)
+	}
+	defer destFile.Close()
+
+	if _, err := io.Copy(destFile, srcFile); err != nil {
+		logger.GetLogger().Errorf("Failed to copy file %s to %s: %v", srcFile, destFile, err)
+		return fmt.Errorf("Failed to copy file %s to %s: %w", srcFile, destFile, err)
+	}
+
+	logger.GetLogger().Infof("Successfully Download file %s to %s", remoteFile, localFile)
+	return nil
 }

@@ -123,7 +123,7 @@ func (executor *LocalExecutor) MkDirALL(path string, outputHandler func(string))
 func (executor *LocalExecutor) ReadFile(path string) ([]byte, error) {
 	content, err := os.ReadFile(path)
 	if err != nil {
-		return nil, fmt.Errorf("failed to read file %s: %v", path, err)
+		return nil, fmt.Errorf("failed to read file %s: %w", path, err)
 	}
 	return content, nil
 }
@@ -131,7 +131,7 @@ func (executor *LocalExecutor) ReadFile(path string) ([]byte, error) {
 func (executor *LocalExecutor) WriteFile(content []byte, path string, perm os.FileMode) error {
 	err := os.WriteFile(path, content, perm)
 	if err != nil {
-		return fmt.Errorf("failed to write to file %s: %v", path, err)
+		return fmt.Errorf("failed to write to file %s: %w", path, err)
 	}
 	return nil
 }
@@ -189,4 +189,24 @@ func (executor *LocalExecutor) DirIsExist(path string) bool {
 		return true
 	}
 	return false
+}
+
+func (executor *LocalExecutor) FileIsExists(path string) bool {
+	info, err := os.Stat(path)
+	if err == nil && !info.IsDir() {
+		return true
+	}
+	return false
+}
+
+func (executor *LocalExecutor) FetchFile(path string, local string, perm os.FileMode) error {
+	return nil
+}
+
+func (executor *LocalExecutor) Upload(localFile, remoteFile string) error {
+	return nil
+}
+
+func (executor *LocalExecutor) Download(remoteFile, localFile string) error {
+	return nil
 }

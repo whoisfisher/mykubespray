@@ -1,0 +1,43 @@
+[32m[2024-11-18 16:11:29] INFO Mkdir Directory: /root/taichu/wangcluster
+[0m[32m[2024-11-18 16:11:31] INFO 
+
+[0m[32m[2024-11-18 16:11:31] INFO 
+
+[0m[32m[2024-11-18 16:11:31] INFO 16:11:28 CST [GreetingsModule] Greetings
+
+[0m[32m[2024-11-18 16:11:31] INFO  _   __      _          _   __           
+
+[0m[32m[2024-11-18 16:11:31] INFO 16:11:28 CST failed: [node1]
+
+[0m[31m[2024-11-18 16:11:31] ERROR SSH command execution failed: Process exited with status 1
+[0m[32m[2024-11-18 16:11:31] INFO | | / /     | |        | | / /           
+
+[0m[32m[2024-11-18 16:11:31] INFO 16:11:28 CST failed: [node2]
+
+[0m[31m[2024-11-18 16:11:31] ERROR Pipeline Done
+
+[0m[31m[2024-11-18 16:11:31] ERROR Failed to create cluster wangcluster: Process exited with status 1
+[0m[32m[2024-11-18 16:11:31] INFO | |/ / _   _| |__   ___| |/ /  ___ _   _ 
+
+[0m[32m[2024-11-18 16:11:31] INFO Method: GET | Path: /api/ws/v1/cluster/create | Status: 200 | Duration: 7.7320742s | IP: 127.0.0.1
+
+[0m[32m[2024-11-18 16:11:31] INFO error: Pipeline[CreateClusterPipeline] execute failed: Module[GreetingsModule] exec failed: 
+
+[0m[32m[2024-11-18 16:11:31] INFO {{0 2024-11-18 16:11:24.0059656 +0800 CST m=+6.728688101 0001-01-01 00:00:00 +0000 UTC {0001-01-01 00:00:00 +0000 UTC false}} example_user 1731917491 /api/ws/v1/cluster/create /api/ws/v1/cluster/create example_module GET No description available for this endpoint.}
+[0m[32m[2024-11-18 16:11:31] INFO |    \| | | | '_ \ / _ \    \ / _ \ | | |
+
+[0m[32m[2024-11-18 16:11:31] INFO failed: [node1] failed to connect to 192.168.227.148: Failed to validate ssh connection parameters: Failed to read keyfile "C:/Users/Administrator/.ssh/AAA/id_rsa": open C:/Users/Administrator/.ssh/AAA/id_rsa: no such file or directory
+
+[0m[32m[2024-11-18 16:11:31] INFO | |\  \ |_| | |_) |  __/ |\  \  __/ |_| |
+
+[0m[32m[2024-11-18 16:11:31] INFO failed: [node2] failed to connect to 192.168.227.149: Failed to validate ssh connection parameters: Failed to read keyfile "C:/Users/Administrator/.ssh/AAA/id_rsa": open C:/Users/Administrator/.ssh/AAA/id_rsa: no such file or directory
+
+[0m[32m[2024-11-18 16:11:31] INFO \_| \_/\__,_|_.__/ \___\_| \_/\___|\__, |
+
+[0m[32m[2024-11-18 16:11:31] INFO                                     __/ |
+
+[0m[32m[2024-11-18 16:11:31] INFO                                    |___/
+
+[0m[32m[2024-11-18 16:11:31] INFO 
+
+[0m

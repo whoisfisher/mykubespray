@@ -3,8 +3,8 @@ package utils
 import (
 	"fmt"
 	"github.com/whoisfisher/mykubespray/pkg/entity"
+	"github.com/whoisfisher/mykubespray/pkg/logger"
 	"golang.org/x/crypto/ssh"
-	"log"
 	"os"
 )
 
@@ -35,7 +35,7 @@ func NewConnection(host entity.Host) (*SSHConnection, error) {
 	if host.PrivateKey != "" {
 		key, err := parsePrivateKey(host.PrivateKey)
 		if err != nil {
-			log.Printf("Failed to parse private key: %s", err.Error())
+			logger.GetLogger().Errorf("Failed to parse private key: %s", err.Error())
 			return nil, err
 		}
 		sshConfig.Auth = append(sshConfig.Auth, key)
@@ -44,7 +44,7 @@ func NewConnection(host entity.Host) (*SSHConnection, error) {
 	address := fmt.Sprintf("%s:%d", host.Address, host.Port)
 	client, err := ssh.Dial("tcp", address, sshConfig)
 	if err != nil {
-		log.Printf("Failed to dial: %s", err.Error())
+		logger.GetLogger().Errorf("Failed to dial: %s", err.Error())
 		return nil, err
 	}
 
@@ -70,7 +70,7 @@ func NewSSHConnection(config SSHConfig) (*SSHConnection, error) {
 	if config.PrivateKey != "" {
 		key, err := parsePrivateKey(config.PrivateKey)
 		if err != nil {
-			log.Printf("Failed to parse private key: %s", err.Error())
+			logger.GetLogger().Errorf("Failed to parse private key: %s", err.Error())
 			return nil, err
 		}
 		sshConfig.Auth = append(sshConfig.Auth, key)
@@ -79,7 +79,7 @@ func NewSSHConnection(config SSHConfig) (*SSHConnection, error) {
 	address := fmt.Sprintf("%s:%d", config.Host, config.Port)
 	client, err := ssh.Dial("tcp", address, sshConfig)
 	if err != nil {
-		log.Printf("Failed to dial: %s", err.Error())
+		logger.GetLogger().Errorf("Failed to dial: %s", err.Error())
 		return nil, err
 	}
 
@@ -93,13 +93,13 @@ func NewSSHConnection(config SSHConfig) (*SSHConnection, error) {
 func parsePrivateKey(keyPath string) (ssh.AuthMethod, error) {
 	key, err := os.ReadFile(keyPath)
 	if err != nil {
-		log.Printf("Failed to read private key file: %s", err.Error())
+		logger.GetLogger().Errorf("Failed to read private key file: %s", err.Error())
 		return nil, err
 	}
 
 	signer, err := ssh.ParsePrivateKey(key)
 	if err != nil {
-		log.Printf("Failed to parse private key: %s", err.Error())
+		logger.GetLogger().Errorf("Failed to parse private key: %s", err.Error())
 		return nil, err
 	}
 

@@ -1,0 +1,4 @@
+[32m[2024-11-18 17:11:33] INFO Kube-apiserver stopped
+[0m[31m[2024-11-18 17:13:33] ERROR Failed to download backup file from s3: %!w(*fmt.wrapError=&{复制数据失败: The specified key does not exist. {{ Error} NoSuchKey The specified key does not exist. etcd etcd-backup-1731919637.db /etcd/etcd-backup-1731919637.db 1809052776784D0B e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855  MinIO 404}})
+[0m[31m[2024-11-18 17:14:43] ERROR Failed to restore etcd
+[0m

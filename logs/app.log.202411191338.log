@@ -1,0 +1,6 @@
+[32m[2024-11-19 13:38:17] INFO Kube-apiserver stopped
+[0m[32m[2024-11-19 13:38:18] INFO Download backup file: c:/tmp/etcd-backup-1731994581.db
+[0m[32m[2024-11-19 13:38:18] INFO Successfully Upload file c:/tmp/etcd-backup-1731994581.db to /data/wangzhendong/etcd-backup-1731994581.db
+[0m[31m[2024-11-19 13:38:18] ERROR The current feature does not support this cluster
+[0m[31m[2024-11-19 13:38:18] ERROR Failed to restore etcd
+[0m

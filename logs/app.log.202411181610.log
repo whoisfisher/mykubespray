@@ -1,0 +1,4 @@
+[32m[2024-11-18 16:10:35] INFO ETCD_NAME:etcd-node2
+[0m[32m[2024-11-18 16:10:36] INFO etcd save to: /data/wangzhendong/etcd-backup-1731917435.db
+[0m[31m[2024-11-18 16:10:36] ERROR Failed to create local file: open c:/tmp: is a directory
+[0m

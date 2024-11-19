@@ -1,0 +1,6 @@
+[32m[2024-11-18 14:48:13] INFO etcd 快照已保存到: /data/etcd-backup-1731912492.db
+[0m[32m[2024-11-18 14:48:18] INFO Successfully fetched file from /data/etcd-backup-1731912492.db to C:/tmp/etcd-backup-1731912492.db
+[0m[32m[2024-11-18 14:48:24] INFO 已经上传 100.00%
+[0m[32m[2024-11-18 14:48:24] INFO 备份文件上传到 S3: /data/etcd-backup-1731912492.db
+[0m[31m[2024-11-18 14:48:24] ERROR 删除本地备份文件失败: remove /data/etcd-backup-1731912492.db: The system cannot find the path specified.
+[0m
