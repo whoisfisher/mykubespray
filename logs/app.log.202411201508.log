@@ -1,0 +1,22 @@
+[32m[2024-11-20 15:08:21] INFO ETCD_NAME:etcd-node2
+[0m[32m[2024-11-20 15:08:21] INFO etcd snapshot saved to: /data/wangzhendong/etcd-backup-1732086501.db
+[0m[32m[2024-11-20 15:08:21] INFO Successfully Download file /data/wangzhendong/etcd-backup-1732086501.db to c:/tmp/etcd-backup-1732086501.db
+[0m[32m[2024-11-20 15:08:21] INFO Bucket etcd already exists
+[0m[32m[2024-11-20 15:08:22] INFO Uploaded: 100.00%
+[0m[32m[2024-11-20 15:08:22] INFO Successfully to upload file c:/tmp/etcd-backup-1732086501.db to s3://172.30.1.12:30204/etcd/data/wangzhendong/etcd-backup-1732086501.db
+[0m[32m[2024-11-20 15:08:22] INFO Upload backup file to S3: s3://172.30.1.12:30204/etcd/data/wangzhendong/etcd-backup-1732086501.db
+[0m[32m[2024-11-20 15:08:22] INFO Backup etcd successfully
+[0m[32m[2024-11-20 15:08:55] INFO Kube-apiserver stopped
+[0m[32m[2024-11-20 15:08:56] INFO Bucket etcd already exists
+[0m[32m[2024-11-20 15:08:56] INFO Successfully to download file data/wangzhendong/etcd-backup-1732083472.db to c:/tmp/etcd-backup-1732083472.db
+[0m[32m[2024-11-20 15:08:56] INFO Download backup file: c:/tmp/etcd-backup-1732083472.db
+[0m[32m[2024-11-20 15:08:56] INFO Successfully Upload file c:/tmp/etcd-backup-1732083472.db to /data/wangzhendong/etcd-backup-1732083472.db
+[0m[32m[2024-11-20 15:08:57] INFO Successfully stopped etcd
+[0m[32m[2024-11-20 15:08:57] INFO Create directory /data/wangzhendong/etcd-20241120150857
+[0m[32m[2024-11-20 15:08:57] INFO Backup /var/lib/etcd to /data/wangzhendong/etcd-20241120150857 success
+[0m[32m[2024-11-20 15:08:57] INFO ETCD_NAME:etcd-node2
+[0m[32m[2024-11-20 15:08:57] INFO Successfully to restore snapshot: /data/wangzhendong/etcd-backup-1732083472.db
+[0m[32m[2024-11-20 15:09:02] INFO Successfully start etcd
+[0m[32m[2024-11-20 15:09:02] INFO Restore etcd successfully
+[0m[32m[2024-11-20 15:09:03] INFO Kube-apiserver started
+[0m

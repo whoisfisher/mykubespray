@@ -1,0 +1,9 @@
+[32m[2024-11-20 14:28:50] INFO Kube-apiserver stopped
+[0m[32m[2024-11-20 14:29:03] INFO Bucket etcd already exists
+[0m[32m[2024-11-20 14:29:03] INFO Successfully to download file data/wangzhendong/etcd-backup-1732083472.db to c:/tmp/etcd-backup-1732083472.db
+[0m[32m[2024-11-20 14:29:03] INFO Download backup file: c:/tmp/etcd-backup-1732083472.db
+[0m[32m[2024-11-20 14:29:03] INFO Successfully Upload file c:/tmp/etcd-backup-1732083472.db to /data/wangzhendong/etcd-backup-1732083472.db
+[0m[32m[2024-11-20 14:29:03] INFO Successfully stopped etcd
+[0m[32m[2024-11-20 14:29:04] INFO Create directory /data/wangzhendong/etcd-20241120142903
+[0m[32m[2024-11-20 14:29:09] INFO ETCD_NAME:etcd-node2
+[0m

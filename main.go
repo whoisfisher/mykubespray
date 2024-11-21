@@ -4,7 +4,10 @@ import (
 	"fmt"
 	"github.com/toolkits/pkg/runner"
 	"github.com/urfave/cli/v2"
+	"github.com/whoisfisher/mykubespray/pkg/entity"
 	"github.com/whoisfisher/mykubespray/pkg/server"
+	"github.com/whoisfisher/mykubespray/pkg/utils/etcd"
+	"github.com/whoisfisher/mykubespray/pkg/utils/oss"
 	"os"
 )
 
@@ -42,7 +45,7 @@ func NewServerCmd() *cli.Command {
 	}
 }
 
-func main() {
+func main1() {
 	app := cli.NewApp()
 	app.Name = "cluster-utils"
 	app.Version = "1.0.0"
@@ -56,41 +59,41 @@ func main() {
 	}
 }
 
-//func main2() {
-//	host := entity.Host{
-//		Name:            "kylin2",
-//		Address:         "192.168.227.149",
-//		InternalAddress: "192.168.227.149",
-//		Port:            22,
-//		User:            "root",
-//		Password:        "Def@u1tpwd",
-//	}
-//	s3Client, err := oss.NewS3("172.30.1.12:30204", "admin", "Def@u1tpwd", "etcd", "us-east-1", false)
-//	if err != nil {
-//		panic(err)
-//	}
-//	bm := etcd.NewBackupManager(host, "/data", "c:/tmp", "wangzhendong", s3Client)
-//	bm.BackupEtcd(context.Background())
-//}
-//
-//func main3() {
-//	hosts := []entity.Host{
-//		{
-//			Name:            "kylin2",
-//			Address:         "192.168.227.149",
-//			InternalAddress: "192.168.227.149",
-//			Port:            22,
-//			User:            "root",
-//			Password:        "Def@u1tpwd",
-//		},
-//	}
-//	s3Client, err := oss.NewS3("172.30.1.12:30204", "admin", "Def@u1tpwd", "etcd", "us-east-1", false)
-//	if err != nil {
-//		panic(err)
-//	}
-//
-//	err = etcd.RestoreEtcdCluster(hosts, "/data", "c:/tmp", "wangzhendong", "etcd-backup-1731994581.db", s3Client)
-//	if err != nil {
-//		return
-//	}
-//}
+func main2() {
+	host := entity.Host{
+		Name:            "kylin2",
+		Address:         "192.168.227.149",
+		InternalAddress: "192.168.227.149",
+		Port:            22,
+		User:            "root",
+		Password:        "Def@u1tpwd",
+	}
+	s3Client, err := oss.NewS3("172.30.1.12:30204", "admin", "Def@u1tpwd", "etcd", "us-east-1", false)
+	if err != nil {
+		panic(err)
+	}
+	bm := etcd.NewBackupManager(host, "/data", "c:/tmp", "wangzhendong", s3Client)
+	bm.BackupEtcd()
+}
+
+func main() {
+	hosts := []entity.Host{
+		{
+			Name:            "kylin2",
+			Address:         "192.168.227.149",
+			InternalAddress: "192.168.227.149",
+			Port:            22,
+			User:            "root",
+			Password:        "Def@u1tpwd",
+		},
+	}
+	s3Client, err := oss.NewS3("172.30.1.12:30204", "admin", "Def@u1tpwd", "etcd", "us-east-1", false)
+	if err != nil {
+		panic(err)
+	}
+
+	err = etcd.RestoreEtcdCluster(hosts, "/data", "c:/tmp", "wangzhendong", "etcd-backup-1732083472.db", s3Client)
+	if err != nil {
+		return
+	}
+}

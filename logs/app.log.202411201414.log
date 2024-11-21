@@ -1,0 +1,4 @@
+[32m[2024-11-20 14:14:55] INFO ETCD_NAME:etcd-node2
+[0m[31m[2024-11-20 14:14:55] ERROR Error getting CA FILE
+[0m[31m[2024-11-20 14:14:55] ERROR Error getting backup command: Error gettting CA FILE
+[0m

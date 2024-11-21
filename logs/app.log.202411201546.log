@@ -1,0 +1,6 @@
+[32m[2024-11-20 15:46:38] INFO ETCD_NAME:etcd-node2
+[0m[31m[2024-11-20 15:46:38] ERROR Failed to execute command: Process exited with status 1, bash: -c: line 0: syntax error near unexpected token `('
+bash: -c: line 0: `ETCDCTL_API=3 etcdctl --cacert=/etc/ssl/etcd/ssl/ca.pem --key=/etc/ssl/etcd/ssl/admin-node2-key.pem --cert=/etc/ssl/etcd/ssl/admin-node2.pem --endpoints=https://192.168.227.149:2379 snapshot save /data/wangzhendong/etcd-backup-%!d(string=20241120154638).db'
+
+[0m[31m[2024-11-20 15:46:38] ERROR Failed to create snapshot for etcd : Process exited with status 1, output: 
+[0m

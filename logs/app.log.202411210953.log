@@ -1,0 +1,17 @@
+[32m[2024-11-21 09:53:07] INFO Kube-apiserver stopped
+[0m[32m[2024-11-21 09:53:07] INFO Bucket etcd already exists
+[0m[32m[2024-11-21 09:53:08] INFO Successfully to download file data/wangzhendong/etcd-backup-1732083472.db to c:/tmp/etcd-backup-1732083472.db
+[0m[32m[2024-11-21 09:53:08] INFO Download backup file: c:/tmp/etcd-backup-1732083472.db
+[0m[32m[2024-11-21 09:53:08] INFO Successfully to upload file c:/tmp/etcd-backup-1732083472.db to /data/wangzhendong/etcd-backup-1732083472.db
+[0m[32m[2024-11-21 09:53:08] INFO Successfully stopped etcd
+[0m[32m[2024-11-21 09:53:08] INFO Create directory /data/wangzhendong/etcd-20241121095308
+[0m[32m[2024-11-21 09:53:08] INFO Backup /var/lib/etcd to /data/wangzhendong/etcd-20241121095308 success
+[0m[32m[2024-11-21 09:53:08] INFO ETCD_NAME:etcd-node2
+[0m[32m[2024-11-21 09:53:08] INFO Successfully to restore snapshot: /data/wangzhendong/etcd-backup-1732083472.db
+[0m[32m[2024-11-21 09:53:09] INFO Successfully start etcd
+[0m[32m[2024-11-21 09:53:09] INFO Restore etcd successfully
+[0m[31m[2024-11-21 09:53:10] ERROR Failed to execute command: Process exited with status 1, 
+[0m[31m[2024-11-21 09:53:10] ERROR Error checking kube-apiserver status: Process exited with status 1.
+[0m[31m[2024-11-21 09:53:10] ERROR Error checking kube-apiserver status
+[0m[31m[2024-11-21 09:53:10] ERROR Failed to start kube-apiserver: Error checking kube-apiserver status
+[0m

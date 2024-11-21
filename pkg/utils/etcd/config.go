@@ -46,3 +46,24 @@ func SetEnvVars(content string) error {
 
 	return nil
 }
+
+func SetEnvVarsFromConf(content string) error {
+	lines := strings.Split(content, "\n")
+
+	for _, line := range lines {
+		line = strings.TrimSpace(line)
+		if len(line) == 0 || strings.HasPrefix(line, "#") {
+			continue
+		}
+		parts := strings.SplitN(line, ":", 2)
+		if len(parts) == 2 {
+			err := os.Setenv(parts[0], parts[1])
+			if err != nil {
+				logger.GetLogger().Errorf("Cannot set enviroment %s: %v", parts[0], err)
+				return fmt.Errorf("Cannot set enviroment %s: %v", parts[0], err)
+			}
+		}
+	}
+
+	return nil
+}

@@ -7,7 +7,6 @@ import (
 	"github.com/whoisfisher/mykubespray/pkg/logger"
 	"github.com/whoisfisher/mykubespray/pkg/utils"
 	"github.com/whoisfisher/mykubespray/pkg/utils/oss"
-	"log"
 	"os"
 	"time"
 )
@@ -38,8 +37,12 @@ func NewRestoreManager(host entity.Host, backupDir, localPath, clusterName strin
 }
 
 func RestoreEtcdCluster(hosts []entity.Host, backupDir, localPath, clusterName, backupName string, uploader *oss.S3Uploader) error {
+
+	mapRm := make(map[string]*RestoreManager)
+
 	for _, host := range hosts {
 		bm := NewRestoreManager(host, backupDir, localPath, clusterName, uploader)
+		mapRm[host.Address] = bm
 		err := bm.PauseKubeAPI()
 		if err != nil {
 			logger.GetLogger().Errorf("Failed to stop kube-apiserver: %v", err)
@@ -48,8 +51,8 @@ func RestoreEtcdCluster(hosts []entity.Host, backupDir, localPath, clusterName, 
 	}
 
 	for _, host := range hosts {
-		bm := NewRestoreManager(host, backupDir, localPath, clusterName, uploader)
-		err := bm.RestoreEtcd(context.Background(), backupName)
+		//bm := NewRestoreManager(host, backupDir, localPath, clusterName, uploader)
+		err := mapRm[host.Address].RestoreEtcd(context.Background(), backupName)
 		if err != nil {
 			logger.GetLogger().Errorf("Failed to restore etcd: %v", err)
 			return fmt.Errorf("Failed to restore etcd: %w", err)
@@ -57,8 +60,8 @@ func RestoreEtcdCluster(hosts []entity.Host, backupDir, localPath, clusterName, 
 	}
 
 	for _, host := range hosts {
-		bm := NewRestoreManager(host, backupDir, localPath, clusterName, uploader)
-		err := bm.ResumeKubeAPI()
+		//bm := NewRestoreManager(host, backupDir, localPath, clusterName, uploader)
+		err := mapRm[host.Address].ResumeKubeAPI()
 		if err != nil {
 			logger.GetLogger().Errorf("Failed to start kube-apiserver: %v", err)
 			return fmt.Errorf("Failed to start kube-apiserver: %w", err)
@@ -80,7 +83,7 @@ func (rm *RestoreManager) RestoreEtcd(ctx context.Context, backupFileName string
 	backupFilePath := fmt.Sprintf("%s/%s/%s", rm.BackupDir, rm.ClusterName, backupFileName)
 	localFile := fmt.Sprintf("%s/%s", rm.LocalPath, backupFileName)
 
-	if err := rm.S3Uploader.Download(ctx, "data/"+rm.ClusterName+"/"+backupFileName, localFile); err != nil {
+	if err := rm.S3Uploader.SimpleDownload(ctx, "data/"+rm.ClusterName+"/"+backupFileName, localFile); err != nil {
 		logger.GetLogger().Errorf("Failed to download backup file from s3: %v", err)
 		return fmt.Errorf("Failed to download backup file from s3: %w", err)
 	}
@@ -99,22 +102,10 @@ func (rm *RestoreManager) RestoreEtcd(ctx context.Context, backupFileName string
 		return fmt.Errorf("Failed to chmod file %s: %w", backupFilePath, err)
 	}
 
-	if rm.OSClient.SSExecutor.FileIsExists("/etc/etcd.env") {
-		err = rm.readEtcdEnvFile("/etc/etcd.env")
-		if err != nil {
-			logger.GetLogger().Errorf("Failed to read env %s: %v", "/etc/etcd.env", err)
-			return fmt.Errorf("Failed to read env %s: %w", "/etc/etcd.env", err)
-		}
-	} else {
-		logger.GetLogger().Errorf("The current feature does not support this cluster")
-		return fmt.Errorf("The current feature does not support this cluster")
-	}
-
 	if err := rm.StopEtcd(); err != nil {
 		logger.GetLogger().Errorf("Failed to stop etcd: %v", err)
 		return fmt.Errorf("Failed to stop etcd: %w", err)
 	}
-
 	if err := rm.BackupEtcdDir(); err != nil {
 		logger.GetLogger().Errorf("Backup /var/lib/etcd failure")
 		return fmt.Errorf("Backup /var/lib/etcd failure")
@@ -132,7 +123,7 @@ func (rm *RestoreManager) RestoreEtcd(ctx context.Context, backupFileName string
 
 	if err := os.Remove(localFile); err != nil {
 		logger.GetLogger().Errorf("Failed to delete local backup file %s:%v", localFile, err)
-		log.Printf("Failed to delete local backup file %s:%w", localFile, err)
+		return fmt.Errorf("Failed to delete local backup file %s:%w", localFile, err)
 	}
 
 	delCmd := fmt.Sprintf("rm -f %s", backupFilePath)
@@ -148,16 +139,19 @@ func (rm *RestoreManager) RestoreEtcd(ctx context.Context, backupFileName string
 
 func (rm *RestoreManager) restoreEtcdSnapshot(snapshotPath string) error {
 	dataDir := "/var/lib/etcd"
-	command := fmt.Sprintf("ETCDCTL_API=3 etcdctl --cacert=%s --key=%s --cert=%s --endpoints=%s --name=%s --initial-cluster=%s --initial-advertise-peer-urls=%s --data-dir=%s snapshot restore %s",
-		os.Getenv("ETCDCTL_CA_FILE"), os.Getenv("ETCDCTL_KEY_FILE"), os.Getenv("ETCDCTL_CERT_FILE"), os.Getenv("ETCD_ADVERTISE_CLIENT_URLS"), os.Getenv("ETCD_NAME"), os.Getenv("ETCD_INITIAL_CLUSTER"), os.Getenv("ETCD_INITIAL_ADVERTISE_PEER_URLS"), dataDir, snapshotPath)
 
+	command, err := rm.getRestoreCommand(dataDir, snapshotPath)
+	if err != nil {
+		logger.GetLogger().Errorf("Error getting restore command: %v", err)
+		return fmt.Errorf("Error getting restore command: %w", err)
+	}
 	output, err := rm.OSClient.SSExecutor.ExecuteShortCommand(command)
 	if err != nil {
 		logger.GetLogger().Errorf("Failed to restore snapshot for etcd : %v, %s", err, output)
 		return fmt.Errorf("Failed to restore snapshot for etcd : %w, %s", err, output)
 	}
 
-	log.Printf("Successfully to restore snapshot: %s to node %s", snapshotPath, os.Getenv("ETCD_ADVERTISE_CLIENT_URLS"))
+	logger.GetLogger().Infof("Successfully to restore snapshot: %s", snapshotPath)
 	return nil
 }
 
@@ -205,8 +199,15 @@ func (rm *RestoreManager) ResumeKubeAPI() error {
 		logger.GetLogger().Errorf("Restore and start kube-apiserver failure")
 		return fmt.Errorf("Restore and start kube-apiserver failure")
 	}
-
-	fmt.Println("Kube-apiserver started")
+	logger.GetLogger().Infof("kube-apiserver resume")
+	//if err := rm.checkApiServerStatus(); err != nil {
+	//	logger.GetLogger().Errorf("Error checking kube-apiserver status")
+	//	return fmt.Errorf("Error checking kube-apiserver status")
+	//}
+	//if err := rm.checkNodeStatus(); err != nil {
+	//	logger.GetLogger().Errorf("Error checking node %s status: %v", rm.OSClient.SSExecutor.Host.Name, err)
+	//	return fmt.Errorf("Error checking node %s status: %w", rm.OSClient.SSExecutor.Host.Name, err)
+	//}
 	return nil
 }
 
@@ -295,6 +296,121 @@ func (rm *RestoreManager) BackupEtcdDir() error {
 		return fmt.Errorf("Backup %s to %s failure", manifestPath, tempPath)
 	}
 
-	fmt.Println("Backup %s to %s success", manifestPath, tempPath)
+	logger.GetLogger().Infof("Backup %s to %s success", manifestPath, tempPath)
 	return nil
+}
+
+func (rm *RestoreManager) getRestoreCommand(dataDir, snapshotPath string) (string, error) {
+	if rm.OSClient.SSExecutor.FileIsExists("/etc/etcd.env") {
+		err := rm.readEtcdEnvFile("/etc/etcd.env")
+		if err != nil {
+			logger.GetLogger().Errorf("Failed to read env %s: %v", "/etc/etcd.env", err)
+			return "", fmt.Errorf("Failed to read env %s: %w", "/etc/etcd.env", err)
+		}
+	} else {
+		logger.GetLogger().Errorf("The current feature does not support the cluster")
+		return "", fmt.Errorf("The current feature does not support the cluster")
+	}
+	caCert := os.Getenv("ETCDCTL_CA_FILE")
+	if len(caCert) == 0 {
+		logger.GetLogger().Errorf("Error getting CA FILE")
+		return "", fmt.Errorf("Error gettting CA FILE")
+	}
+	key := os.Getenv("ETCDCTL_KEY_FILE")
+	if len(key) == 0 {
+		logger.GetLogger().Errorf("Error getting KEY FILE")
+		return "", fmt.Errorf("Error gettting KEY FILE")
+	}
+	cert := os.Getenv("ETCDCTL_CERT_FILE")
+	if len(cert) == 0 {
+		logger.GetLogger().Errorf("Error getting CERT FILE")
+		return "", fmt.Errorf("Error gettting CERT FILE")
+	}
+	endpoints := os.Getenv("ETCD_ADVERTISE_CLIENT_URLS") // 应取ETCDCTL_ENDPOINTS,但是ETCD_ADVERTISE_CLIENT_URLS
+	if len(endpoints) == 0 {
+		logger.GetLogger().Errorf("Error getting ENDPOINTS")
+		return "", fmt.Errorf("Error gettting ENDPOINTS")
+	}
+	name := os.Getenv("ETCD_NAME")
+	if len(name) == 0 {
+		logger.GetLogger().Errorf("Error getting ETCD NAME")
+		return "", fmt.Errorf("Error gettting ETCD NAME")
+	}
+	initialCluster := os.Getenv("ETCD_INITIAL_CLUSTER")
+	if len(initialCluster) == 0 {
+		logger.GetLogger().Errorf("Error getting ETCD INITIAL CLUSTER")
+		return "", fmt.Errorf("Error gettting ETCD INITIAL CLUSTER")
+	}
+	initialAdvertisePeerUrls := os.Getenv("ETCD_INITIAL_ADVERTISE_PEER_URLS")
+	if len(initialAdvertisePeerUrls) == 0 {
+		logger.GetLogger().Errorf("Error getting ETCD INITIAL ADVERTISE PEER CLUSTER")
+		return "", fmt.Errorf("Error getting ETCD INITIAL ADVERTISE PEER CLUSTER")
+	}
+	command := fmt.Sprintf("ETCDCTL_API=3 etcdctl --cacert=%s --key=%s --cert=%s --endpoints=%s --name=%s --initial-cluster=%s --initial-advertise-peer-urls=%s --data-dir=%s snapshot restore %s",
+		caCert, key, cert, endpoints, name, initialCluster, initialAdvertisePeerUrls, dataDir, snapshotPath)
+	return command, nil
+}
+
+func (rm *RestoreManager) checkApiServerStatus() error {
+	command := fmt.Sprintf("crictl ps -a | grep kube-apiserver | grep -i running")
+	timeout := time.After(60 * time.Second)
+	ticker := time.NewTicker(2 * time.Second)
+	defer ticker.Stop()
+	res, err := rm.OSClient.SSExecutor.ExecuteShortCommand(command)
+	if err != nil {
+		logger.GetLogger().Infof("Please wait for a moment, checking kube-apiserver status: %v.", err)
+	}
+	if len(res) > 0 {
+		logger.GetLogger().Infof("Successfully start kube-apiserver.")
+		return nil
+	}
+
+	for {
+		select {
+		case <-timeout:
+			logger.GetLogger().Errorf("Timeout while waiting to start kube-apiserver")
+			return fmt.Errorf("Timeout while waiting to start kube-apiserver")
+		case <-ticker.C:
+			res, err := rm.OSClient.SSExecutor.ExecuteShortCommand(command)
+			if err != nil {
+				logger.GetLogger().Infof("Please wait for a moment, checking kube-apiserver status: %v.", err)
+			}
+			if len(res) > 0 {
+				logger.GetLogger().Infof("Successfully start kube-apiserver.")
+				return nil
+			} else {
+				logger.GetLogger().Infof("Checking apiserver status, please wait for a moment")
+			}
+		}
+	}
+}
+
+func (rm *RestoreManager) checkNodeStatus() error {
+	command := fmt.Sprintf("kubectl get node -owide | grep -i %s | grep -i Ready", rm.OSClient.SSExecutor.Host.Name)
+	timeout := time.After(60 * time.Second)
+	ticker := time.NewTicker(2 * time.Second)
+	defer ticker.Stop()
+	res, err := rm.OSClient.SSExecutor.ExecuteShortCommand(command)
+	if err != nil {
+		logger.GetLogger().Infof("Please wait for a moment, checking node %s status: %v", rm.OSClient.SSExecutor.Host.Name, err)
+	} else if len(res) > 0 {
+		logger.GetLogger().Infof("The node is already in a ready state.")
+		return nil
+	}
+
+	for {
+		select {
+		case <-timeout:
+			logger.GetLogger().Errorf("Timeout while checking node %s status", rm.OSClient.SSExecutor.Host.Name)
+			return fmt.Errorf("Timeout while checking node %s status", rm.OSClient.SSExecutor.Host.Name)
+		case <-ticker.C:
+			res, err := rm.OSClient.SSExecutor.ExecuteShortCommand(command)
+			if err != nil {
+				logger.GetLogger().Infof("Please wait for a moment, checking node %s status: %v", rm.OSClient.SSExecutor.Host.Name, err)
+			} else if len(res) > 0 {
+				logger.GetLogger().Infof("The node is already in a ready state.")
+				return nil
+			}
+		}
+	}
 }

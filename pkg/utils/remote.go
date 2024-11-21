@@ -961,7 +961,7 @@ func (executor *SSHExecutor) Upload(localFile, remoteFile string) error {
 			return fmt.Errorf("Failed to copy %s to %s: %w", tempPath, remoteFile, err)
 		}
 	}
-	logger.GetLogger().Infof("Successfully Upload file %s to %s", localFile, remoteFile)
+	logger.GetLogger().Infof("Successfully to upload file %s to %s", localFile, remoteFile)
 	return nil
 }
 
@@ -1003,6 +1003,6 @@ func (executor *SSHExecutor) Download(remoteFile, localFile string) error {
 		return fmt.Errorf("Failed to copy file %s to %s: %w", srcFile, destFile, err)
 	}
 
-	logger.GetLogger().Infof("Successfully Download file %s to %s", remoteFile, localFile)
+	logger.GetLogger().Infof("Successfully to download file %s to %s", remoteFile, localFile)
 	return nil
 }

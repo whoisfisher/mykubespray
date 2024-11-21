@@ -1,0 +1,107 @@
+[32m[2024-11-21 09:56:32] INFO Kube-apiserver stopped
+[0m[32m[2024-11-21 09:56:32] INFO Bucket etcd already exists
+[0m[32m[2024-11-21 09:56:32] INFO Successfully to download file data/wangzhendong/etcd-backup-1732083472.db to c:/tmp/etcd-backup-1732083472.db
+[0m[32m[2024-11-21 09:56:32] INFO Download backup file: c:/tmp/etcd-backup-1732083472.db
+[0m[32m[2024-11-21 09:56:33] INFO Successfully to upload file c:/tmp/etcd-backup-1732083472.db to /data/wangzhendong/etcd-backup-1732083472.db
+[0m[32m[2024-11-21 09:56:33] INFO Successfully stopped etcd
+[0m[32m[2024-11-21 09:56:33] INFO Create directory /data/wangzhendong/etcd-20241121095633
+[0m[32m[2024-11-21 09:56:33] INFO Backup /var/lib/etcd to /data/wangzhendong/etcd-20241121095633 success
+[0m[32m[2024-11-21 09:56:33] INFO ETCD_NAME:etcd-node2
+[0m[32m[2024-11-21 09:56:33] INFO Successfully to restore snapshot: /data/wangzhendong/etcd-backup-1732083472.db
+[0m[32m[2024-11-21 09:56:35] INFO Successfully start etcd
+[0m[32m[2024-11-21 09:56:35] INFO Restore etcd successfully
+[0m[32m[2024-11-21 09:56:36] INFO Successfully start kube-apiserver.
+[0m[31m[2024-11-21 09:56:36] ERROR Failed to execute command: Process exited with status 1, The connection to the server lb.cars.local:6443 was refused - did you specify the right host or port?
+
+[0m[32m[2024-11-21 09:56:36] INFO Please wait for a moment, checking node kylin2 status: Process exited with status 1
+[0m[31m[2024-11-21 09:56:38] ERROR Failed to execute command: Process exited with status 1, The connection to the server lb.cars.local:6443 was refused - did you specify the right host or port?
+
+[0m[32m[2024-11-21 09:56:38] INFO Please wait for a moment, checking node kylin2 status: Process exited with status 1
+[0m[31m[2024-11-21 09:56:40] ERROR Failed to execute command: Process exited with status 1, The connection to the server lb.cars.local:6443 was refused - did you specify the right host or port?
+
+[0m[32m[2024-11-21 09:56:40] INFO Please wait for a moment, checking node kylin2 status: Process exited with status 1
+[0m[31m[2024-11-21 09:56:42] ERROR Failed to execute command: Process exited with status 1, The connection to the server lb.cars.local:6443 was refused - did you specify the right host or port?
+
+[0m[32m[2024-11-21 09:56:42] INFO Please wait for a moment, checking node kylin2 status: Process exited with status 1
+[0m[31m[2024-11-21 09:56:44] ERROR Failed to execute command: Process exited with status 1, The connection to the server lb.cars.local:6443 was refused - did you specify the right host or port?
+
+[0m[32m[2024-11-21 09:56:44] INFO Please wait for a moment, checking node kylin2 status: Process exited with status 1
+[0m[31m[2024-11-21 09:56:46] ERROR Failed to execute command: Process exited with status 1, The connection to the server lb.cars.local:6443 was refused - did you specify the right host or port?
+
+[0m[32m[2024-11-21 09:56:46] INFO Please wait for a moment, checking node kylin2 status: Process exited with status 1
+[0m[31m[2024-11-21 09:56:48] ERROR Failed to execute command: Process exited with status 1, The connection to the server lb.cars.local:6443 was refused - did you specify the right host or port?
+
+[0m[32m[2024-11-21 09:56:48] INFO Please wait for a moment, checking node kylin2 status: Process exited with status 1
+[0m[31m[2024-11-21 09:56:50] ERROR Failed to execute command: Process exited with status 1, The connection to the server lb.cars.local:6443 was refused - did you specify the right host or port?
+
+[0m[32m[2024-11-21 09:56:50] INFO Please wait for a moment, checking node kylin2 status: Process exited with status 1
+[0m[31m[2024-11-21 09:56:52] ERROR Failed to execute command: Process exited with status 1, The connection to the server lb.cars.local:6443 was refused - did you specify the right host or port?
+
+[0m[32m[2024-11-21 09:56:52] INFO Please wait for a moment, checking node kylin2 status: Process exited with status 1
+[0m[31m[2024-11-21 09:56:54] ERROR Failed to execute command: Process exited with status 1, The connection to the server lb.cars.local:6443 was refused - did you specify the right host or port?
+
+[0m[32m[2024-11-21 09:56:54] INFO Please wait for a moment, checking node kylin2 status: Process exited with status 1
+[0m[31m[2024-11-21 09:56:56] ERROR Failed to execute command: Process exited with status 1, The connection to the server lb.cars.local:6443 was refused - did you specify the right host or port?
+
+[0m[32m[2024-11-21 09:56:56] INFO Please wait for a moment, checking node kylin2 status: Process exited with status 1
+[0m[31m[2024-11-21 09:56:58] ERROR Failed to execute command: Process exited with status 1, The connection to the server lb.cars.local:6443 was refused - did you specify the right host or port?
+
+[0m[32m[2024-11-21 09:56:58] INFO Please wait for a moment, checking node kylin2 status: Process exited with status 1
+[0m[31m[2024-11-21 09:57:00] ERROR Failed to execute command: Process exited with status 1, The connection to the server lb.cars.local:6443 was refused - did you specify the right host or port?
+
+[0m[32m[2024-11-21 09:57:00] INFO Please wait for a moment, checking node kylin2 status: Process exited with status 1
+[0m[31m[2024-11-21 09:57:02] ERROR Failed to execute command: Process exited with status 1, The connection to the server lb.cars.local:6443 was refused - did you specify the right host or port?
+
+[0m[32m[2024-11-21 09:57:02] INFO Please wait for a moment, checking node kylin2 status: Process exited with status 1
+[0m[31m[2024-11-21 09:57:04] ERROR Failed to execute command: Process exited with status 1, The connection to the server lb.cars.local:6443 was refused - did you specify the right host or port?
+
+[0m[32m[2024-11-21 09:57:04] INFO Please wait for a moment, checking node kylin2 status: Process exited with status 1
+[0m[31m[2024-11-21 09:57:06] ERROR Failed to execute command: Process exited with status 1, The connection to the server lb.cars.local:6443 was refused - did you specify the right host or port?
+
+[0m[32m[2024-11-21 09:57:06] INFO Please wait for a moment, checking node kylin2 status: Process exited with status 1
+[0m[31m[2024-11-21 09:57:08] ERROR Failed to execute command: Process exited with status 1, The connection to the server lb.cars.local:6443 was refused - did you specify the right host or port?
+
+[0m[32m[2024-11-21 09:57:08] INFO Please wait for a moment, checking node kylin2 status: Process exited with status 1
+[0m[31m[2024-11-21 09:57:10] ERROR Failed to execute command: Process exited with status 1, The connection to the server lb.cars.local:6443 was refused - did you specify the right host or port?
+
+[0m[32m[2024-11-21 09:57:10] INFO Please wait for a moment, checking node kylin2 status: Process exited with status 1
+[0m[31m[2024-11-21 09:57:12] ERROR Failed to execute command: Process exited with status 1, The connection to the server lb.cars.local:6443 was refused - did you specify the right host or port?
+
+[0m[32m[2024-11-21 09:57:12] INFO Please wait for a moment, checking node kylin2 status: Process exited with status 1
+[0m[31m[2024-11-21 09:57:14] ERROR Failed to execute command: Process exited with status 1, The connection to the server lb.cars.local:6443 was refused - did you specify the right host or port?
+
+[0m[32m[2024-11-21 09:57:14] INFO Please wait for a moment, checking node kylin2 status: Process exited with status 1
+[0m[31m[2024-11-21 09:57:16] ERROR Failed to execute command: Process exited with status 1, The connection to the server lb.cars.local:6443 was refused - did you specify the right host or port?
+
+[0m[32m[2024-11-21 09:57:16] INFO Please wait for a moment, checking node kylin2 status: Process exited with status 1
+[0m[31m[2024-11-21 09:57:18] ERROR Failed to execute command: Process exited with status 1, The connection to the server lb.cars.local:6443 was refused - did you specify the right host or port?
+
+[0m[32m[2024-11-21 09:57:18] INFO Please wait for a moment, checking node kylin2 status: Process exited with status 1
+[0m[31m[2024-11-21 09:57:20] ERROR Failed to execute command: Process exited with status 1, The connection to the server lb.cars.local:6443 was refused - did you specify the right host or port?
+
+[0m[32m[2024-11-21 09:57:20] INFO Please wait for a moment, checking node kylin2 status: Process exited with status 1
+[0m[31m[2024-11-21 09:57:22] ERROR Failed to execute command: Process exited with status 1, The connection to the server lb.cars.local:6443 was refused - did you specify the right host or port?
+
+[0m[32m[2024-11-21 09:57:22] INFO Please wait for a moment, checking node kylin2 status: Process exited with status 1
+[0m[31m[2024-11-21 09:57:24] ERROR Failed to execute command: Process exited with status 1, The connection to the server lb.cars.local:6443 was refused - did you specify the right host or port?
+
+[0m[32m[2024-11-21 09:57:24] INFO Please wait for a moment, checking node kylin2 status: Process exited with status 1
+[0m[31m[2024-11-21 09:57:26] ERROR Failed to execute command: Process exited with status 1, The connection to the server lb.cars.local:6443 was refused - did you specify the right host or port?
+
+[0m[32m[2024-11-21 09:57:26] INFO Please wait for a moment, checking node kylin2 status: Process exited with status 1
+[0m[31m[2024-11-21 09:57:28] ERROR Failed to execute command: Process exited with status 1, The connection to the server lb.cars.local:6443 was refused - did you specify the right host or port?
+
+[0m[32m[2024-11-21 09:57:28] INFO Please wait for a moment, checking node kylin2 status: Process exited with status 1
+[0m[31m[2024-11-21 09:57:30] ERROR Failed to execute command: Process exited with status 1, The connection to the server lb.cars.local:6443 was refused - did you specify the right host or port?
+
+[0m[32m[2024-11-21 09:57:30] INFO Please wait for a moment, checking node kylin2 status: Process exited with status 1
+[0m[31m[2024-11-21 09:57:32] ERROR Failed to execute command: Process exited with status 1, The connection to the server lb.cars.local:6443 was refused - did you specify the right host or port?
+
+[0m[32m[2024-11-21 09:57:32] INFO Please wait for a moment, checking node kylin2 status: Process exited with status 1
+[0m[31m[2024-11-21 09:57:34] ERROR Failed to execute command: Process exited with status 1, The connection to the server lb.cars.local:6443 was refused - did you specify the right host or port?
+
+[0m[32m[2024-11-21 09:57:34] INFO Please wait for a moment, checking node kylin2 status: Process exited with status 1
+[0m[31m[2024-11-21 09:57:36] ERROR Timeout while checking node kylin2 status
+[0m[31m[2024-11-21 09:57:36] ERROR Error checking node kylin2 status: Timeout while checking node kylin2 status
+[0m[31m[2024-11-21 09:57:36] ERROR Failed to start kube-apiserver: Error checking node kylin2 status: Timeout while checking node kylin2 status
+[0m

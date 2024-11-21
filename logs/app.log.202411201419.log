@@ -1,0 +1,14 @@
+[32m[2024-11-20 14:19:18] INFO Kube-apiserver stopped
+[0m[32m[2024-11-20 14:19:19] INFO Bucket etcd already exists
+[0m[32m[2024-11-20 14:19:19] INFO Successfully to download file data/wangzhendong/etcd-backup-1732083472.db to c:/tmp/etcd-backup-1732083472.db
+[0m[32m[2024-11-20 14:19:19] INFO Download backup file: c:/tmp/etcd-backup-1732083472.db
+[0m[32m[2024-11-20 14:19:19] INFO Successfully Upload file c:/tmp/etcd-backup-1732083472.db to /data/wangzhendong/etcd-backup-1732083472.db
+[0m[32m[2024-11-20 14:19:19] INFO Successfully stopped etcd
+[0m[32m[2024-11-20 14:19:20] INFO Create directory /data/wangzhendong/etcd-20241120141919
+[0m[32m[2024-11-20 14:19:20] INFO ETCD_NAME:etcd-node2
+[0m[31m[2024-11-20 14:19:20] ERROR Failed to execute command: Process exited with status 1, Error: parse etcd-node2=https://192.168.227.149:2380: first path segment in URL cannot contain colon
+
+[0m[31m[2024-11-20 14:19:20] ERROR Failed to restore snapshot for etcd : Process exited with status 1, 
+[0m[31m[2024-11-20 14:19:20] ERROR Failed to restore node:https://192.168.227.149:2379: Failed to restore snapshot for etcd : Process exited with status 1, 
+[0m[31m[2024-11-20 14:19:20] ERROR Failed to restore etcd: Failed to restore node:https://192.168.227.149:2379: Failed to restore snapshot for etcd : Process exited with status 1, 
+[0m
