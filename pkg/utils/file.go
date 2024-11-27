@@ -20,3 +20,10 @@ func CompressStr(str, seq string) string {
 	reg := regexp.MustCompile("\\s+")
 	return reg.ReplaceAllString(str, seq)
 }
+
+func FileExists(filePath string) bool {
+	if _, err := os.Stat(filePath); os.IsNotExist(err) {
+		return false // 文件不存在
+	}
+	return true // 文件存在
+}

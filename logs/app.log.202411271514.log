@@ -1,0 +1,44 @@
+[32m[2024-11-27 15:14:01] INFO Bucket etcd already exists
+[0m[32m[2024-11-27 15:14:01] INFO Successfully to download file data/wangzhendong/etcd-backup-20241127145804.db to c:/tmp/etcd-backup-20241127145804.db
+[0m[32m[2024-11-27 15:14:01] INFO Download backup file: c:/tmp/etcd-backup-20241127145804.db
+[0m[32m[2024-11-27 15:14:01] INFO Successfully to upload file c:/tmp/etcd-backup-20241127145804.db to /data/wangzhendong/etcd-backup-20241127145804.db
+[0m[32m[2024-11-27 15:14:01] INFO Kube-apiserver stopped: node2
+[0m[32m[2024-11-27 15:14:01] INFO Successfully stopped etcd: node2
+[0m[32m[2024-11-27 15:14:01] INFO Create directory /data/wangzhendong/etcd-20241127151401
+[0m[32m[2024-11-27 15:14:02] INFO Backup /var/lib/etcd to /data/wangzhendong/etcd-20241127151401 success
+[0m[32m[2024-11-27 15:14:02] INFO Bucket etcd already exists
+[0m[32m[2024-11-27 15:14:02] INFO Successfully to download file data/wangzhendong/etcd-backup-20241127145804.db to c:/tmp/etcd-backup-20241127145804.db
+[0m[32m[2024-11-27 15:14:02] INFO Download backup file: c:/tmp/etcd-backup-20241127145804.db
+[0m[32m[2024-11-27 15:14:03] INFO Successfully to upload file c:/tmp/etcd-backup-20241127145804.db to /data/wangzhendong/etcd-backup-20241127145804.db
+[0m[32m[2024-11-27 15:14:03] INFO Kube-apiserver stopped: node3
+[0m[32m[2024-11-27 15:14:03] INFO Successfully stopped etcd: node3
+[0m[32m[2024-11-27 15:14:03] INFO Create directory /data/wangzhendong/etcd-20241127151403
+[0m[32m[2024-11-27 15:14:03] INFO Backup /var/lib/etcd to /data/wangzhendong/etcd-20241127151403 success
+[0m[32m[2024-11-27 15:14:04] INFO Bucket etcd already exists
+[0m[32m[2024-11-27 15:14:05] INFO Successfully to download file data/wangzhendong/etcd-backup-20241127145804.db to c:/tmp/etcd-backup-20241127145804.db
+[0m[32m[2024-11-27 15:14:05] INFO Download backup file: c:/tmp/etcd-backup-20241127145804.db
+[0m[32m[2024-11-27 15:14:05] INFO Successfully to upload file c:/tmp/etcd-backup-20241127145804.db to /data/wangzhendong/etcd-backup-20241127145804.db
+[0m[32m[2024-11-27 15:14:05] INFO Kube-apiserver stopped: node4
+[0m[32m[2024-11-27 15:14:05] INFO Successfully stopped etcd: node4
+[0m[32m[2024-11-27 15:14:05] INFO Create directory /data/wangzhendong/etcd-20241127151405
+[0m[32m[2024-11-27 15:14:06] INFO Backup /var/lib/etcd to /data/wangzhendong/etcd-20241127151405 success
+[0m[32m[2024-11-27 15:14:06] INFO ETCD_NAME:etcd-node2
+[0m[32m[2024-11-27 15:14:06] INFO Successfully to restore snapshot node2: /data/wangzhendong/etcd-backup-20241127145804.db
+[0m[32m[2024-11-27 15:14:06] INFO ETCD_NAME:etcd-node3
+[0m[32m[2024-11-27 15:14:06] INFO Successfully to restore snapshot node3: /data/wangzhendong/etcd-backup-20241127145804.db
+[0m[32m[2024-11-27 15:14:06] INFO ETCD_NAME:etcd-node4
+[0m[32m[2024-11-27 15:14:06] INFO Successfully to restore snapshot node4: /data/wangzhendong/etcd-backup-20241127145804.db
+[0m[31m[2024-11-27 15:15:36] ERROR Failed to execute command: Process exited with status 1, Job for etcd.service failed because a timeout was exceeded.
+See "systemctl status etcd.service" and "journalctl -xe" for details.
+
+[0m[31m[2024-11-27 15:15:36] ERROR Failed to start etcd: Process exited with status 1
+[0m[31m[2024-11-27 15:15:36] ERROR Failed to start etcd: Process exited with status 1
+[0m[32m[2024-11-27 15:15:37] INFO kube-apiserver resume: node2
+[0m[32m[2024-11-27 15:15:37] INFO Restore etcd successfully
+[0m[32m[2024-11-27 15:15:55] INFO Successfully start etcd
+[0m[32m[2024-11-27 15:15:55] INFO kube-apiserver resume: node3
+[0m[32m[2024-11-27 15:15:56] INFO Restore etcd successfully
+[0m[32m[2024-11-27 15:15:56] INFO Successfully start etcd
+[0m[32m[2024-11-27 15:15:56] INFO kube-apiserver resume: node4
+[0m[32m[2024-11-27 15:15:56] INFO Restore etcd successfully
+[0m

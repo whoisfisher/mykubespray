@@ -1,0 +1,127 @@
+[32m[2024-11-27 16:06:31] INFO Bucket etcd already exists
+[0m[32m[2024-11-27 16:06:31] INFO Successfully to download file data/wangzhendong/etcd-backup-20241127145804.db to c:/tmp/etcd-backup-20241127145804.db
+[0m[32m[2024-11-27 16:06:31] INFO Download backup file: c:/tmp/etcd-backup-20241127145804.db
+[0m[32m[2024-11-27 16:06:32] INFO Successfully to upload file c:/tmp/etcd-backup-20241127145804.db to /data/wangzhendong/etcd-backup-20241127145804.db
+[0m[32m[2024-11-27 16:06:32] INFO Kube-apiserver stopped: node2
+[0m[32m[2024-11-27 16:06:33] INFO Successfully stopped etcd: node2
+[0m[32m[2024-11-27 16:06:33] INFO Create directory /data/wangzhendong/etcd-20241127160633
+[0m[32m[2024-11-27 16:06:34] INFO Backup /var/lib/etcd to /data/wangzhendong/etcd-20241127160633 success
+[0m[32m[2024-11-27 16:06:34] INFO Bucket etcd already exists
+[0m[32m[2024-11-27 16:06:35] INFO Successfully to download file data/wangzhendong/etcd-backup-20241127145804.db to c:/tmp/etcd-backup-20241127145804.db
+[0m[32m[2024-11-27 16:06:35] INFO Download backup file: c:/tmp/etcd-backup-20241127145804.db
+[0m[32m[2024-11-27 16:06:35] INFO Successfully to upload file c:/tmp/etcd-backup-20241127145804.db to /data/wangzhendong/etcd-backup-20241127145804.db
+[0m[32m[2024-11-27 16:06:35] INFO Kube-apiserver stopped: node3
+[0m[32m[2024-11-27 16:06:36] INFO Successfully stopped etcd: node3
+[0m[32m[2024-11-27 16:06:37] INFO Create directory /data/wangzhendong/etcd-20241127160636
+[0m[32m[2024-11-27 16:06:37] INFO Backup /var/lib/etcd to /data/wangzhendong/etcd-20241127160636 success
+[0m[32m[2024-11-27 16:06:38] INFO Bucket etcd already exists
+[0m[32m[2024-11-27 16:06:38] INFO Successfully to download file data/wangzhendong/etcd-backup-20241127145804.db to c:/tmp/etcd-backup-20241127145804.db
+[0m[32m[2024-11-27 16:06:38] INFO Download backup file: c:/tmp/etcd-backup-20241127145804.db
+[0m[32m[2024-11-27 16:06:38] INFO Successfully to upload file c:/tmp/etcd-backup-20241127145804.db to /data/wangzhendong/etcd-backup-20241127145804.db
+[0m[32m[2024-11-27 16:06:38] INFO Kube-apiserver stopped: node4
+[0m[32m[2024-11-27 16:06:38] INFO Successfully stopped etcd: node4
+[0m[32m[2024-11-27 16:06:39] INFO Create directory /data/wangzhendong/etcd-20241127160638
+[0m[32m[2024-11-27 16:06:39] INFO Backup /var/lib/etcd to /data/wangzhendong/etcd-20241127160638 success
+[0m[32m[2024-11-27 16:06:39] INFO ETCD_NAME:etcd-node2
+[0m[32m[2024-11-27 16:06:39] INFO Successfully to restore snapshot node2: /data/wangzhendong/etcd-backup-20241127145804.db
+[0m[32m[2024-11-27 16:06:39] INFO ETCD_NAME:etcd-node3
+[0m[32m[2024-11-27 16:06:39] INFO Successfully to restore snapshot node3: /data/wangzhendong/etcd-backup-20241127145804.db
+[0m[32m[2024-11-27 16:06:39] INFO ETCD_NAME:etcd-node4
+[0m[32m[2024-11-27 16:06:39] INFO Successfully to restore snapshot node4: /data/wangzhendong/etcd-backup-20241127145804.db
+[0m[32m[2024-11-27 16:06:40] INFO kube-apiserver resume: node2
+[0m[32m[2024-11-27 16:06:40] INFO Restore etcd successfully
+[0m[32m[2024-11-27 16:06:40] INFO kube-apiserver resume: node3
+[0m[32m[2024-11-27 16:06:40] INFO Restore etcd successfully
+[0m[32m[2024-11-27 16:06:40] INFO kube-apiserver resume: node4
+[0m[32m[2024-11-27 16:06:40] INFO Restore etcd successfully
+[0m[32m[2024-11-27 16:06:40] INFO ETCD_NAME:etcd-node2
+[0m[32m[2024-11-27 16:06:40] INFO ETCDCTL_API=3 etcdctl --cacert=/etc/ssl/etcd/ssl/ca.pem --key=/etc/ssl/etcd/ssl/admin-node2-key.pem --cert=/etc/ssl/etcd/ssl/admin-node2.pem endpoint health
+[0m[32m[2024-11-27 16:06:41] INFO The node is already in a ready state node2.
+[0m[31m[2024-11-27 16:06:42] ERROR Failed to execute command: Process exited with status 1, The connection to the server lb.cars.local:6443 was refused - did you specify the right host or port?
+
+[0m[32m[2024-11-27 16:06:42] INFO Please wait for a moment, checking node node2 status: Process exited with status 1
+[0m[31m[2024-11-27 16:06:44] ERROR Failed to execute command: Process exited with status 1, The connection to the server lb.cars.local:6443 was refused - did you specify the right host or port?
+
+[0m[32m[2024-11-27 16:06:44] INFO Please wait for a moment, checking node node2 status: Process exited with status 1
+[0m[31m[2024-11-27 16:06:46] ERROR Failed to execute command: Process exited with status 1, The connection to the server lb.cars.local:6443 was refused - did you specify the right host or port?
+
+[0m[32m[2024-11-27 16:06:46] INFO Please wait for a moment, checking node node2 status: Process exited with status 1
+[0m[31m[2024-11-27 16:06:48] ERROR Failed to execute command: Process exited with status 1, The connection to the server lb.cars.local:6443 was refused - did you specify the right host or port?
+
+[0m[32m[2024-11-27 16:06:48] INFO Please wait for a moment, checking node node2 status: Process exited with status 1
+[0m[31m[2024-11-27 16:06:50] ERROR Failed to execute command: Process exited with status 1, The connection to the server lb.cars.local:6443 was refused - did you specify the right host or port?
+
+[0m[32m[2024-11-27 16:06:50] INFO Please wait for a moment, checking node node2 status: Process exited with status 1
+[0m[31m[2024-11-27 16:06:52] ERROR Failed to execute command: Process exited with status 1, The connection to the server lb.cars.local:6443 was refused - did you specify the right host or port?
+
+[0m[32m[2024-11-27 16:06:52] INFO Please wait for a moment, checking node node2 status: Process exited with status 1
+[0m[31m[2024-11-27 16:06:54] ERROR Failed to execute command: Process exited with status 1, The connection to the server lb.cars.local:6443 was refused - did you specify the right host or port?
+
+[0m[32m[2024-11-27 16:06:54] INFO Please wait for a moment, checking node node2 status: Process exited with status 1
+[0m[31m[2024-11-27 16:06:56] ERROR Failed to execute command: Process exited with status 1, The connection to the server lb.cars.local:6443 was refused - did you specify the right host or port?
+
+[0m[32m[2024-11-27 16:06:56] INFO Please wait for a moment, checking node node2 status: Process exited with status 1
+[0m[31m[2024-11-27 16:06:58] ERROR Failed to execute command: Process exited with status 1, The connection to the server lb.cars.local:6443 was refused - did you specify the right host or port?
+
+[0m[32m[2024-11-27 16:06:58] INFO Please wait for a moment, checking node node2 status: Process exited with status 1
+[0m[31m[2024-11-27 16:07:00] ERROR Failed to execute command: Process exited with status 1, The connection to the server lb.cars.local:6443 was refused - did you specify the right host or port?
+
+[0m[32m[2024-11-27 16:07:00] INFO Please wait for a moment, checking node node2 status: Process exited with status 1
+[0m[31m[2024-11-27 16:07:02] ERROR Failed to execute command: Process exited with status 1, The connection to the server lb.cars.local:6443 was refused - did you specify the right host or port?
+
+[0m[32m[2024-11-27 16:07:02] INFO Please wait for a moment, checking node node2 status: Process exited with status 1
+[0m[31m[2024-11-27 16:07:04] ERROR Failed to execute command: Process exited with status 1, The connection to the server lb.cars.local:6443 was refused - did you specify the right host or port?
+
+[0m[32m[2024-11-27 16:07:04] INFO Please wait for a moment, checking node node2 status: Process exited with status 1
+[0m[31m[2024-11-27 16:07:06] ERROR Failed to execute command: Process exited with status 1, The connection to the server lb.cars.local:6443 was refused - did you specify the right host or port?
+
+[0m[32m[2024-11-27 16:07:06] INFO Please wait for a moment, checking node node2 status: Process exited with status 1
+[0m[31m[2024-11-27 16:07:08] ERROR Failed to execute command: Process exited with status 1, The connection to the server lb.cars.local:6443 was refused - did you specify the right host or port?
+
+[0m[32m[2024-11-27 16:07:08] INFO Please wait for a moment, checking node node2 status: Process exited with status 1
+[0m[31m[2024-11-27 16:07:10] ERROR Failed to execute command: Process exited with status 1, The connection to the server lb.cars.local:6443 was refused - did you specify the right host or port?
+
+[0m[32m[2024-11-27 16:07:10] INFO Please wait for a moment, checking node node2 status: Process exited with status 1
+[0m[31m[2024-11-27 16:07:12] ERROR Failed to execute command: Process exited with status 1, The connection to the server lb.cars.local:6443 was refused - did you specify the right host or port?
+
+[0m[32m[2024-11-27 16:07:12] INFO Please wait for a moment, checking node node2 status: Process exited with status 1
+[0m[31m[2024-11-27 16:07:14] ERROR Failed to execute command: Process exited with status 1, The connection to the server lb.cars.local:6443 was refused - did you specify the right host or port?
+
+[0m[32m[2024-11-27 16:07:14] INFO Please wait for a moment, checking node node2 status: Process exited with status 1
+[0m[31m[2024-11-27 16:07:16] ERROR Failed to execute command: Process exited with status 1, The connection to the server lb.cars.local:6443 was refused - did you specify the right host or port?
+
+[0m[32m[2024-11-27 16:07:16] INFO Please wait for a moment, checking node node2 status: Process exited with status 1
+[0m[31m[2024-11-27 16:07:18] ERROR Failed to execute command: Process exited with status 1, The connection to the server lb.cars.local:6443 was refused - did you specify the right host or port?
+
+[0m[32m[2024-11-27 16:07:18] INFO Please wait for a moment, checking node node2 status: Process exited with status 1
+[0m[31m[2024-11-27 16:07:20] ERROR Failed to execute command: Process exited with status 1, The connection to the server lb.cars.local:6443 was refused - did you specify the right host or port?
+
+[0m[32m[2024-11-27 16:07:20] INFO Please wait for a moment, checking node node2 status: Process exited with status 1
+[0m[31m[2024-11-27 16:07:22] ERROR Failed to execute command: Process exited with status 1, The connection to the server lb.cars.local:6443 was refused - did you specify the right host or port?
+
+[0m[32m[2024-11-27 16:07:22] INFO Please wait for a moment, checking node node2 status: Process exited with status 1
+[0m[31m[2024-11-27 16:07:24] ERROR Failed to execute command: Process exited with status 1, The connection to the server lb.cars.local:6443 was refused - did you specify the right host or port?
+
+[0m[32m[2024-11-27 16:07:24] INFO Please wait for a moment, checking node node2 status: Process exited with status 1
+[0m[31m[2024-11-27 16:07:26] ERROR Failed to execute command: Process exited with status 1, The connection to the server lb.cars.local:6443 was refused - did you specify the right host or port?
+
+[0m[32m[2024-11-27 16:07:26] INFO Please wait for a moment, checking node node2 status: Process exited with status 1
+[0m[31m[2024-11-27 16:07:28] ERROR Failed to execute command: Process exited with status 1, The connection to the server lb.cars.local:6443 was refused - did you specify the right host or port?
+
+[0m[32m[2024-11-27 16:07:28] INFO Please wait for a moment, checking node node2 status: Process exited with status 1
+[0m[31m[2024-11-27 16:07:30] ERROR Failed to execute command: Process exited with status 1, The connection to the server lb.cars.local:6443 was refused - did you specify the right host or port?
+
+[0m[32m[2024-11-27 16:07:30] INFO Please wait for a moment, checking node node2 status: Process exited with status 1
+[0m[31m[2024-11-27 16:07:32] ERROR Failed to execute command: Process exited with status 1, The connection to the server lb.cars.local:6443 was refused - did you specify the right host or port?
+
+[0m[32m[2024-11-27 16:07:32] INFO Please wait for a moment, checking node node2 status: Process exited with status 1
+[0m[32m[2024-11-27 16:07:35] INFO The node is already in a ready state.
+[0m[32m[2024-11-27 16:07:35] INFO ETCD_NAME:etcd-node3
+[0m[32m[2024-11-27 16:07:35] INFO ETCDCTL_API=3 etcdctl --cacert=/etc/ssl/etcd/ssl/ca.pem --key=/etc/ssl/etcd/ssl/admin-node3-key.pem --cert=/etc/ssl/etcd/ssl/admin-node3.pem endpoint health
+[0m[32m[2024-11-27 16:07:35] INFO The node is already in a ready state node3.
+[0m[32m[2024-11-27 16:07:35] INFO The node is already in a ready state.
+[0m[32m[2024-11-27 16:07:35] INFO ETCD_NAME:etcd-node4
+[0m[32m[2024-11-27 16:07:35] INFO ETCDCTL_API=3 etcdctl --cacert=/etc/ssl/etcd/ssl/ca.pem --key=/etc/ssl/etcd/ssl/admin-node4-key.pem --cert=/etc/ssl/etcd/ssl/admin-node4.pem endpoint health
+[0m[32m[2024-11-27 16:07:35] INFO The node is already in a ready state node4.
+[0m[32m[2024-11-27 16:07:36] INFO The node is already in a ready state.
+[0m

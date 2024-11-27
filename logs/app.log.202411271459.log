@@ -1,0 +1,38 @@
+[32m[2024-11-27 14:59:49] INFO Bucket etcd already exists
+[0m[32m[2024-11-27 14:59:49] INFO Successfully to download file data/wangzhendong/etcd-backup-20241127145804.db to c:/tmp/etcd-backup-20241127145804.db
+[0m[32m[2024-11-27 14:59:49] INFO Download backup file: c:/tmp/etcd-backup-20241127145804.db
+[0m[32m[2024-11-27 14:59:50] INFO Successfully to upload file c:/tmp/etcd-backup-20241127145804.db to /data/wangzhendong/etcd-backup-20241127145804.db
+[0m[32m[2024-11-27 14:59:50] INFO Kube-apiserver stopped: node2
+[0m[32m[2024-11-27 14:59:51] INFO Successfully stopped etcd: node2
+[0m[32m[2024-11-27 14:59:51] INFO Create directory /data/wangzhendong/etcd-20241127145951
+[0m[32m[2024-11-27 14:59:51] INFO Backup /var/lib/etcd to /data/wangzhendong/etcd-20241127145951 success
+[0m[32m[2024-11-27 14:59:52] INFO Bucket etcd already exists
+[0m[32m[2024-11-27 14:59:52] INFO Successfully to download file data/wangzhendong/etcd-backup-20241127145804.db to c:/tmp/etcd-backup-20241127145804.db
+[0m[32m[2024-11-27 14:59:52] INFO Download backup file: c:/tmp/etcd-backup-20241127145804.db
+[0m[32m[2024-11-27 14:59:53] INFO Successfully to upload file c:/tmp/etcd-backup-20241127145804.db to /data/wangzhendong/etcd-backup-20241127145804.db
+[0m[32m[2024-11-27 14:59:53] INFO Kube-apiserver stopped: node3
+[0m[32m[2024-11-27 14:59:54] INFO Successfully stopped etcd: node3
+[0m[32m[2024-11-27 14:59:55] INFO Create directory /data/wangzhendong/etcd-20241127145954
+[0m[32m[2024-11-27 14:59:55] INFO Backup /var/lib/etcd to /data/wangzhendong/etcd-20241127145954 success
+[0m[32m[2024-11-27 14:59:56] INFO Bucket etcd already exists
+[0m[32m[2024-11-27 14:59:56] INFO Successfully to download file data/wangzhendong/etcd-backup-20241127145804.db to c:/tmp/etcd-backup-20241127145804.db
+[0m[32m[2024-11-27 14:59:56] INFO Download backup file: c:/tmp/etcd-backup-20241127145804.db
+[0m[32m[2024-11-27 14:59:56] INFO Successfully to upload file c:/tmp/etcd-backup-20241127145804.db to /data/wangzhendong/etcd-backup-20241127145804.db
+[0m[32m[2024-11-27 14:59:56] INFO Kube-apiserver stopped: node4
+[0m[32m[2024-11-27 14:59:57] INFO Successfully stopped etcd: node4
+[0m[32m[2024-11-27 14:59:57] INFO Create directory /data/wangzhendong/etcd-20241127145957
+[0m[32m[2024-11-27 14:59:57] INFO Backup /var/lib/etcd to /data/wangzhendong/etcd-20241127145957 success
+[0m[32m[2024-11-27 14:59:57] INFO ETCD_NAME:etcd-node2
+[0m[32m[2024-11-27 14:59:57] INFO Successfully to restore snapshot node2: /data/wangzhendong/etcd-backup-20241127145804.db
+[0m[32m[2024-11-27 14:59:58] INFO ETCD_NAME:etcd-node3
+[0m[32m[2024-11-27 14:59:58] INFO Successfully to restore snapshot node3: /data/wangzhendong/etcd-backup-20241127145804.db
+[0m[32m[2024-11-27 14:59:58] INFO ETCD_NAME:etcd-node4
+[0m[32m[2024-11-27 14:59:58] INFO Successfully to restore snapshot node4: /data/wangzhendong/etcd-backup-20241127145804.db
+[0m[32m[2024-11-27 15:00:29] INFO Successfully start etcd
+[0m[32m[2024-11-27 15:00:30] INFO kube-apiserver resume: node2
+[0m[32m[2024-11-27 15:00:30] INFO Restore etcd successfully
+[0m[32m[2024-11-27 15:00:30] INFO Successfully start etcd
+[0m[32m[2024-11-27 15:00:30] INFO kube-apiserver resume: node3
+[0m[31m[2024-11-27 15:00:30] ERROR Failed to delete local backup file node3 c:/tmp/etcd-backup-20241127145804.db:remove c:/tmp/etcd-backup-20241127145804.db: The system cannot find the file specified.
+[0m[31m[2024-11-27 15:00:30] ERROR Failed to start kube-apiserver: Failed to delete local backup file node3 c:/tmp/etcd-backup-20241127145804.db:remove c:/tmp/etcd-backup-20241127145804.db: The system cannot find the file specified.
+[0m

@@ -1,0 +1,30 @@
+[32m[2024-11-27 15:36:08] INFO Bucket etcd already exists
+[0m[32m[2024-11-27 15:36:08] INFO Successfully to download file data/wangzhendong/etcd-backup-20241127145804.db to c:/tmp/etcd-backup-20241127145804.db
+[0m[32m[2024-11-27 15:36:08] INFO Download backup file: c:/tmp/etcd-backup-20241127145804.db
+[0m[32m[2024-11-27 15:36:08] INFO Successfully to upload file c:/tmp/etcd-backup-20241127145804.db to /data/wangzhendong/etcd-backup-20241127145804.db
+[0m[32m[2024-11-27 15:36:08] INFO Kube-apiserver stopped: node2
+[0m[32m[2024-11-27 15:36:10] INFO Successfully stopped etcd: node2
+[0m[32m[2024-11-27 15:36:10] INFO Create directory /data/wangzhendong/etcd-20241127153610
+[0m[32m[2024-11-27 15:36:10] INFO Backup /var/lib/etcd to /data/wangzhendong/etcd-20241127153610 success
+[0m[32m[2024-11-27 15:36:11] INFO Bucket etcd already exists
+[0m[32m[2024-11-27 15:36:11] INFO Successfully to download file data/wangzhendong/etcd-backup-20241127145804.db to c:/tmp/etcd-backup-20241127145804.db
+[0m[32m[2024-11-27 15:36:11] INFO Download backup file: c:/tmp/etcd-backup-20241127145804.db
+[0m[32m[2024-11-27 15:36:11] INFO Successfully to upload file c:/tmp/etcd-backup-20241127145804.db to /data/wangzhendong/etcd-backup-20241127145804.db
+[0m[32m[2024-11-27 15:36:12] INFO Kube-apiserver stopped: node3
+[0m[32m[2024-11-27 15:36:13] INFO Successfully stopped etcd: node3
+[0m[32m[2024-11-27 15:36:13] INFO Create directory /data/wangzhendong/etcd-20241127153613
+[0m[32m[2024-11-27 15:36:14] INFO Backup /var/lib/etcd to /data/wangzhendong/etcd-20241127153613 success
+[0m[32m[2024-11-27 15:36:15] INFO Bucket etcd already exists
+[0m[32m[2024-11-27 15:36:15] INFO Successfully to download file data/wangzhendong/etcd-backup-20241127145804.db to c:/tmp/etcd-backup-20241127145804.db
+[0m[32m[2024-11-27 15:36:15] INFO Download backup file: c:/tmp/etcd-backup-20241127145804.db
+[0m[32m[2024-11-27 15:36:15] INFO Successfully to upload file c:/tmp/etcd-backup-20241127145804.db to /data/wangzhendong/etcd-backup-20241127145804.db
+[0m[32m[2024-11-27 15:36:15] INFO Kube-apiserver stopped: node4
+[0m[32m[2024-11-27 15:36:16] INFO Successfully stopped etcd: node4
+[0m[32m[2024-11-27 15:36:17] INFO Create directory /data/wangzhendong/etcd-20241127153616
+[0m[32m[2024-11-27 15:36:17] INFO Backup /var/lib/etcd to /data/wangzhendong/etcd-20241127153616 success
+[0m[31m[2024-11-27 15:36:36] ERROR Failed to create SSH session: ssh: unexpected packet in response to channel open: <nil>
+[0m[31m[2024-11-27 15:36:36] ERROR The current feature does not support the cluster
+[0m[31m[2024-11-27 15:36:36] ERROR Error getting restore command node2: The current feature does not support the cluster
+[0m[31m[2024-11-27 15:36:36] ERROR Failed to restore node node2:: Error getting restore command node2: The current feature does not support the cluster
+[0m[31m[2024-11-27 15:36:36] ERROR Failed to restore etcd: Failed to restore node node2:: Error getting restore command node2: The current feature does not support the cluster
+[0m

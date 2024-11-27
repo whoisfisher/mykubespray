@@ -135,6 +135,15 @@ func (client *OSClient) StartService(service string) error {
 	return nil
 }
 
+func (client *OSClient) QuickStartService(service string) {
+	command := fmt.Sprintf("systemctl start %s", service)
+	if client.WhoAmI() != "root" {
+		command = SudoPrefixWithPassword(command, client.SSExecutor.Host.Password)
+	}
+	client.SSExecutor.QuickExecuteShortCommand(command)
+	return
+}
+
 func (client *OSClient) StopService(service string) error {
 	command := fmt.Sprintf("systemctl stop %s", service)
 	if client.WhoAmI() != "root" {

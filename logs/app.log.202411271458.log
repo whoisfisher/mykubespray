@@ -1,0 +1,9 @@
+[32m[2024-11-27 14:58:04] INFO ETCD_NAME:etcd-node2
+[0m[32m[2024-11-27 14:58:04] INFO etcd snapshot saved to: /data/wangzhendong/etcd-backup-20241127145804.db
+[0m[32m[2024-11-27 14:58:04] INFO Successfully to download file /data/wangzhendong/etcd-backup-20241127145804.db to c:/tmp/etcd-backup-20241127145804.db
+[0m[32m[2024-11-27 14:58:04] INFO Bucket etcd already exists
+[0m[32m[2024-11-27 14:58:05] INFO Uploaded: 100.00%
+[0m[32m[2024-11-27 14:58:05] INFO Successfully to upload file c:/tmp/etcd-backup-20241127145804.db to s3://172.30.1.12:30204/etcd/data/wangzhendong/etcd-backup-20241127145804.db
+[0m[32m[2024-11-27 14:58:05] INFO Upload backup file to S3: s3://172.30.1.12:30204/etcd/data/wangzhendong/etcd-backup-20241127145804.db
+[0m[32m[2024-11-27 14:58:05] INFO Backup etcd successfully
+[0m

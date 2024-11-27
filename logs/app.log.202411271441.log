@@ -1,0 +1,9 @@
+[32m[2024-11-27 14:41:25] INFO Bucket etcd already exists
+[0m[32m[2024-11-27 14:41:25] INFO Successfully to download file data/wangzhendong/etcd-backup-1732083472.db to c:/tmp/etcd-backup-1732083472.db
+[0m[32m[2024-11-27 14:41:25] INFO Download backup file: c:/tmp/etcd-backup-1732083472.db
+[0m[32m[2024-11-27 14:41:25] INFO Successfully to upload file c:/tmp/etcd-backup-1732083472.db to /data/wangzhendong/etcd-backup-1732083472.db
+[0m[31m[2024-11-27 14:41:26] ERROR Failed to execute command: Process exited with status 1
+[0m[31m[2024-11-27 14:41:26] ERROR Backup and stop kube-apiserver failure: Process exited with status 1
+[0m[31m[2024-11-27 14:41:26] ERROR Failed to stop kube-apiserver node2: Backup and stop kube-apiserver failure: Process exited with status 1
+[0m[31m[2024-11-27 14:41:26] ERROR Failed to stop kube-apiserver: Failed to stop kube-apiserver node2: Backup and stop kube-apiserver failure: Process exited with status 1
+[0m

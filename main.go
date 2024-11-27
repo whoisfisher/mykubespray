@@ -45,7 +45,7 @@ func NewServerCmd() *cli.Command {
 	}
 }
 
-func main1() {
+func main() {
 	app := cli.NewApp()
 	app.Name = "cluster-utils"
 	app.Version = "1.0.0"
@@ -76,12 +76,26 @@ func main2() {
 	bm.BackupEtcd()
 }
 
-func main() {
+func main3() {
 	hosts := []entity.Host{
 		{
-			Name:            "kylin2",
+			Name:            "node2",
 			Address:         "192.168.227.149",
 			InternalAddress: "192.168.227.149",
+			Port:            22,
+			User:            "root",
+			Password:        "Def@u1tpwd",
+		}, {
+			Name:            "node3",
+			Address:         "192.168.227.150",
+			InternalAddress: "192.168.227.150",
+			Port:            22,
+			User:            "root",
+			Password:        "Def@u1tpwd",
+		}, {
+			Name:            "node4",
+			Address:         "192.168.227.151",
+			InternalAddress: "192.168.227.151",
 			Port:            22,
 			User:            "root",
 			Password:        "Def@u1tpwd",
@@ -92,7 +106,7 @@ func main() {
 		panic(err)
 	}
 
-	err = etcd.RestoreEtcdCluster(hosts, "/data", "c:/tmp", "wangzhendong", "etcd-backup-1732083472.db", s3Client)
+	err = etcd.RestoreEtcdCluster(hosts, "/data", "c:/tmp", "wangzhendong", "etcd-backup-20241127145804.db", s3Client)
 	if err != nil {
 		return
 	}

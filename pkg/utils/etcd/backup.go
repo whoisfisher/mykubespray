@@ -117,22 +117,22 @@ func (bm *BackupManager) getBackupCommand(backupFilePath string) (string, error)
 		logger.GetLogger().Errorf("The current feature does not support the cluster")
 		return "", fmt.Errorf("The current feature does not support the cluster")
 	}
-	caCert := os.Getenv("ETCDCTL_CA_FILE")
+	caCert = os.Getenv("ETCDCTL_CA_FILE")
 	if len(caCert) == 0 {
 		logger.GetLogger().Errorf("Error getting CA FILE")
 		return "", fmt.Errorf("Error gettting CA FILE")
 	}
-	key := os.Getenv("ETCDCTL_KEY_FILE")
+	key = os.Getenv("ETCDCTL_KEY_FILE")
 	if len(caCert) == 0 {
 		logger.GetLogger().Errorf("Error getting KEY FILE")
 		return "", fmt.Errorf("Error gettting KEY FILE")
 	}
-	cert := os.Getenv("ETCDCTL_CERT_FILE")
+	cert = os.Getenv("ETCDCTL_CERT_FILE")
 	if len(caCert) == 0 {
 		logger.GetLogger().Errorf("Error getting CERT FILE")
 		return "", fmt.Errorf("Error gettting CERT FILE")
 	}
-	endpoints := os.Getenv("ETCD_ADVERTISE_CLIENT_URLS") // 应取ETCDCTL_ENDPOINTS,但是ETCD_ADVERTISE_CLIENT_URLS
+	endpoints = os.Getenv("ETCD_ADVERTISE_CLIENT_URLS") // 应取ETCDCTL_ENDPOINTS,但是ETCD_ADVERTISE_CLIENT_URLS
 	if len(caCert) == 0 {
 		logger.GetLogger().Errorf("Error getting ENDPOINTS")
 		return "", fmt.Errorf("Error gettting ENDPOINTS")

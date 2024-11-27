@@ -1,0 +1,20 @@
+[32m[2024-11-27 15:44:59] INFO Bucket etcd already exists
+[0m[32m[2024-11-27 15:44:59] INFO Successfully to download file data/wangzhendong/etcd-backup-20241127145804.db to c:/tmp/etcd-backup-20241127145804.db
+[0m[32m[2024-11-27 15:44:59] INFO Download backup file: c:/tmp/etcd-backup-20241127145804.db
+[0m[32m[2024-11-27 15:45:00] INFO Successfully to upload file c:/tmp/etcd-backup-20241127145804.db to /data/wangzhendong/etcd-backup-20241127145804.db
+[0m[32m[2024-11-27 15:45:00] INFO Kube-apiserver stopped: node2
+[0m[32m[2024-11-27 15:45:00] INFO Successfully stopped etcd: node2
+[0m[32m[2024-11-27 15:45:00] INFO Create directory /data/wangzhendong/etcd-20241127154500
+[0m[32m[2024-11-27 15:45:00] INFO Backup /var/lib/etcd to /data/wangzhendong/etcd-20241127154500 success
+[0m[32m[2024-11-27 15:45:01] INFO Bucket etcd already exists
+[0m[32m[2024-11-27 15:45:01] INFO Successfully to download file data/wangzhendong/etcd-backup-20241127145804.db to c:/tmp/etcd-backup-20241127145804.db
+[0m[32m[2024-11-27 15:45:01] INFO Download backup file: c:/tmp/etcd-backup-20241127145804.db
+[0m[32m[2024-11-27 15:45:01] INFO Successfully to upload file c:/tmp/etcd-backup-20241127145804.db to /data/wangzhendong/etcd-backup-20241127145804.db
+[0m[32m[2024-11-27 15:45:01] INFO Kube-apiserver stopped: node3
+[0m[32m[2024-11-27 15:45:02] INFO Successfully stopped etcd: node3
+[0m[32m[2024-11-27 15:45:02] INFO Create directory /data/wangzhendong/etcd-20241127154502
+[0m[31m[2024-11-27 15:45:02] ERROR Failed to execute command: Process exited with status 1
+[0m[31m[2024-11-27 15:45:02] ERROR Backup /var/lib/etcd to /data/wangzhendong/etcd-20241127154502 failure
+[0m[31m[2024-11-27 15:45:02] ERROR Backup /var/lib/etcd failure node3: Backup /var/lib/etcd to /data/wangzhendong/etcd-20241127154502 failure
+[0m[31m[2024-11-27 15:45:02] ERROR Failed to stop kube-apiserver: Backup /var/lib/etcd failure node3: Backup /var/lib/etcd to /data/wangzhendong/etcd-20241127154502 failure
+[0m

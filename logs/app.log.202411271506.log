@@ -1,0 +1,25 @@
+[32m[2024-11-27 15:06:01] INFO Bucket etcd already exists
+[0m[32m[2024-11-27 15:06:01] INFO Successfully to download file data/wangzhendong/etcd-backup-20241127145804.db to c:/tmp/etcd-backup-20241127145804.db
+[0m[32m[2024-11-27 15:06:01] INFO Download backup file: c:/tmp/etcd-backup-20241127145804.db
+[0m[32m[2024-11-27 15:06:02] INFO Successfully to upload file c:/tmp/etcd-backup-20241127145804.db to /data/wangzhendong/etcd-backup-20241127145804.db
+[0m[32m[2024-11-27 15:06:02] INFO Kube-apiserver stopped: node2
+[0m[32m[2024-11-27 15:06:04] INFO Successfully stopped etcd: node2
+[0m[32m[2024-11-27 15:06:04] INFO Create directory /data/wangzhendong/etcd-20241127150604
+[0m[32m[2024-11-27 15:06:04] INFO Backup /var/lib/etcd to /data/wangzhendong/etcd-20241127150604 success
+[0m[32m[2024-11-27 15:06:05] INFO Bucket etcd already exists
+[0m[32m[2024-11-27 15:06:05] INFO Successfully to download file data/wangzhendong/etcd-backup-20241127145804.db to c:/tmp/etcd-backup-20241127145804.db
+[0m[32m[2024-11-27 15:06:05] INFO Download backup file: c:/tmp/etcd-backup-20241127145804.db
+[0m[32m[2024-11-27 15:06:05] INFO Successfully to upload file c:/tmp/etcd-backup-20241127145804.db to /data/wangzhendong/etcd-backup-20241127145804.db
+[0m[32m[2024-11-27 15:06:05] INFO Kube-apiserver stopped: node3
+[0m[32m[2024-11-27 15:06:07] INFO Successfully stopped etcd: node3
+[0m[32m[2024-11-27 15:06:07] INFO Create directory /data/wangzhendong/etcd-20241127150607
+[0m[32m[2024-11-27 15:06:07] INFO Backup /var/lib/etcd to /data/wangzhendong/etcd-20241127150607 success
+[0m[32m[2024-11-27 15:06:08] INFO Bucket etcd already exists
+[0m[32m[2024-11-27 15:06:08] INFO Successfully to download file data/wangzhendong/etcd-backup-20241127145804.db to c:/tmp/etcd-backup-20241127145804.db
+[0m[32m[2024-11-27 15:06:08] INFO Download backup file: c:/tmp/etcd-backup-20241127145804.db
+[0m[32m[2024-11-27 15:06:08] INFO Successfully to upload file c:/tmp/etcd-backup-20241127145804.db to /data/wangzhendong/etcd-backup-20241127145804.db
+[0m[31m[2024-11-27 15:06:08] ERROR Failed to execute command: Process exited with status 1
+[0m[31m[2024-11-27 15:06:08] ERROR Backup and stop kube-apiserver failure: Process exited with status 1
+[0m[31m[2024-11-27 15:06:08] ERROR Failed to stop kube-apiserver node4: Backup and stop kube-apiserver failure: Process exited with status 1
+[0m[31m[2024-11-27 15:06:08] ERROR Failed to stop kube-apiserver: Failed to stop kube-apiserver node4: Backup and stop kube-apiserver failure: Process exited with status 1
+[0m

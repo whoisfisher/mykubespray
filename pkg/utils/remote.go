@@ -54,6 +54,19 @@ func (executor *SSHExecutor) ExecuteShortCommand(command string) (string, error)
 	return string(res), nil
 }
 
+func (executor *SSHExecutor) QuickExecuteShortCommand(command string) {
+	session, err := executor.Connection.Client.NewSession()
+	if err != nil {
+		logger.GetLogger().Errorf("Failed to create SSH session: %v", err)
+		return
+	}
+	defer session.Close()
+	err = session.Start(command)
+	if err != nil {
+		return
+	}
+}
+
 func (executor *SSHExecutor) ExecuteShortCMD(command string) ([]byte, error) {
 	session, err := executor.Connection.Client.NewSession()
 	if err != nil {

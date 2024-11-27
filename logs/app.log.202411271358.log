@@ -1,0 +1,20 @@
+[32m[2024-11-27 13:58:03] INFO Kube-apiserver stopped
+[0m[32m[2024-11-27 13:58:04] INFO Kube-apiserver stopped
+[0m[32m[2024-11-27 13:58:04] INFO Kube-apiserver stopped
+[0m[32m[2024-11-27 13:58:05] INFO Bucket etcd already exists
+[0m[32m[2024-11-27 13:58:05] INFO Successfully to download file data/wangzhendong/etcd-backup-1732083472.db to c:/tmp/etcd-backup-1732083472.db
+[0m[32m[2024-11-27 13:58:05] INFO Download backup file: c:/tmp/etcd-backup-1732083472.db
+[0m[32m[2024-11-27 13:58:05] INFO Successfully to upload file c:/tmp/etcd-backup-1732083472.db to /data/wangzhendong/etcd-backup-1732083472.db
+[0m[32m[2024-11-27 13:58:06] INFO Successfully stopped etcd
+[0m[32m[2024-11-27 13:58:06] INFO Create directory /data/wangzhendong/etcd-20241127135806
+[0m[32m[2024-11-27 13:58:06] INFO Backup /var/lib/etcd to /data/wangzhendong/etcd-20241127135806 success
+[0m[32m[2024-11-27 13:58:07] INFO ETCD_NAME:etcd-node2
+[0m[32m[2024-11-27 13:58:07] INFO Successfully to restore snapshot: /data/wangzhendong/etcd-backup-1732083472.db
+[0m[31m[2024-11-27 13:59:37] ERROR Failed to execute command: Process exited with status 1, Job for etcd.service failed because a timeout was exceeded.
+See "systemctl status etcd.service" and "journalctl -xe" for details.
+
+[0m[31m[2024-11-27 13:59:37] ERROR Failed to start etcd: Process exited with status 1
+[0m[31m[2024-11-27 13:59:37] ERROR Failed to start etcd: Process exited with status 1
+[0m[31m[2024-11-27 13:59:37] ERROR Failed to start etcd: Failed to start etcd: Process exited with status 1
+[0m[31m[2024-11-27 13:59:37] ERROR Failed to restore etcd: Failed to start etcd: Failed to start etcd: Process exited with status 1
+[0m
