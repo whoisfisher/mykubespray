@@ -27,9 +27,9 @@ func (client *KubekeyClient) ParseToTemplate() *entity.KubekeyTemplate {
 	template := &entity.KubekeyTemplate{}
 	for _, host := range client.KubekeyConf.Hosts {
 		if len(host.Password) > 0 {
-			template.HostList += fmt.Sprintf("- {name: %s, address: %s, internalAddress: %s, port: %d, user: %s, password: %s}\n  ", host.Name, host.Address, host.InternalAddress, host.Port, host.User, host.Password)
+			template.HostList += fmt.Sprintf("- {name: %s, address: %s, internalAddress: %s, port: %d, user: %s, password: %s, arch: %s}\n  ", host.Name, host.Address, host.InternalAddress, host.Port, host.User, host.Password, host.Arch)
 		} else if len(host.PrivateKey) > 0 {
-			template.HostList += fmt.Sprintf("- {name: %s, address: %s, internalAddress: %s, port: %d, user: %s, privateKeyPath: %s}\n  ", host.Name, host.Address, host.InternalAddress, host.Port, host.User, host.PrivateKey)
+			template.HostList += fmt.Sprintf("- {name: %s, address: %s, internalAddress: %s, port: %d, user: %s, privateKeyPath: %s, arch: %s}\n  ", host.Name, host.Address, host.InternalAddress, host.Port, host.User, host.PrivateKey, host.Arch)
 		} else {
 			logger.GetLogger().Errorf("Password or PrivateKeyPath cannot empty")
 			return nil

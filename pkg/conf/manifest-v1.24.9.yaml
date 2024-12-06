@@ -53,5 +53,6 @@ spec:
     - registry.cn-beijing.aliyuncs.com/kubesphereio/node:v3.23.2
     - registry.cn-beijing.aliyuncs.com/kubesphereio/pause:3.7
     - registry.cn-beijing.aliyuncs.com/kubesphereio/pod2daemon-flexvol:v3.23.2
+    - registry.cn-beijing.aliyuncs.com/kubesphereio/typha:v3.23.2
   registry:
     auths: {}
